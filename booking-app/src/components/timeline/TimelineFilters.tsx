@@ -63,19 +63,19 @@ export function TimelineFilters({
   };
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm mb-6">
+    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
-          <Filter className="w-5 h-5 text-gray-600" />
-          <h3 className="text-lg font-semibold text-gray-900">Filters</h3>
+          <Filter className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Filters</h3>
           {hasActiveFilters && (
-            <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+            <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full">
               {[selectedContactId ? 1 : 0, 4 - selectedStatuses.length].filter(n => n > 0).reduce((a, b) => a + b, 0)} active
             </span>
           )}
           {itemCount !== undefined && (
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
               • Showing {itemCount} {itemCount === 1 ? 'item' : 'items'}
             </span>
           )}
@@ -86,14 +86,14 @@ export function TimelineFilters({
               variant="ghost"
               size="sm"
               onClick={onClearFilters}
-              className="text-gray-600 hover:text-gray-900"
+              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
             >
               Clear All
             </Button>
           )}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-gray-600 hover:text-gray-900 transition-colors"
+            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             {isExpanded ? '▼' : '▶'}
           </button>
@@ -105,7 +105,7 @@ export function TimelineFilters({
         <div className="p-4 space-y-6">
           {/* Client Filter */}
           <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700">Client</Label>
+            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Client</Label>
             <Select
               value={selectedContactId || 'all'}
               onValueChange={(value) => onContactChange(value === 'all' ? null : value)}
@@ -139,12 +139,12 @@ export function TimelineFilters({
           {/* Status Filter */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-gray-700">Quote Status</Label>
+              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Quote Status</Label>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleSelectAllStatuses}
-                className="text-xs text-blue-600 hover:text-blue-700 h-auto p-1"
+                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 h-auto p-1"
               >
                 {selectedStatuses.length === 4 ? 'Deselect All' : 'Select All'}
               </Button>
@@ -153,7 +153,7 @@ export function TimelineFilters({
               {QUOTE_STATUSES.map((status) => (
                 <div
                   key={status.value}
-                  className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 cursor-pointer"
+                  className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                   onClick={() => handleStatusToggle(status.value)}
                 >
                   <Checkbox
@@ -176,26 +176,26 @@ export function TimelineFilters({
 
           {/* Active Filters Display */}
           {hasActiveFilters && (
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-2 flex-wrap gap-2">
-                <span className="text-sm font-medium text-gray-700">Active:</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Active:</span>
                 {selectedContact && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-blue-50 text-blue-700 rounded-md text-sm">
+                  <div className="flex items-center space-x-1 px-2 py-1 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-md text-sm">
                     <span>{getContactDisplayName(selectedContact.firstName, selectedContact.lastName)}</span>
                     <button
                       onClick={() => onContactChange(null)}
-                      className="hover:text-blue-900"
+                      className="hover:text-blue-900 dark:hover:text-blue-100"
                     >
                       <X className="w-3 h-3" />
                     </button>
                   </div>
                 )}
                 {selectedStatuses.length < 4 && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-purple-50 text-purple-700 rounded-md text-sm">
+                  <div className="flex items-center space-x-1 px-2 py-1 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-md text-sm">
                     <span>{selectedStatuses.length} {selectedStatuses.length === 1 ? 'status' : 'statuses'}</span>
                     <button
                       onClick={() => onStatusChange(['draft', 'sent', 'accepted', 'rejected'])}
-                      className="hover:text-purple-900"
+                      className="hover:text-purple-900 dark:hover:text-purple-100"
                     >
                       <X className="w-3 h-3" />
                     </button>

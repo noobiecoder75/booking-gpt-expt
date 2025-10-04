@@ -359,41 +359,74 @@ CREATE POLICY "Agents can delete their own contacts" ON public.contacts
     EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'agent')
   );
 
--- Quotes policies
-CREATE POLICY "Users can view their own quotes" ON public.quotes
-  FOR SELECT USING (auth.uid() = user_id);
+-- Quotes policies (Role-Based Access Control)
+CREATE POLICY "Admins and owners can view quotes" ON public.quotes
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can create their own quotes" ON public.quotes
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can create quotes" ON public.quotes
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can update their own quotes" ON public.quotes
-  FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can update quotes" ON public.quotes
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can delete their own quotes" ON public.quotes
-  FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can delete quotes" ON public.quotes
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
--- Invoices policies (ADDED - New table)
-CREATE POLICY "Users can view their own invoices" ON public.invoices
-  FOR SELECT USING (auth.uid() = user_id);
+-- Invoices policies (Role-Based Access Control)
+CREATE POLICY "Admins and owners can view invoices" ON public.invoices
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can create their own invoices" ON public.invoices
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can create invoices" ON public.invoices
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can update their own invoices" ON public.invoices
-  FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can update invoices" ON public.invoices
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can delete their own invoices" ON public.invoices
-  FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can delete invoices" ON public.invoices
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
--- Bookings policies
-CREATE POLICY "Users can view their own bookings" ON public.bookings
-  FOR SELECT USING (auth.uid() = user_id);
+-- Bookings policies (Role-Based Access Control)
+CREATE POLICY "Admins and owners can view bookings" ON public.bookings
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can create their own bookings" ON public.bookings
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can create bookings" ON public.bookings
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can update their own bookings" ON public.bookings
-  FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can update bookings" ON public.bookings
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
 -- Hotels policies (public read, authenticated write)
 CREATE POLICY "Anyone can view hotels" ON public.hotels
@@ -415,12 +448,18 @@ CREATE POLICY "Authenticated users can insert flights" ON public.flights
 CREATE POLICY "Authenticated users can update flights" ON public.flights
   FOR UPDATE USING (auth.role() = 'authenticated');
 
--- Payments policies
-CREATE POLICY "Users can view their own payments" ON public.payments
-  FOR SELECT USING (auth.uid() = user_id);
+-- Payments policies (Role-Based Access Control)
+CREATE POLICY "Admins and owners can view payments" ON public.payments
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can create their own payments" ON public.payments
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can create payments" ON public.payments
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
 -- Commissions policies
 CREATE POLICY "Users can view their own commissions" ON public.commissions
@@ -434,18 +473,30 @@ CREATE POLICY "Admins can manage all commissions" ON public.commissions
     )
   );
 
--- Tasks policies
-CREATE POLICY "Users can view their own tasks" ON public.tasks
-  FOR SELECT USING (auth.uid() = user_id);
+-- Tasks policies (Role-Based Access Control)
+CREATE POLICY "Admins and owners can view tasks" ON public.tasks
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can create their own tasks" ON public.tasks
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can create tasks" ON public.tasks
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can update their own tasks" ON public.tasks
-  FOR UPDATE USING (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can update tasks" ON public.tasks
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
-CREATE POLICY "Users can delete their own tasks" ON public.tasks
-  FOR DELETE USING (auth.uid() = user_id);
+CREATE POLICY "Admins and owners can delete tasks" ON public.tasks
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
 
 -- =====================================================
 -- TRIGGERS FOR UPDATED_AT
