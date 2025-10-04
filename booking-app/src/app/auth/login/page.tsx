@@ -34,7 +34,7 @@ export default function LoginPage() {
 
       // Redirect to dashboard or the intended page
       const params = new URLSearchParams(window.location.search);
-      const redirectTo = params.get('redirectTo') || '/';
+      const redirectTo = params.get('redirectTo') || '/quotes';
       router.push(redirectTo);
       router.refresh();
     } catch (error: any) {

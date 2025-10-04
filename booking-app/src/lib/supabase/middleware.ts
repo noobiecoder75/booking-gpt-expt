@@ -66,7 +66,7 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect to dashboard if accessing auth routes while logged in
   if (isAuthPath && user) {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/quotes', request.url));
   }
 
   return supabaseResponse;
