@@ -116,8 +116,16 @@ export default function SignUpPage() {
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
           <CardDescription className="text-center">
-            Enter your details to create a new account
+            Create your workspace as the admin
           </CardDescription>
+          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-sm text-blue-800">
+              <strong>First user?</strong> You'll become the admin automatically.
+            </p>
+            <p className="text-xs text-blue-600 mt-1">
+              Already have a workspace? Ask your admin for an invite link.
+            </p>
+          </div>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (

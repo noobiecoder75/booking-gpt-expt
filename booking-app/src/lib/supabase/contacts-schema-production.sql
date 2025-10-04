@@ -306,18 +306,58 @@ CREATE POLICY "Users can view their own profile" ON public.users
 CREATE POLICY "Users can update their own profile" ON public.users
   FOR UPDATE USING (auth.uid() = id);
 
--- Contacts policies (ADDED - New table)
-CREATE POLICY "Users can view their own contacts" ON public.contacts
-  FOR SELECT USING (auth.uid() = user_id);
+-- Contacts policies (Role-Based Access Control)
+-- Admins can view all contacts in their workspace
+CREATE POLICY "Admins can view all contacts" ON public.contacts
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+  );
 
-CREATE POLICY "Users can create their own contacts" ON public.contacts
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+-- Agents can only view their own contacts
+CREATE POLICY "Agents can view their own contacts" ON public.contacts
+  FOR SELECT USING (
+    auth.uid() = user_id AND
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'agent')
+  );
 
-CREATE POLICY "Users can update their own contacts" ON public.contacts
-  FOR UPDATE USING (auth.uid() = user_id);
+-- Admins can create contacts (will be owned by them or assigned user)
+CREATE POLICY "Admins can create any contact" ON public.contacts
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+  );
 
-CREATE POLICY "Users can delete their own contacts" ON public.contacts
-  FOR DELETE USING (auth.uid() = user_id);
+-- Agents can create their own contacts only
+CREATE POLICY "Agents can create their own contacts" ON public.contacts
+  FOR INSERT WITH CHECK (
+    auth.uid() = user_id AND
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'agent')
+  );
+
+-- Admins can update any contact
+CREATE POLICY "Admins can update any contact" ON public.contacts
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+  );
+
+-- Agents can update their own contacts only
+CREATE POLICY "Agents can update their own contacts" ON public.contacts
+  FOR UPDATE USING (
+    auth.uid() = user_id AND
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'agent')
+  );
+
+-- Admins can delete any contact
+CREATE POLICY "Admins can delete any contact" ON public.contacts
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+  );
+
+-- Agents can delete their own contacts only
+CREATE POLICY "Agents can delete their own contacts" ON public.contacts
+  FOR DELETE USING (
+    auth.uid() = user_id AND
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'agent')
+  );
 
 -- Quotes policies
 CREATE POLICY "Users can view their own quotes" ON public.quotes
@@ -456,14 +496,19 @@ CREATE TRIGGER update_tasks_updated_at BEFORE UPDATE ON public.tasks
 
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+  user_count INTEGER;
 BEGIN
+  -- Check if this is the first user signing up (workspace owner)
+  SELECT COUNT(*) INTO user_count FROM public.users;
+
   INSERT INTO public.users (id, email, full_name, avatar_url, role)
   VALUES (
     NEW.id,
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name'),
     NEW.raw_user_meta_data->>'avatar_url',
-    'agent'
+    CASE WHEN user_count = 0 THEN 'admin' ELSE 'agent' END
   );
   RETURN NEW;
 EXCEPTION
