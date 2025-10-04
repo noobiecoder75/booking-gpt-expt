@@ -56,23 +56,8 @@ export default function SignUpPage() {
       if (error) throw error;
 
       if (data.user) {
+        // User profile is automatically created by database trigger
         setSuccess(true);
-        // Create user profile in public.users table
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert([
-            {
-              id: data.user.id,
-              email: data.user.email,
-              full_name: fullName,
-              company_name: companyName,
-              role: 'agent', // Default role
-            },
-          ]);
-
-        if (profileError) {
-          console.error('Failed to create user profile:', profileError);
-        }
       }
     } catch (error: any) {
       setError(error.message || 'An error occurred during sign up');
