@@ -181,7 +181,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   return (
     <div className="space-y-8">
       {/* Progress Steps */}
-      <ModernCard variant="elevated" className="p-6">
+      <ModernCard variant="elevated" className="p-6 bg-white">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
           {steps.map((step, index) => (
             <div
@@ -195,18 +195,18 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
                   className={`w-12 h-12 rounded-xl flex items-center justify-center text-sm font-medium transition-colors ${
                     index <= currentStepIndex
                       ? 'bg-blue-600 text-white'
-                      : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'
+                      : 'bg-white text-gray-600 border border-gray-200'
                   }`}
                 >
                   {index + 1}
                 </div>
                 <div className="mt-3 text-center">
                   <div className={`text-sm font-medium ${
-                    index <= currentStepIndex ? 'text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400'
+                    index <= currentStepIndex ? 'text-gray-900' : 'text-gray-600'
                   }`}>
                     {step.label}
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 hidden md:block">
+                  <div className="text-xs text-gray-500 mt-1 hidden md:block">
                     {step.description}
                   </div>
                 </div>
@@ -214,7 +214,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
               {index < steps.length - 1 && (
                 <div
                   className={`hidden md:flex flex-1 h-0.5 mx-6 rounded-full transition-colors ${
-                    index < currentStepIndex ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'
+                    index < currentStepIndex ? 'bg-blue-600' : 'bg-gray-200'
                   }`}
                 />
               )}
@@ -224,7 +224,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       </ModernCard>
 
       {/* Navigation */}
-      <ModernCard variant="default" className="p-6">
+      <ModernCard variant="default" className="p-6 bg-white">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <ModernButton
@@ -270,7 +270,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       </ModernCard>
 
       {/* Step Content */}
-      <ModernCard variant="elevated" className="p-8">
+      <ModernCard variant="elevated" className="p-8 bg-white">
         {renderStepContent()}
       </ModernCard>
     </div>
