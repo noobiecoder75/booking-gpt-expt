@@ -6,10 +6,11 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useContactStore } from '@/store/contact-store';
+import { useContactStore } from '@/store/contact-store-supabase';
 import { useQuoteStore } from '@/store/quote-store';
 import { useInvoiceStore } from '@/store/invoice-store';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { ContactForm } from '@/components/contacts/ContactForm';
 import { Contact } from '@/types';
 import {
   Users,
@@ -29,11 +30,13 @@ import {
   Edit,
   MoreHorizontal,
   Heart,
-  Award
+  Award,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 
 export default function ContactsPage() {
-  const { contacts, addContact, updateContact, deleteContact, searchContacts } = useContactStore();
+  const { contacts, fetchContacts, syncStatus, addContact, updateContact, deleteContact, searchContacts } = useContactStore();
   const { getQuotesByContact, quotes } = useQuoteStore();
   const { getInvoicesByCustomer, invoices } = useInvoiceStore();
 
@@ -41,6 +44,13 @@ export default function ContactsPage() {
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
+  const [showContactForm, setShowContactForm] = useState(false);
+  const [editingContact, setEditingContact] = useState<Contact | null>(null);
+
+  // Fetch contacts on mount
+  useEffect(() => {
+    fetchContacts();
+  }, [fetchContacts]);
 
   useEffect(() => {
     if (searchQuery.trim()) {
@@ -105,6 +115,21 @@ export default function ContactsPage() {
     setViewMode('list');
   };
 
+  const handleAddContact = () => {
+    setEditingContact(null);
+    setShowContactForm(true);
+  };
+
+  const handleEditContact = (contact: Contact) => {
+    setEditingContact(contact);
+    setShowContactForm(true);
+  };
+
+  const handleFormClose = () => {
+    setShowContactForm(false);
+    setEditingContact(null);
+  };
+
   // Customer 360 view component
   const Customer360View = ({ contact }: { contact: Contact }) => {
     const customerQuotes = getQuotesByContact(contact.id);
@@ -161,7 +186,7 @@ export default function ContactsPage() {
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Message
               </Button>
-              <Button variant="outline">
+              <Button variant="outline" onClick={() => handleEditContact(contact)}>
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
               </Button>
@@ -397,7 +422,11 @@ export default function ContactsPage() {
                   </p>
                 </div>
 
-                <Button className="mt-4 md:mt-0">
+                <Button
+                  className="mt-4 md:mt-0"
+                  onClick={handleAddContact}
+                  disabled={syncStatus === 'syncing'}
+                >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Contact
                 </Button>
@@ -456,6 +485,35 @@ export default function ContactsPage() {
                 </Card>
               </div>
 
+              {/* Loading State */}
+              {syncStatus === 'syncing' && (
+                <div className="flex items-center justify-center py-8 mb-6">
+                  <Loader2 className="w-6 h-6 animate-spin text-blue-600 mr-2" />
+                  <span className="text-gray-600">Loading contacts...</span>
+                </div>
+              )}
+
+              {/* Error State */}
+              {syncStatus === 'error' && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md flex items-start">
+                  <AlertCircle className="w-5 h-5 text-red-600 mr-3 mt-0.5" />
+                  <div>
+                    <h3 className="text-sm font-medium text-red-800">Failed to load contacts</h3>
+                    <p className="text-sm text-red-600 mt-1">
+                      There was an error loading your contacts. Please try again.
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="mt-3"
+                      onClick={() => fetchContacts()}
+                    >
+                      Retry
+                    </Button>
+                  </div>
+                </div>
+              )}
+
               {/* Search and Filters */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="relative flex-1">
@@ -465,6 +523,7 @@ export default function ContactsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
+                    disabled={syncStatus === 'syncing'}
                   />
                 </div>
               </div>
@@ -555,6 +614,14 @@ export default function ContactsPage() {
                 </CardContent>
               </Card>
             </>
+          )}
+
+          {/* Contact Form Modal */}
+          {showContactForm && (
+            <ContactForm
+              contact={editingContact}
+              onClose={handleFormClose}
+            />
           )}
         </div>
     </MainLayout>
