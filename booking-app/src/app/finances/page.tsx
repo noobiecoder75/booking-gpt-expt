@@ -6,12 +6,12 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useInvoiceStore } from '@/store/invoice-store';
-import { useCommissionStore } from '@/store/commission-store';
+import { useInvoiceStore } from '@/store/invoice-store-supabase';
+import { useCommissionStore } from '@/store/commission-store-supabase';
 import { useExpenseStore } from '@/store/expense-store';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { useQuoteStore } from '@/store/quote-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { formatItemDetails } from '@/lib/travel-item-formatter';
 import {
   TrendingUp,

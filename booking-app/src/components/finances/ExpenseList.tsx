@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from 'react';
 import { useExpenseStore } from '@/store/expense-store';
-import { useContactStore } from '@/store/contact-store';
-import { useQuoteStore } from '@/store/quote-store';
+import { useContactStore } from '@/store/contact-store-supabase';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';

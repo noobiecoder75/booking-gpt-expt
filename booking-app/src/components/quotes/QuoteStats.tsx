@@ -1,7 +1,7 @@
 'use client';
 
-import { useQuoteStore } from '@/store/quote-store';
-import { useInvoiceStore } from '@/store/invoice-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useInvoiceStore } from '@/store/invoice-store-supabase';
 import { formatCurrency } from '@/lib/utils';
 import { FileText, Send, CheckCircle, XCircle, DollarSign, TrendingUp, Briefcase } from 'lucide-react';
 

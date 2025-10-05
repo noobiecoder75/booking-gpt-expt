@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useTaskStore } from '@/store/task-store';
+import { useTaskStore } from '@/store/task-store-supabase';
 import { TaskStatus, TaskPriority, TaskType } from '@/types/task';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { MainLayout } from '@/components/layout/MainLayout';

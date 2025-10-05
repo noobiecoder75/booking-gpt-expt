@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useContactStore } from '@/store/contact-store';
+import { useContactStore } from '@/store/contact-store-supabase';
 import { Contact } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

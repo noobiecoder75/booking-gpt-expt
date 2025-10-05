@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useQuoteStore } from '@/store/quote-store';
-import { useContactStore } from '@/store/contact-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useContactStore } from '@/store/contact-store-supabase';
 import { TravelQuote } from '@/types';
 import { QuoteCard } from './QuoteCard';
 import { QuoteFilters, QuoteFilterOptions } from './QuoteFilters';

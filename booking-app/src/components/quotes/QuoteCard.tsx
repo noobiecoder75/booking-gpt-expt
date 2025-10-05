@@ -1,8 +1,8 @@
 'use client';
 
 import { TravelQuote, Contact } from '@/types';
-import { useContactStore } from '@/store/contact-store';
-import { useQuoteStore } from '@/store/quote-store';
+import { useContactStore } from '@/store/contact-store-supabase';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { ModernButton } from '@/components/ui/modern-button';
 import { ModernCard } from '@/components/ui/modern-card';
 import { Badge } from '@/components/ui/badge';

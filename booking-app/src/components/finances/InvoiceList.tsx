@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useInvoiceStore } from '@/store/invoice-store';
+import { useInvoiceStore } from '@/store/invoice-store-supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';

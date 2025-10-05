@@ -1,5 +1,5 @@
-import { useTaskStore } from '@/store/task-store';
-import { useQuoteStore } from '@/store/quote-store';
+import { useTaskStore } from '@/store/task-store-supabase';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 
 /**
  * Booking Processor - Handles hybrid booking logic

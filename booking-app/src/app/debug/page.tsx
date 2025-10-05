@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useQuoteStore } from '@/store/quote-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { useAuthStore } from '@/store/auth-store';
 import { Button } from '@/components/ui/button';
 

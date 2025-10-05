@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useQuoteStore } from '@/store/quote-store';
-import { useContactStore } from '@/store/contact-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useContactStore } from '@/store/contact-store-supabase';
 import { ModernButton } from '@/components/ui/modern-button';
 import { ModernCard, ModernCardContent } from '@/components/ui/modern-card';
 import { ExternalLink, Eye } from 'lucide-react';

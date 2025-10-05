@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useCommissionStore } from '@/store/commission-store';
+import { useCommissionStore } from '@/store/commission-store-supabase';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

@@ -3,8 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import { TravelQuote, Contact } from '@/types';
-import { useQuoteStore } from '@/store/quote-store';
-import { useContactStore } from '@/store/contact-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useContactStore } from '@/store/contact-store-supabase';
 import { ClientQuoteView } from '@/components/client/ClientQuoteView';
 import { ModernCard } from '@/components/ui/modern-card';
 import { Loader2 } from 'lucide-react';

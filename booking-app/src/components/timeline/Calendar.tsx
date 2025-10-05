@@ -3,7 +3,7 @@
 import { Calendar as BigCalendar, momentLocalizer, View } from 'react-big-calendar';
 import moment from 'moment';
 import { useState, useMemo, useEffect } from 'react';
-import { useQuoteStore } from '@/store/quote-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { CalendarEvent, TravelQuote } from '@/types';
 import { getTravelItemColor } from '@/lib/utils';
 import { downloadICSFile } from '@/lib/calendar-export';

@@ -1,8 +1,8 @@
 'use client';
 
 import { useExpenseStore } from '@/store/expense-store';
-import { useContactStore } from '@/store/contact-store';
-import { useQuoteStore } from '@/store/quote-store';
+import { useContactStore } from '@/store/contact-store-supabase';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { formatCurrency } from '@/lib/utils';
 import { DollarSign, Calendar, User, FileText, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

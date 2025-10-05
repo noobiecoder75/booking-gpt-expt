@@ -5,7 +5,7 @@ import { Calendar, momentLocalizer, View, SlotInfo, ToolbarProps } from 'react-b
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
 import { TravelQuote, TravelItem, CalendarEvent } from '@/types';
-import { useQuoteStore } from '@/store/quote-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';

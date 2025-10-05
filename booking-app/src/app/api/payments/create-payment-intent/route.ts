@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripeInstance, formatAmountForStripe, calculateDepositAmount } from '@/lib/stripe/config';
-import { useQuoteStore } from '@/store/quote-store';
-import { usePaymentStore } from '@/store/payment-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
+import { usePaymentStore } from '@/store/payment-store-supabase';
 import { TravelQuote, TravelItem } from '@/types';
 import { PriceChange } from '@/types/payment';
 

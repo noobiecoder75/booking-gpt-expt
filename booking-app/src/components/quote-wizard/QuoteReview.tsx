@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { TravelQuote, Contact } from '@/types';
-import { useQuoteStore } from '@/store/quote-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { Button } from '@/components/ui/button';
 import { formatCurrency, getContactDisplayName, formatDate, detectDestinationMismatches, DestinationMismatch } from '@/lib/utils';
 import { Plane, Hotel, MapPin, Car, FileText, Send, AlertTriangle, X } from 'lucide-react';

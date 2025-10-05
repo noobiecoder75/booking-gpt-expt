@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useContactStore } from '@/store/contact-store';
-import { useQuoteStore } from '@/store/quote-store';
+import { useContactStore } from '@/store/contact-store-supabase';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { Contact, TravelQuote } from '@/types';
 import { ModernButton } from '@/components/ui/modern-button';
 import { ModernCard } from '@/components/ui/modern-card';

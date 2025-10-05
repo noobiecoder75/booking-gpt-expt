@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useTaskStore } from '@/store/task-store';
+import { useTaskStore } from '@/store/task-store-supabase';
 import { Upload, X, FileText, Image as ImageIcon, File, CheckCircle } from 'lucide-react';
 
 interface DocumentUploadProps {

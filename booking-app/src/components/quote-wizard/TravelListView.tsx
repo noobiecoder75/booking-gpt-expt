@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { TravelQuote, TravelItem } from '@/types';
-import { useQuoteStore } from '@/store/quote-store';
+import { useQuoteStore } from '@/store/quote-store-supabase';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, getTravelItemColor } from '@/lib/utils';
