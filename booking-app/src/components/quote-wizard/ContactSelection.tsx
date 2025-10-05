@@ -136,7 +136,7 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
 
       {/* Help text */}
       {filteredContacts.length > 0 && !selectedContactId && (
-        <div className="text-center text-gray-500 text-sm">
+        <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
           Click on a contact above to select them, then continue to the next step.
         </div>
       )}

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { useSidebarStore } from '@/store/sidebar-store';
 import {
   LayoutDashboard,
@@ -31,13 +31,13 @@ import {
 export function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, profile, signOut } = useAuth();
   const { collapsed, mobileMenuOpen, toggleCollapsed, setMobileMenuOpen } = useSidebarStore();
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set(['finances']));
 
-  const handleLogout = () => {
-    logout();
-    router.push('/');
+  const handleLogout = async () => {
+    await signOut();
+    router.push('/auth/login');
   };
 
   const toggleMenu = (menuKey: string) => {
@@ -257,7 +257,7 @@ export function Sidebar() {
         <div className="p-4 border-t border-gray-200">
           {!collapsed && (
             <div className="text-sm text-gray-600 mb-3 px-3">
-              {user?.email}
+              {user?.email || profile?.email}
             </div>
           )}
           <Button
@@ -390,7 +390,7 @@ export function Sidebar() {
             {/* User Section */}
             <div className="p-4 border-t border-gray-200">
               <div className="text-sm text-gray-600 mb-3 px-3">
-                {user?.email}
+                {user?.email || profile?.email}
               </div>
               <Button
                 variant="ghost"

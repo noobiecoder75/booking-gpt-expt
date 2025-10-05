@@ -76,12 +76,12 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     handleNext();
   };
 
-  const handleQuoteDetailsComplete = (quoteData: Partial<TravelQuote>) => {
+  const handleQuoteDetailsComplete = async (quoteData: Partial<TravelQuote>) => {
     if (!selectedContact) return;
-    
+
     if (isEditMode && currentQuote?.id) {
       // Update existing quote
-      updateQuote(currentQuote.id, {
+      await updateQuote(currentQuote.id, {
         title: quoteData.title || currentQuote.title,
         travelDates: quoteData.travelDates || currentQuote.travelDates,
         ...quoteData,
@@ -95,7 +95,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       }
     } else {
       // Create new quote
-      const newQuoteId = addQuote({
+      const newQuoteId = await addQuote({
         contactId: selectedContact.id,
         title: quoteData.title || 'New Travel Quote',
         items: [],
@@ -110,8 +110,8 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       // Link quote to contact
       addQuoteToContact(selectedContact.id, newQuoteId);
 
-      // Set current quote in store for timeline integration
-      const quote = useQuoteStore.getState().getQuoteById(newQuoteId);
+      // Wait for quote to be available in store
+      const quote = getQuoteById(newQuoteId);
       if (quote) {
         setCurrentQuote(quote);
         setStoreCurrentQuote(quote);
@@ -202,11 +202,11 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
                 </div>
                 <div className="mt-3 text-center">
                   <div className={`text-sm font-medium ${
-                    index <= currentStepIndex ? 'text-gray-900' : 'text-gray-600'
+                    index <= currentStepIndex ? 'text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400'
                   }`}>
                     {step.label}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1 hidden md:block">
+                  <div className="text-xs text-gray-500 dark:text-gray-500 mt-1 hidden md:block">
                     {step.description}
                   </div>
                 </div>

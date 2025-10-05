@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuth } from '@/components/auth/AuthProvider';
 import {
   LayoutDashboard,
   Users,
@@ -25,12 +25,12 @@ import { useState } from 'react';
 export function AppNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuthStore();
+  const { user, profile, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    router.push('/');
+  const handleLogout = async () => {
+    await signOut();
+    router.push('/auth/login');
   };
 
   const navItems = [
@@ -125,7 +125,7 @@ export function AppNav() {
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
             <div className="text-sm text-gray-600">
-              {user?.email}
+              {user?.email || profile?.email}
             </div>
             <Button
               variant="ghost"
@@ -181,7 +181,7 @@ export function AppNav() {
 
               <div className="border-t border-gray-200 pt-4 mt-4">
                 <div className="text-sm text-gray-600 px-4 mb-3">
-                  {user?.email}
+                  {user?.email || profile?.email}
                 </div>
                 <button
                   onClick={handleLogout}
