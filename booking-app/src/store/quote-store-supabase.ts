@@ -141,8 +141,14 @@ export const useQuoteStore = create<QuoteStore>()(
 
           const { data: { user } } = await supabase.auth.getUser();
           if (!user) {
-            console.warn('No authenticated user, skipping fetch');
-            set({ syncStatus: 'idle' });
+            console.warn('[QuoteStore] No authenticated user, clearing stale quotes');
+            // Clear stale quotes when user is null to prevent showing old data
+            set({
+              quotes: [],
+              currentQuote: null,
+              syncStatus: 'idle',
+              calendarEventsCache: null,
+            });
             return;
           }
 
@@ -163,8 +169,13 @@ export const useQuoteStore = create<QuoteStore>()(
             calendarEventsCache: null,
           });
         } catch (error) {
-          console.error('Failed to fetch quotes:', error);
-          set({ syncStatus: 'error' });
+          console.error('[QuoteStore] Failed to fetch quotes:', error);
+          set({
+            quotes: [],
+            currentQuote: null,
+            syncStatus: 'error',
+            calendarEventsCache: null,
+          });
         }
       },
 

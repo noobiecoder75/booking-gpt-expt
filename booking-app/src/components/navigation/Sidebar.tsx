@@ -35,6 +35,7 @@ export function Sidebar() {
   const { user, profile, signOut } = useAuth();
   const { collapsed, mobileMenuOpen, toggleCollapsed, setMobileMenuOpen } = useSidebarStore();
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set(['finances']));
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Component lifecycle logging
   useEffect(() => {
@@ -69,7 +70,14 @@ export function Sidebar() {
   }, [collapsed, mobileMenuOpen, expandedMenus]);
 
   const handleLogout = async () => {
+    if (isLoggingOut) {
+      console.log('[Sidebar] Logout already in progress, ignoring duplicate click');
+      return;
+    }
+
     console.log('[Sidebar] Logout initiated');
+    setIsLoggingOut(true);
+
     try {
       await signOut();
       console.log('[Sidebar] SignOut successful, redirecting to /auth/login');
@@ -338,11 +346,12 @@ export function Sidebar() {
             variant="ghost"
             size={collapsed ? "icon" : "sm"}
             onClick={handleLogout}
+            disabled={isLoggingOut}
             className={`text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 w-full ${collapsed ? 'justify-center' : 'justify-start'}`}
             title={collapsed ? 'Sign Out' : undefined}
           >
             <LogOut className={collapsed ? "w-6 h-6" : "w-4 h-4"} />
-            {!collapsed && <span className="ml-2">Sign Out</span>}
+            {!collapsed && <span className="ml-2">{isLoggingOut ? 'Signing Out...' : 'Sign Out'}</span>}
           </Button>
         </div>
       </aside>
@@ -471,10 +480,11 @@ export function Sidebar() {
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
+                disabled={isLoggingOut}
                 className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 w-full justify-start"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign Out
+                {isLoggingOut ? 'Signing Out...' : 'Sign Out'}
               </Button>
             </div>
           </aside>

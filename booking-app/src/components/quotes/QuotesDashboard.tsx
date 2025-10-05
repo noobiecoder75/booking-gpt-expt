@@ -13,7 +13,7 @@ import Link from 'next/link';
 import moment from 'moment';
 
 export function QuotesDashboard() {
-  const { quotes, searchQuotes, getQuotesByStatus, getQuotesByDateRange } = useQuoteStore();
+  const { quotes, searchQuotes, getQuotesByStatus, getQuotesByDateRange, syncStatus } = useQuoteStore();
   const { contacts } = useContactStore();
   const [filters, setFilters] = useState<QuoteFilterOptions>({
     searchQuery: '',
@@ -215,7 +215,27 @@ export function QuotesDashboard() {
       ) : (
         <div className="text-center py-16">
           <div className="glass-card rounded-2xl p-12 max-w-lg mx-auto">
-            {quotes.length === 0 ? (
+            {syncStatus === 'error' ? (
+              // Error state
+              <div>
+                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                  Failed to load quotes
+                </h3>
+                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                  There was an error loading your quotes. Please try refreshing the page or contact support if the problem persists.
+                </p>
+                <Button
+                  size="lg"
+                  className="shadow-soft hover-lift"
+                  onClick={() => window.location.reload()}
+                >
+                  Refresh Page
+                </Button>
+              </div>
+            ) : quotes.length === 0 ? (
               // No quotes at all
               <div>
                 <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -246,8 +266,8 @@ export function QuotesDashboard() {
                 <p className="text-gray-600 mb-6">
                   Try adjusting your search criteria or clearing the active filters to see more quotes.
                 </p>
-                <Button 
-                  variant="outline" 
+                <Button
+                  variant="outline"
                   size="lg"
                   className="shadow-soft hover-lift"
                   onClick={() => setFilters({
