@@ -163,7 +163,11 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
             break;
           case 'hotel':
             startDate.setHours(15, 0); // 3:00 PM check-in
-            endDate.setHours(11, 0);   // 11:00 AM check-out (next day)
+            endDate.setHours(11, 0);   // 11:00 AM check-out
+            // If endDate is on or before startDate after time adjustments, add 1 day
+            if (endDate.getTime() <= startDate.getTime()) {
+              endDate.setDate(endDate.getDate() + 1);
+            }
             break;
           case 'activity':
             startDate.setHours(10, 0); // 10:00 AM

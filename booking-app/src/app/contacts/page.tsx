@@ -49,16 +49,27 @@ export default function ContactsPage() {
 
   // Fetch contacts on mount
   useEffect(() => {
+    console.log('[ContactsPage] Component mounted, fetching contacts');
     fetchContacts();
+    return () => {
+      console.log('[ContactsPage] Component unmounted');
+    };
   }, [fetchContacts]);
 
   useEffect(() => {
+    console.log('[ContactsPage] Filtering contacts:', {
+      totalContacts: contacts.length,
+      searchQuery,
+      syncStatus
+    });
     if (searchQuery.trim()) {
-      setFilteredContacts(searchContacts(searchQuery.trim()));
+      const filtered = searchContacts(searchQuery.trim());
+      console.log('[ContactsPage] Search results:', filtered.length);
+      setFilteredContacts(filtered);
     } else {
       setFilteredContacts(contacts);
     }
-  }, [contacts, searchQuery, searchContacts]);
+  }, [contacts, searchQuery, searchContacts, syncStatus]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -106,6 +117,7 @@ export default function ContactsPage() {
   };
 
   const handleContactSelect = (contact: Contact) => {
+    console.log('[ContactsPage] Contact selected:', contact.id, contact.firstName, contact.lastName);
     setSelectedContact(contact);
     setViewMode('detail');
   };
@@ -148,23 +160,23 @@ export default function ContactsPage() {
     return (
       <div className="space-y-6">
         {/* Customer Header */}
-        <div className="bg-white rounded-lg border p-6">
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-4">
               <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                 {contact.firstName[0]}{contact.lastName[0]}
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   {contact.firstName} {contact.lastName}
                 </h2>
                 <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center text-gray-600">
+                  <div className="flex items-center text-gray-600 dark:text-gray-400">
                     <Mail className="w-4 h-4 mr-1" />
                     {contact.email}
                   </div>
                   {contact.phone && (
-                    <div className="flex items-center text-gray-600">
+                    <div className="flex items-center text-gray-600 dark:text-gray-400">
                       <Phone className="w-4 h-4 mr-1" />
                       {contact.phone}
                     </div>
@@ -279,8 +291,8 @@ export default function ContactsPage() {
                 {acceptedQuotes.slice(0, 5).map((quote) => (
                   <div key={quote.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <div className="font-medium">{quote.title}</div>
-                      <div className="text-sm text-gray-600">
+                      <div className="font-medium dark:text-gray-100">{quote.title}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         {new Date(quote.createdAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -293,7 +305,7 @@ export default function ContactsPage() {
                   </div>
                 ))}
                 {acceptedQuotes.length === 0 && (
-                  <div className="text-center py-4 text-gray-500">
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">
                     No bookings yet
                   </div>
                 )}
@@ -311,8 +323,8 @@ export default function ContactsPage() {
                 {paidInvoices.slice(0, 5).map((invoice) => (
                   <div key={invoice.id} className="flex items-center justify-between p-3 border rounded-lg">
                     <div>
-                      <div className="font-medium">#{invoice.invoiceNumber}</div>
-                      <div className="text-sm text-gray-600">
+                      <div className="font-medium dark:text-gray-100">#{invoice.invoiceNumber}</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
                         Paid: {new Date(invoice.payments[0]?.processedDate || invoice.updatedAt).toLocaleDateString()}
                       </div>
                     </div>
@@ -325,7 +337,7 @@ export default function ContactsPage() {
                   </div>
                 ))}
                 {paidInvoices.length === 0 && (
-                  <div className="text-center py-4 text-gray-500">
+                  <div className="text-center py-4 text-gray-500 dark:text-gray-400">
                     No payments yet
                   </div>
                 )}
@@ -347,8 +359,8 @@ export default function ContactsPage() {
                     {pendingQuotes.map((quote) => (
                       <div key={quote.id} className="flex items-center justify-between p-3 border border-orange-200 rounded-lg bg-orange-50">
                         <div>
-                          <div className="font-medium">{quote.title}</div>
-                          <div className="text-sm text-gray-600">
+                          <div className="font-medium dark:text-gray-900">{quote.title}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-700">
                             Sent: {new Date(quote.createdAt).toLocaleDateString()}
                           </div>
                         </div>
@@ -375,8 +387,8 @@ export default function ContactsPage() {
                     {outstandingInvoices.map((invoice) => (
                       <div key={invoice.id} className="flex items-center justify-between p-3 border border-red-200 rounded-lg bg-red-50">
                         <div>
-                          <div className="font-medium">#{invoice.invoiceNumber}</div>
-                          <div className="text-sm text-gray-600">
+                          <div className="font-medium dark:text-gray-900">#{invoice.invoiceNumber}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-700">
                             Due: {new Date(invoice.dueDate).toLocaleDateString()}
                           </div>
                         </div>
@@ -407,7 +419,7 @@ export default function ContactsPage() {
                 <Button variant="ghost" onClick={handleBackToList} className="mr-4">
                   ← Back to Contacts
                 </Button>
-                <h1 className="text-3xl font-bold text-gray-900">Customer Profile</h1>
+                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Customer Profile</h1>
               </div>
               <Customer360View contact={selectedContact} />
             </>
@@ -416,8 +428,8 @@ export default function ContactsPage() {
               {/* Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900">Customer Relationship Management</h1>
-                  <p className="text-gray-600 mt-2">
+                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Customer Relationship Management</h1>
+                  <p className="text-gray-600 dark:text-gray-400 mt-2">
                     Manage your travel clients and build lasting relationships
                   </p>
                 </div>
@@ -536,9 +548,9 @@ export default function ContactsPage() {
                 <CardContent>
                   {filteredContacts.length === 0 ? (
                     <div className="text-center py-8">
-                      <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No contacts found</h3>
-                      <p className="text-gray-600">
+                      <Users className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No contacts found</h3>
+                      <p className="text-gray-600 dark:text-gray-400">
                         {searchQuery ? 'Try adjusting your search criteria.' : 'Add your first contact to get started.'}
                       </p>
                     </div>
@@ -559,10 +571,10 @@ export default function ContactsPage() {
                                     {contact.firstName[0]}{contact.lastName[0]}
                                   </div>
                                   <div>
-                                    <div className="font-semibold text-gray-900">
+                                    <div className="font-semibold text-gray-900 dark:text-gray-100">
                                       {contact.firstName} {contact.lastName}
                                     </div>
-                                    <div className="text-sm text-gray-600">{contact.email}</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400">{contact.email}</div>
                                   </div>
                                 </div>
                                 <Button size="sm" variant="ghost" onClick={(e) => {
@@ -575,16 +587,16 @@ export default function ContactsPage() {
 
                               <div className="space-y-2">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">Customer Value</span>
-                                  <span className="font-semibold text-green-600">{formatCurrency(totalValue)}</span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">Customer Value</span>
+                                  <span className="font-semibold text-green-600 dark:text-green-400">{formatCurrency(totalValue)}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">Bookings</span>
-                                  <span className="font-semibold">{totalBookings}</span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">Bookings</span>
+                                  <span className="font-semibold dark:text-gray-100">{totalBookings}</span>
                                 </div>
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600">Last Booking</span>
-                                  <span className="text-sm">{lastBooking ? new Date(lastBooking).toLocaleDateString() : 'Never'}</span>
+                                  <span className="text-sm text-gray-600 dark:text-gray-400">Last Booking</span>
+                                  <span className="text-sm dark:text-gray-300">{lastBooking ? new Date(lastBooking).toLocaleDateString() : 'Never'}</span>
                                 </div>
                               </div>
 

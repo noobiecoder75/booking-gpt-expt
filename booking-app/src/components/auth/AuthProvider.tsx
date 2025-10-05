@@ -120,13 +120,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
+      console.log('🔄 AuthProvider: Starting signOut');
+
+      // Sign out with local scope (clears cookies properly)
+      const { error } = await supabase.auth.signOut({ scope: 'local' });
+
+      if (error) {
+        console.error('❌ AuthProvider: signOut error:', error);
+        // Continue with cleanup even if signOut fails
+      }
+
+      // Clear all state
       setUser(null);
       setSession(null);
       setProfile(null);
+
+      // Clear local/session storage
+      try {
+        const STORAGE_KEYS = [
+          'quote-store-supabase',
+          'contact-store-supabase',
+          'rate-store-supabase',
+          'settings-store',
+          'sidebar-store',
+        ];
+
+        STORAGE_KEYS.forEach(key => {
+          localStorage.removeItem(key);
+        });
+
+        sessionStorage.clear();
+        console.log('✅ AuthProvider: Storage cleared');
+      } catch (storageError) {
+        console.error('❌ AuthProvider: Error clearing storage:', storageError);
+      }
+
+      console.log('✅ AuthProvider: signOut completed');
     } catch (error) {
-      console.error('Error signing out:', error);
+      console.error('❌ AuthProvider: signOut exception:', error);
+      // Force clear state even on error
+      setUser(null);
+      setSession(null);
+      setProfile(null);
     }
   };
 

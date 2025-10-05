@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { TimelineCalendar } from '@/components/timeline/Calendar';
 import { TimelineFilters } from '@/components/timeline/TimelineFilters';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -18,7 +18,23 @@ export default function TimelinePage() {
   ]);
   const [eventCount, setEventCount] = useState<number>(0);
 
+  useEffect(() => {
+    console.log('[TimelinePage] Component mounted');
+    return () => {
+      console.log('[TimelinePage] Component unmounted');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('[TimelinePage] Filters changed:', {
+      selectedContactId,
+      selectedStatuses,
+      eventCount
+    });
+  }, [selectedContactId, selectedStatuses, eventCount]);
+
   const handleClearFilters = () => {
+    console.log('[TimelinePage] Clearing filters');
     setSelectedContactId(null);
     setSelectedStatuses(['draft', 'sent', 'accepted', 'rejected']);
   };

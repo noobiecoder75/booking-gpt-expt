@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { useSidebarStore } from '@/store/sidebar-store';
+import { ThemeToggle } from '@/components/theme/ThemeToggle';
 import {
   LayoutDashboard,
   Users,
@@ -35,17 +36,62 @@ export function Sidebar() {
   const { collapsed, mobileMenuOpen, toggleCollapsed, setMobileMenuOpen } = useSidebarStore();
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set(['finances']));
 
+  // Component lifecycle logging
+  useEffect(() => {
+    console.log('[Sidebar] Component mounted');
+    return () => {
+      console.log('[Sidebar] Component unmounted');
+    };
+  }, []);
+
+  // Auth data logging
+  useEffect(() => {
+    console.log('[Sidebar] Auth data:', {
+      hasUser: !!user,
+      userEmail: user?.email,
+      hasProfile: !!profile,
+      profileEmail: profile?.email
+    });
+  }, [user, profile]);
+
+  // Pathname logging
+  useEffect(() => {
+    console.log('[Sidebar] Pathname changed:', pathname);
+  }, [pathname]);
+
+  // State changes logging
+  useEffect(() => {
+    console.log('[Sidebar] State:', {
+      collapsed,
+      mobileMenuOpen,
+      expandedMenus: Array.from(expandedMenus)
+    });
+  }, [collapsed, mobileMenuOpen, expandedMenus]);
+
   const handleLogout = async () => {
-    await signOut();
-    router.push('/auth/login');
+    console.log('[Sidebar] Logout initiated');
+    try {
+      await signOut();
+      console.log('[Sidebar] SignOut successful, redirecting to /auth/login');
+      // Use window.location for hard redirect to ensure complete state cleanup
+      window.location.href = '/auth/login';
+    } catch (error) {
+      console.error('[Sidebar] Logout error:', error);
+      console.log('[Sidebar] Force redirecting to /auth/login despite error');
+      // Force redirect even on error
+      window.location.href = '/auth/login';
+    }
   };
 
   const toggleMenu = (menuKey: string) => {
+    console.log('[Sidebar] Toggling menu:', menuKey);
     const newExpanded = new Set(expandedMenus);
     if (newExpanded.has(menuKey)) {
       newExpanded.delete(menuKey);
+      console.log('[Sidebar] Menu collapsed:', menuKey);
     } else {
       newExpanded.add(menuKey);
+      console.log('[Sidebar] Menu expanded:', menuKey);
     }
     setExpandedMenus(newExpanded);
   };
@@ -95,6 +141,15 @@ export function Sidebar() {
     },
   ];
 
+  // Log navigation items with active states
+  useEffect(() => {
+    console.log('[Sidebar] Navigation items:', navItems.map(item => ({
+      label: item.label,
+      href: item.href,
+      active: item.active
+    })));
+  }, [pathname]);
+
   const createQuoteItem = {
     href: '/quote-wizard',
     label: 'Create Quote',
@@ -103,24 +158,39 @@ export function Sidebar() {
     highlight: true
   };
 
+  // Log create quote item
+  useEffect(() => {
+    console.log('[Sidebar] Create Quote item:', {
+      label: createQuoteItem.label,
+      href: createQuoteItem.href,
+      active: createQuoteItem.active
+    });
+  }, [pathname]);
+
+  // Log when component renders
+  console.log('[Sidebar] Rendering - pathname:', pathname, 'collapsed:', collapsed, 'mobileMenuOpen:', mobileMenuOpen);
+
   return (
     <>
       {/* Mobile Menu Button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md border border-gray-200"
-        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700"
+        onClick={() => {
+          console.log('[Sidebar] Mobile menu toggled to:', !mobileMenuOpen);
+          setMobileMenuOpen(!mobileMenuOpen);
+        }}
       >
         {mobileMenuOpen ? (
-          <X className="w-5 h-5 text-gray-600" />
+          <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         ) : (
-          <Menu className="w-5 h-5 text-gray-600" />
+          <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
         )}
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className={`hidden lg:flex flex-col fixed left-0 top-0 h-full bg-white border-r border-gray-200 z-40 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
+      <aside className={`hidden lg:flex flex-col fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-40 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             {!collapsed && (
               <Link href="/quotes" className="flex items-center space-x-3">
@@ -128,8 +198,8 @@ export function Sidebar() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900">BookingGPT</span>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full ml-2">Pro</span>
+                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">BookingGPT</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full ml-2">Pro</span>
                 </div>
               </Link>
             )}
@@ -141,13 +211,16 @@ export function Sidebar() {
               </Link>
             )}
             <button
-              onClick={toggleCollapsed}
-              className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+              onClick={() => {
+                console.log('[Sidebar] Collapse toggled to:', !collapsed);
+                toggleCollapsed();
+              }}
+              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
             >
               {collapsed ? (
-                <ChevronRight className="w-4 h-4 text-gray-600" />
+                <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               ) : (
-                <ChevronLeft className="w-4 h-4 text-gray-600" />
+                <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
               )}
             </button>
           </div>
@@ -254,17 +327,18 @@ export function Sidebar() {
         </nav>
 
         {/* User Section */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200 space-y-2">
           {!collapsed && (
-            <div className="text-sm text-gray-600 mb-3 px-3">
+            <div className="text-sm text-gray-600 dark:text-gray-400 mb-3 px-3">
               {user?.email || profile?.email}
             </div>
           )}
+          {!collapsed && <ThemeToggle />}
           <Button
             variant="ghost"
             size={collapsed ? "icon" : "sm"}
             onClick={handleLogout}
-            className={`text-gray-600 hover:text-gray-900 w-full ${collapsed ? 'justify-center' : 'justify-start'}`}
+            className={`text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 w-full ${collapsed ? 'justify-center' : 'justify-start'}`}
             title={collapsed ? 'Sign Out' : undefined}
           >
             <LogOut className={collapsed ? "w-6 h-6" : "w-4 h-4"} />
@@ -277,16 +351,16 @@ export function Sidebar() {
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-40">
           <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-64 bg-white border-r border-gray-200">
+          <aside className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200">
+            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
               <Link href="/quotes" className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900">BookingGPT</span>
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full ml-2">Pro</span>
+                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">BookingGPT</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full ml-2">Pro</span>
                 </div>
               </Link>
             </div>
@@ -388,15 +462,16 @@ export function Sidebar() {
             </nav>
 
             {/* User Section */}
-            <div className="p-4 border-t border-gray-200">
-              <div className="text-sm text-gray-600 mb-3 px-3">
+            <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+              <div className="text-sm text-gray-600 dark:text-gray-400 mb-3 px-3">
                 {user?.email || profile?.email}
               </div>
+              <ThemeToggle />
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="text-gray-600 hover:text-gray-900 w-full justify-start"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 w-full justify-start"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 Sign Out

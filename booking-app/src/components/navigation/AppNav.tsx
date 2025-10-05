@@ -29,8 +29,15 @@ export function AppNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut();
-    router.push('/auth/login');
+    try {
+      await signOut();
+      // Use window.location for hard redirect to ensure complete state cleanup
+      window.location.href = '/auth/login';
+    } catch (error) {
+      console.error('Logout error:', error);
+      // Force redirect even on error
+      window.location.href = '/auth/login';
+    }
   };
 
   const navItems = [

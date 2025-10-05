@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useTaskStore } from '@/store/task-store-supabase';
 import { TaskStatus, TaskPriority, TaskType } from '@/types/task';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -39,6 +39,22 @@ function TasksContent() {
   const [statusFilter, setStatusFilter] = useState<TaskStatus | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    console.log('[TasksPage] Component mounted, tasks loaded:', tasks.length);
+    return () => {
+      console.log('[TasksPage] Component unmounted');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('[TasksPage] Tasks updated:', {
+      totalTasks: tasks.length,
+      statusFilter,
+      priorityFilter,
+      searchQuery
+    });
+  }, [tasks, statusFilter, priorityFilter, searchQuery]);
 
   // Filter tasks
   const filteredTasks = useMemo(() => {
@@ -133,34 +149,34 @@ function TasksContent() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Booking Tasks</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Booking Tasks</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-2">
             Manage manual booking tasks and upload confirmations
           </p>
         </div>
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-            <div className="text-sm text-gray-600">Pending</div>
-            <div className="text-2xl font-bold text-gray-900">{summary.pending}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
+            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{summary.pending}</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-            <div className="text-sm text-gray-600">In Progress</div>
-            <div className="text-2xl font-bold text-blue-600">{summary.inProgress}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-600 dark:text-gray-400">In Progress</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{summary.inProgress}</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-            <div className="text-sm text-gray-600">Overdue</div>
-            <div className="text-2xl font-bold text-red-600">{summary.overdue}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-600 dark:text-gray-400">Overdue</div>
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{summary.overdue}</div>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-            <div className="text-sm text-gray-600">Completed</div>
-            <div className="text-2xl font-bold text-green-600">{summary.completed}</div>
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{summary.completed}</div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
           <div className="flex flex-wrap gap-4">
             {/* Search */}
             <div className="flex-1 min-w-[200px]">
@@ -171,7 +187,7 @@ function TasksContent() {
                   placeholder="Search tasks..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -180,7 +196,7 @@ function TasksContent() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as TaskStatus | 'all')}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -194,7 +210,7 @@ function TasksContent() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | 'all')}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="all">All Priorities</option>
               <option value="urgent">Urgent</option>
@@ -208,14 +224,14 @@ function TasksContent() {
         {/* Task List */}
         <div className="space-y-3">
           {filteredTasks.length === 0 ? (
-            <div className="bg-white p-12 rounded-lg shadow-sm border border-gray-200 text-center">
-              <p className="text-gray-500">No tasks found</p>
+            <div className="bg-white dark:bg-gray-800 p-12 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center">
+              <p className="text-gray-500 dark:text-gray-400">No tasks found</p>
             </div>
           ) : (
             filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow"
+                className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
               >
                 <div className="flex items-start gap-4">
                   {/* Status Icon */}
@@ -227,11 +243,11 @@ function TasksContent() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                           {task.title}
                         </h3>
                         {task.description && (
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                             {task.description}
                           </p>
                         )}
@@ -249,13 +265,13 @@ function TasksContent() {
 
                     {/* Task Meta */}
                     <div className="flex flex-wrap items-center gap-4 mt-3 text-sm">
-                      <div className="flex items-center gap-1 text-gray-600">
+                      <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
                         <User className="w-4 h-4" />
                         <span>{task.customerName}</span>
                       </div>
 
                       {task.itemName && (
-                        <div className="text-gray-600">
+                        <div className="text-gray-600 dark:text-gray-400">
                           <span className="font-medium">{task.itemType}:</span> {task.itemName}
                         </div>
                       )}
@@ -268,7 +284,7 @@ function TasksContent() {
                       )}
 
                       {task.assignedToName && (
-                        <div className="text-blue-600">
+                        <div className="text-blue-600 dark:text-blue-400">
                           Assigned to: {task.assignedToName}
                         </div>
                       )}

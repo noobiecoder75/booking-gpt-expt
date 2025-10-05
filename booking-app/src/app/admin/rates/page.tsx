@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { useRateStore } from '@/store/rate-store';
@@ -32,6 +32,24 @@ function RatesContent() {
     metadata?: any;
   } | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+
+  useEffect(() => {
+    console.log('[RatesPage] Component mounted, rates loaded:', rates.length);
+    return () => {
+      console.log('[RatesPage] Component unmounted');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('[RatesPage] State updated:', {
+      totalRates: rates.length,
+      uploading,
+      searchQuery,
+      showEditModal,
+      showPreview,
+      selectedRatesCount: selectedRates.size
+    });
+  }, [rates, uploading, searchQuery, showEditModal, showPreview, selectedRates]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

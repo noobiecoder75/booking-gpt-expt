@@ -25,21 +25,54 @@ export default function LoginPage() {
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      console.log('🔐 Attempting login for:', email);
+
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
 
+      if (!data.session) {
+        throw new Error('No session created after login');
+      }
+
+      console.log('✅ Login successful, session created');
+
+      // Wait for session to be properly established
+      let sessionValid = false;
+      let attempts = 0;
+      const maxAttempts = 5;
+
+      while (!sessionValid && attempts < maxAttempts) {
+        attempts++;
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (session && session.user) {
+          sessionValid = true;
+          console.log('✅ Session validated after', attempts, 'attempts');
+        } else if (attempts < maxAttempts) {
+          console.log('⏳ Waiting for session... attempt', attempts);
+          await new Promise(resolve => setTimeout(resolve, 300 * attempts)); // Exponential backoff
+        }
+      }
+
+      if (!sessionValid) {
+        throw new Error('Session not established. Please try again.');
+      }
+
       // Redirect to dashboard or the intended page
       const params = new URLSearchParams(window.location.search);
       const redirectTo = params.get('redirectTo') || '/quotes';
-      router.push(redirectTo);
-      router.refresh();
+
+      console.log('🔀 Redirecting to:', redirectTo);
+
+      // Use window.location for hard refresh to ensure clean state
+      window.location.href = redirectTo;
     } catch (error: any) {
+      console.error('❌ Login error:', error);
       setError(error.message || 'An error occurred during login');
-    } finally {
       setLoading(false);
     }
   };

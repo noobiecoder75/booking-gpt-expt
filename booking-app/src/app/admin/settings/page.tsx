@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSettingsStore } from '@/store/settings-store';
 import { ModernCard } from '@/components/ui/modern-card';
 import { ModernButton } from '@/components/ui/modern-button';
@@ -45,6 +45,21 @@ export default function AdminSettingsPage() {
     { id: 'system', title: 'System Settings', icon: Cog, description: 'System preferences and maintenance', expanded: false },
   ]);
 
+  useEffect(() => {
+    console.log('[SettingsPage] Component mounted');
+    return () => {
+      console.log('[SettingsPage] Component unmounted');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('[SettingsPage] Settings state:', {
+      hasChanges,
+      saveSuccess,
+      expandedSections: sections.filter(s => s.expanded).map(s => s.id)
+    });
+  }, [hasChanges, saveSuccess, sections]);
+
   const handleInputChange = (key: keyof typeof settings, value: string | number | boolean) => {
     const newSettings = { ...localSettings, [key]: value };
     setLocalSettings(newSettings);
@@ -52,6 +67,7 @@ export default function AdminSettingsPage() {
   };
 
   const toggleSection = (sectionId: string) => {
+    console.log('[SettingsPage] Toggling section:', sectionId);
     setSections(prev => prev.map(section =>
       section.id === sectionId
         ? { ...section, expanded: !section.expanded }
@@ -60,6 +76,7 @@ export default function AdminSettingsPage() {
   };
 
   const handleSave = () => {
+    console.log('[SettingsPage] Saving settings');
     // Validate commission rates
     const commissionRates = [
       localSettings.defaultCommissionRate,
@@ -71,17 +88,20 @@ export default function AdminSettingsPage() {
 
     for (const rate of commissionRates) {
       if (!isValidCommissionRate(rate)) {
+        console.error('[SettingsPage] Invalid commission rate:', rate);
         alert(`All commission rates must be between ${localSettings.minCommissionRate}% and ${localSettings.maxCommissionRate}%`);
         return;
       }
     }
 
     if (localSettings.minCommissionRate >= localSettings.maxCommissionRate) {
+      console.error('[SettingsPage] Invalid commission bounds');
       alert('Minimum commission rate must be less than maximum commission rate');
       return;
     }
 
     if (localSettings.defaultPaymentTerms <= 0) {
+      console.error('[SettingsPage] Invalid payment terms');
       alert('Payment terms must be greater than 0 days');
       return;
     }
@@ -89,6 +109,7 @@ export default function AdminSettingsPage() {
     updateSettings(localSettings);
     setHasChanges(false);
     setSaveSuccess(true);
+    console.log('[SettingsPage] Settings saved successfully');
     setTimeout(() => setSaveSuccess(false), 2000);
   };
 

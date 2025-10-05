@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { FinancialOverview } from '@/components/finances/FinancialOverview';
@@ -11,6 +11,17 @@ import { SupplierPaymentsDue } from '@/components/finances/SupplierPaymentsDue';
 
 export default function FinancesPage() {
   const [activeTab, setActiveTab] = useState('overview');
+
+  useEffect(() => {
+    console.log('[FinancesPage] Component mounted, activeTab:', activeTab);
+    return () => {
+      console.log('[FinancesPage] Component unmounted');
+    };
+  }, []);
+
+  useEffect(() => {
+    console.log('[FinancesPage] Tab changed to:', activeTab);
+  }, [activeTab]);
 
   return (
     <div className="container mx-auto py-6 space-y-6">
