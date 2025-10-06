@@ -37,14 +37,16 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   const { data: existingContact } = useContactByIdQuery(existingQuote?.contactId);
 
   useEffect(() => {
-    if (existingQuote && existingContact) {
+    // Only initialize when explicitly editing an existing quote (editQuoteId provided)
+    // Don't run during normal wizard flow when existingQuote updates from mutations
+    if (editQuoteId && existingQuote && existingContact && !isEditMode) {
       setCurrentQuote(existingQuote);
       setSelectedContact(existingContact);
       setIsEditMode(true);
       // Skip contact selection step in edit mode
       setCurrentStep('details');
     }
-  }, [existingQuote, existingContact]);
+  }, [editQuoteId, existingQuote, existingContact, isEditMode]);
 
   const steps = [
     { id: 'contact', label: 'Select Contact', description: 'Choose or create a contact' },
