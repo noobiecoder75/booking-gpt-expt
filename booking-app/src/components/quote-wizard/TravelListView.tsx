@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { TravelQuote, TravelItem } from '@/types';
-import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, getTravelItemColor } from '@/lib/utils';
@@ -34,19 +34,15 @@ interface GroupedItems {
 }
 
 export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListViewProps) {
-  const { updateItemInQuote } = useQuoteStore();
+  const { addItemToQuote } = useQuoteMutations();
   const [expandedDays, setExpandedDays] = useState<Set<string>>(new Set());
   const [expandAll, setExpandAll] = useState(true);
-
-  const currentQuote = useQuoteStore(state => 
-    state.quotes.find(q => q.id === quote.id)
-  ) || quote;
 
   // Group items by date
   const groupedItems = useMemo(() => {
     const groups: GroupedItems = {};
-    
-    currentQuote.items.forEach(item => {
+
+    quote.items.forEach(item => {
       const dateKey = moment(item.startDate).format('YYYY-MM-DD');
       if (!groups[dateKey]) {
         groups[dateKey] = [];
@@ -56,13 +52,13 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
 
     // Sort items within each day by time
     Object.keys(groups).forEach(date => {
-      groups[date].sort((a, b) => 
+      groups[date].sort((a, b) =>
         new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
       );
     });
 
     return groups;
-  }, [currentQuote.items]);
+  }, [quote.items]);
 
   // Get sorted dates
   const sortedDates = useMemo(() => {
@@ -111,7 +107,7 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
       ...item,
       name: `${item.name} (Copy)`,
     };
-    useQuoteStore.getState().addItemToQuote(quote.id, newItem);
+    addItemToQuote.mutate({ quoteId: quote.id, item: newItem });
   };
 
   const calculateDayTotal = (items: TravelItem[]) => {
@@ -127,7 +123,7 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
             Timeline List View
           </h3>
           <Badge className="bg-blue-100 text-blue-800">
-            {currentQuote.items.length} items
+            {quote.items.length} items
           </Badge>
         </div>
         <Button

@@ -83,10 +83,98 @@ export function useQuoteMutations() {
     },
   });
 
+  const addItemToQuote = useMutation({
+    mutationFn: async ({ quoteId, item }: { quoteId: string; item: Omit<TravelItem, 'id'> }) => {
+      // Fetch current quote to get items
+      const { data: quote, error: fetchError } = await supabase
+        .from('quotes')
+        .select('items')
+        .eq('id', quoteId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const items = quote.items || [];
+      const newItem = { ...item, id: crypto.randomUUID() };
+      const updatedItems = [...items, newItem];
+
+      // Update quote with new items array
+      const { error } = await supabase
+        .from('quotes')
+        .update({ items: updatedItems })
+        .eq('id', quoteId);
+
+      if (error) throw error;
+      return newItem.id;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes', user?.id] });
+    },
+  });
+
+  const updateItemInQuote = useMutation({
+    mutationFn: async ({ quoteId, itemId, updates }: { quoteId: string; itemId: string; updates: Partial<TravelItem> }) => {
+      // Fetch current quote to get items
+      const { data: quote, error: fetchError } = await supabase
+        .from('quotes')
+        .select('items')
+        .eq('id', quoteId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const items = quote.items || [];
+      const updatedItems = items.map((item: TravelItem) =>
+        item.id === itemId ? { ...item, ...updates } : item
+      );
+
+      // Update quote with modified items array
+      const { error } = await supabase
+        .from('quotes')
+        .update({ items: updatedItems })
+        .eq('id', quoteId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes', user?.id] });
+    },
+  });
+
+  const removeItemFromQuote = useMutation({
+    mutationFn: async ({ quoteId, itemId }: { quoteId: string; itemId: string }) => {
+      // Fetch current quote to get items
+      const { data: quote, error: fetchError } = await supabase
+        .from('quotes')
+        .select('items')
+        .eq('id', quoteId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const items = quote.items || [];
+      const updatedItems = items.filter((item: TravelItem) => item.id !== itemId);
+
+      // Update quote with filtered items array
+      const { error } = await supabase
+        .from('quotes')
+        .update({ items: updatedItems })
+        .eq('id', quoteId);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quotes', user?.id] });
+    },
+  });
+
   return {
     addQuote,
     updateQuote,
     deleteQuote,
     updateQuoteStatus,
+    addItemToQuote,
+    updateItemInQuote,
+    removeItemFromQuote,
   };
 }

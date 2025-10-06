@@ -3,8 +3,8 @@
 import { Calendar as BigCalendar, momentLocalizer, View } from 'react-big-calendar';
 import moment from 'moment';
 import { useState, useMemo, useEffect } from 'react';
-import { useQuoteStore } from '@/store/quote-store-supabase';
-import { CalendarEvent, TravelQuote } from '@/types';
+import { useQuotesQuery } from '@/hooks/queries/useQuotesQuery';
+import { CalendarEvent, TravelQuote, TravelItem } from '@/types';
 import { getTravelItemColor } from '@/lib/utils';
 import { downloadICSFile } from '@/lib/calendar-export';
 import { Button } from '@/components/ui/button';
@@ -28,18 +28,41 @@ export function TimelineCalendar({
 }: TimelineCalendarProps) {
   const [view, setView] = useState<View>('week');
   const [date, setDate] = useState(new Date());
-  const { getCalendarEvents, quotes } = useQuoteStore();
+  const { data: quotes = [] } = useQuotesQuery();
 
+  // Convert quotes to calendar events
   const events = useMemo(() => {
-    const rawEvents = getCalendarEvents(contactId || undefined, statusFilters);
+    let filteredQuotes = quotes;
 
-    // Ensure dates are proper Date objects (fix for persisted storage serialization)
-    return rawEvents.map(event => ({
-      ...event,
-      start: event.start instanceof Date ? event.start : new Date(event.start),
-      end: event.end instanceof Date ? event.end : new Date(event.end),
-    }));
-  }, [getCalendarEvents, contactId, statusFilters]);
+    if (contactId) {
+      filteredQuotes = filteredQuotes.filter(quote => quote.contactId === contactId);
+    }
+
+    if (statusFilters && statusFilters.length > 0) {
+      filteredQuotes = filteredQuotes.filter(quote => statusFilters.includes(quote.status));
+    }
+
+    const calendarEvents: CalendarEvent[] = [];
+
+    filteredQuotes.forEach(quote => {
+      quote.items.forEach((item: TravelItem) => {
+        const start = item.startDate instanceof Date ? item.startDate : new Date(item.startDate);
+        const end = item.endDate
+          ? (item.endDate instanceof Date ? item.endDate : new Date(item.endDate))
+          : start;
+
+        calendarEvents.push({
+          id: `${quote.id}-${item.id}`,
+          title: item.name,
+          start,
+          end,
+          resource: item,
+        });
+      });
+    });
+
+    return calendarEvents;
+  }, [quotes, contactId, statusFilters]);
 
   // Notify parent of event count changes
   useEffect(() => {

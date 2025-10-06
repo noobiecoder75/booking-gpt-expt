@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useExpenseStore } from '@/store/expense-store';
-import { useContactStore } from '@/store/contact-store-supabase';
+import { useExpenseMutations } from '@/hooks/mutations/useExpenseMutations';
+import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -32,8 +32,8 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
     notes: '',
   });
 
-  const createExpense = useExpenseStore((state) => state.createExpense);
-  const contacts = useContactStore((state) => state.contacts);
+  const { addExpense } = useExpenseMutations();
+  const { data: contacts = [] } = useContactsQuery();
 
   // Filter contacts to only show suppliers
   const suppliers = useMemo(
@@ -44,7 +44,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    createExpense({
+    addExpense.mutate({
       date: formData.date,
       category: formData.category,
       subcategory: formData.subcategory || undefined,
@@ -153,7 +153,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
               ) : (
                 suppliers.map((supplier) => (
                   <SelectItem key={supplier.id} value={supplier.id}>
-                    {supplier.name}
+                    {supplier.firstName} {supplier.lastName}
                   </SelectItem>
                 ))
               )}
@@ -186,7 +186,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
                   <SelectItem value="">None</SelectItem>
                   {suppliers.map((supplier) => (
                     <SelectItem key={supplier.id} value={supplier.id}>
-                      {supplier.name}
+                      {supplier.firstName} {supplier.lastName}
                     </SelectItem>
                   ))}
                 </SelectContent>

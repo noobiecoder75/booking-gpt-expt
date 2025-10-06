@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useExpenseStore } from '@/store/expense-store';
-import { useContactStore } from '@/store/contact-store-supabase';
-import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
+import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
+import { useContactByIdQuery } from '@/hooks/queries/useContactsQuery';
+import { useQuoteByIdQuery } from '@/hooks/queries/useQuotesQuery';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -23,41 +24,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { ExpenseCategory } from '@/types/financial';
+import { ExpenseCategory, Expense } from '@/types/financial';
 import { Plus, Search, Receipt } from 'lucide-react';
 import { AddExpense } from './AddExpense';
 
-export function ExpenseList() {
-  const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-
-  const allExpenses = useExpenseStore((state) => state.expenses);
-  const searchExpenses = useExpenseStore((state) => state.searchExpenses);
-  const contacts = useContactStore((state) => state.contacts);
-  const { getQuoteById } = useQuoteStore();
-  const { getContactById } = useContactStore();
-
-  // Create supplier lookup map
-  const supplierMap = useMemo(() => {
-    const map = new Map();
-    contacts.filter(c => c.type === 'supplier').forEach(s => map.set(s.id, s));
-    return map;
-  }, [contacts]);
-
-  // Filter expenses
-  let filteredExpenses = searchQuery
-    ? searchExpenses(searchQuery)
-    : allExpenses;
-
-  if (categoryFilter !== 'all') {
-    filteredExpenses = filteredExpenses.filter((exp) => exp.category === categoryFilter);
-  }
-
-  // Sort by date (newest first)
-  filteredExpenses = [...filteredExpenses].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  );
+// Helper component to render expense row with async data
+function ExpenseRow({ expense, supplierMap }: { expense: Expense; supplierMap: Map<string, any> }) {
+  const { data: quote } = useQuoteByIdQuery(expense.bookingId);
+  const { data: customer } = useContactByIdQuery(quote?.contactId);
+  const supplier = expense.supplierId ? supplierMap.get(expense.supplierId) : null;
 
   const getCategoryBadge = (category: ExpenseCategory) => {
     const colors: Record<ExpenseCategory, string> = {
@@ -77,6 +52,98 @@ export function ExpenseList() {
       </Badge>
     );
   };
+
+  return (
+    <TableRow>
+      <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
+      <TableCell>{getCategoryBadge(expense.category)}</TableCell>
+      <TableCell>
+        <div className="max-w-xs">
+          <div className="font-medium truncate">{expense.description}</div>
+          {expense.subcategory && (
+            <div className="text-sm text-muted-foreground">{expense.subcategory}</div>
+          )}
+        </div>
+      </TableCell>
+      <TableCell>
+        {supplier ? (
+          <div>
+            <div className="font-medium">{supplier.firstName} {supplier.lastName}</div>
+            <div className="text-xs text-muted-foreground">Linked Supplier</div>
+          </div>
+        ) : (
+          <div>{expense.vendor || '-'}</div>
+        )}
+      </TableCell>
+      <TableCell>
+        {quote && customer ? (
+          <div>
+            <div className="font-medium text-sm">{customer.firstName} {customer.lastName}</div>
+            <div className="text-xs text-muted-foreground">Booking #{quote.id.slice(0, 8)}</div>
+          </div>
+        ) : (
+          <span className="text-muted-foreground">-</span>
+        )}
+      </TableCell>
+      <TableCell className="text-right font-medium">
+        ${expense.amount.toFixed(2)}
+      </TableCell>
+      <TableCell>
+        {expense.status === 'paid' ? (
+          <Badge className="bg-green-100 text-green-800">Paid</Badge>
+        ) : expense.status === 'pending' ? (
+          <Badge className="bg-orange-100 text-orange-800">Pending</Badge>
+        ) : expense.approvedBy ? (
+          <Badge className="bg-green-100 text-green-800">Approved</Badge>
+        ) : (
+          <Badge className="bg-yellow-100 text-yellow-800">Pending Approval</Badge>
+        )}
+      </TableCell>
+    </TableRow>
+  );
+}
+
+export function ExpenseList() {
+  const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+
+  const { data: allExpenses = [] } = useExpensesQuery();
+  const { data: contacts = [] } = useContactsQuery();
+
+  // Create supplier lookup map
+  const supplierMap = useMemo(() => {
+    const map = new Map();
+    contacts.filter(c => c.type === 'supplier').forEach(s => map.set(s.id, s));
+    return map;
+  }, [contacts]);
+
+  // Filter expenses
+  let filteredExpenses = useMemo(() => {
+    let expenses = allExpenses;
+
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      expenses = expenses.filter(expense =>
+        expense.description.toLowerCase().includes(query) ||
+        expense.vendor?.toLowerCase().includes(query) ||
+        expense.category.toLowerCase().includes(query) ||
+        expense.subcategory?.toLowerCase().includes(query)
+      );
+    }
+
+    return expenses;
+  }, [allExpenses, searchQuery]);
+
+  if (categoryFilter !== 'all') {
+    filteredExpenses = filteredExpenses.filter((exp) => exp.category === categoryFilter);
+  }
+
+  // Sort by date (newest first)
+  filteredExpenses = [...filteredExpenses].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
 
   const totalAmount = filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0);
 
@@ -150,60 +217,13 @@ export function ExpenseList() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredExpenses.map((expense) => {
-                const supplier = expense.supplierId ? supplierMap.get(expense.supplierId) : null;
-                const quote = expense.bookingId ? getQuoteById(expense.bookingId) : null;
-                const customer = quote ? getContactById(quote.contactId) : null;
-
-                return (
-                  <TableRow key={expense.id}>
-                    <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
-                    <TableCell>{getCategoryBadge(expense.category)}</TableCell>
-                    <TableCell>
-                      <div className="max-w-xs">
-                        <div className="font-medium truncate">{expense.description}</div>
-                        {expense.subcategory && (
-                          <div className="text-sm text-muted-foreground">{expense.subcategory}</div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {supplier ? (
-                        <div>
-                          <div className="font-medium">{supplier.firstName} {supplier.lastName}</div>
-                          <div className="text-xs text-muted-foreground">Linked Supplier</div>
-                        </div>
-                      ) : (
-                        <div>{expense.vendor || '-'}</div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {quote && customer ? (
-                        <div>
-                          <div className="font-medium text-sm">{customer.firstName} {customer.lastName}</div>
-                          <div className="text-xs text-muted-foreground">Booking #{quote.id.slice(0, 8)}</div>
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      ${expense.amount.toFixed(2)}
-                    </TableCell>
-                    <TableCell>
-                      {expense.status === 'paid' ? (
-                        <Badge className="bg-green-100 text-green-800">Paid</Badge>
-                      ) : expense.status === 'pending' ? (
-                        <Badge className="bg-orange-100 text-orange-800">Pending</Badge>
-                      ) : expense.approvedBy ? (
-                        <Badge className="bg-green-100 text-green-800">Approved</Badge>
-                      ) : (
-                        <Badge className="bg-yellow-100 text-yellow-800">Pending Approval</Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {filteredExpenses.map((expense) => (
+                <ExpenseRow
+                  key={expense.id}
+                  expense={expense}
+                  supplierMap={supplierMap}
+                />
+              ))}
             </TableBody>
           </Table>
         </div>

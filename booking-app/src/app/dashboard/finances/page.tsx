@@ -1,17 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useInvoiceStore } from '@/store/invoice-store-supabase';
-import { useCommissionStore } from '@/store/commission-store-supabase';
-import { useExpenseStore } from '@/store/expense-store';
+import { useInvoicesQuery } from '@/hooks/queries/useInvoicesQuery';
+import { useInvoiceMutations } from '@/hooks/mutations/useInvoiceMutations';
+import { useCommissionsQuery } from '@/hooks/queries/useCommissionsQuery';
+import { useCommissionMutations } from '@/hooks/mutations/useCommissionMutations';
+import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
+import { useQuotesQuery } from '@/hooks/queries/useQuotesQuery';
+import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
-import { useQuoteStore } from '@/store/quote-store-supabase';
 import { formatItemDetails } from '@/lib/travel-item-formatter';
 import {
   TrendingUp,
@@ -28,10 +31,12 @@ import {
 
 export default function FinancesPage() {
   const { user } = useAuthStore();
-  const { invoices, getTotalRevenue, getTotalOutstanding, getOverdueAmount, getFinancialSummary, getInvoicesByStatus, markInvoiceAsPaid } = useInvoiceStore();
-  const { getTotalCommissionsEarned, getTotalCommissionsPaid, getTotalCommissionsPending, bulkMarkAsPaid, getUnpaidCommissions } = useCommissionStore();
-  const { getTotalExpenses, getExpensesByCategory } = useExpenseStore();
-  const { getQuotesByStatus, generateInvoiceFromAcceptedQuote } = useQuoteStore();
+  const { data: invoices = [] } = useInvoicesQuery();
+  const { markInvoiceAsPaid, generateInvoiceFromQuote } = useInvoiceMutations();
+  const { data: commissions = [] } = useCommissionsQuery();
+  const { bulkMarkAsPaid } = useCommissionMutations();
+  const { data: expenses = [] } = useExpensesQuery();
+  const { data: quotes = [] } = useQuotesQuery();
 
   const [dateRange, setDateRange] = useState('30'); // days
   const [selectedPeriod, setSelectedPeriod] = useState({
@@ -47,25 +52,94 @@ export default function FinancesPage() {
   }, [dateRange]);
 
   // Financial calculations
-  const totalRevenue = getTotalRevenue(selectedPeriod.startDate, selectedPeriod.endDate);
-  const totalOutstanding = getTotalOutstanding();
-  const overdueAmount = getOverdueAmount();
-  const totalExpenses = getTotalExpenses(selectedPeriod.startDate, selectedPeriod.endDate);
-  const totalCommissionsEarned = getTotalCommissionsEarned(undefined, selectedPeriod.startDate, selectedPeriod.endDate);
-  const totalCommissionsPaid = getTotalCommissionsPaid(undefined, selectedPeriod.startDate, selectedPeriod.endDate);
-  const totalCommissionsPending = getTotalCommissionsPending();
+  const totalRevenue = useMemo(() => {
+    return invoices
+      .filter(invoice => {
+        if (invoice.status !== 'paid') return false;
+        const paidAt = new Date(invoice.paidAt || invoice.createdAt);
+        return paidAt >= new Date(selectedPeriod.startDate) &&
+               paidAt <= new Date(selectedPeriod.endDate);
+      })
+      .reduce((sum, invoice) => sum + invoice.total, 0);
+  }, [invoices, selectedPeriod]);
+
+  const totalOutstanding = useMemo(() => {
+    return invoices
+      .filter(invoice => invoice.status !== 'paid' && invoice.status !== 'cancelled' && invoice.status !== 'void')
+      .reduce((sum, invoice) => sum + (invoice.remainingAmount || invoice.total), 0);
+  }, [invoices]);
+
+  const overdueAmount = useMemo(() => {
+    const now = new Date();
+    return invoices
+      .filter(invoice => {
+        if (invoice.status === 'paid' || invoice.status === 'cancelled' || invoice.status === 'void') return false;
+        return new Date(invoice.dueDate) < now;
+      })
+      .reduce((sum, invoice) => sum + (invoice.remainingAmount || invoice.total), 0);
+  }, [invoices]);
+
+  // Calculate total expenses from TanStack Query data
+  const totalExpenses = expenses
+    .filter(expense => {
+      const expenseDate = new Date(expense.date);
+      return expenseDate >= new Date(selectedPeriod.startDate) &&
+             expenseDate <= new Date(selectedPeriod.endDate);
+    })
+    .reduce((sum, expense) => sum + expense.amount, 0);
+
+  const totalCommissionsEarned = useMemo(() => {
+    return commissions
+      .filter(commission => {
+        const createdAt = new Date(commission.createdAt);
+        return createdAt >= new Date(selectedPeriod.startDate) &&
+               createdAt <= new Date(selectedPeriod.endDate);
+      })
+      .reduce((sum, commission) => sum + commission.commissionAmount, 0);
+  }, [commissions, selectedPeriod]);
+
+  const totalCommissionsPaid = useMemo(() => {
+    return commissions
+      .filter(commission => {
+        if (commission.status !== 'paid') return false;
+        const paidAt = new Date(commission.paidAt || commission.createdAt);
+        return paidAt >= new Date(selectedPeriod.startDate) &&
+               paidAt <= new Date(selectedPeriod.endDate);
+      })
+      .reduce((sum, commission) => sum + commission.commissionAmount, 0);
+  }, [commissions, selectedPeriod]);
+
+  const totalCommissionsPending = useMemo(() => {
+    return commissions
+      .filter(commission => commission.status === 'pending')
+      .reduce((sum, commission) => sum + commission.commissionAmount, 0);
+  }, [commissions]);
 
   const netProfit = totalRevenue - totalExpenses - totalCommissionsPaid;
   const profitMargin = totalRevenue > 0 ? ((netProfit / totalRevenue) * 100).toFixed(1) : '0';
 
-  const expensesByCategory = getExpensesByCategory(selectedPeriod.startDate, selectedPeriod.endDate);
-
-  const financialSummary = getFinancialSummary(selectedPeriod.startDate, selectedPeriod.endDate);
+  // Calculate expenses by category from TanStack Query data
+  const expensesByCategory = expenses
+    .filter(expense => {
+      const expenseDate = new Date(expense.date);
+      return expenseDate >= new Date(selectedPeriod.startDate) &&
+             expenseDate <= new Date(selectedPeriod.endDate);
+    })
+    .reduce((acc, expense) => {
+      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+      return acc;
+    }, {} as Record<string, number>);
 
   // Get real data for quick actions
-  const acceptedQuotes = getQuotesByStatus('accepted');
-  const unpaidCommissions = getUnpaidCommissions();
-  const unpaidInvoices = getInvoicesByStatus('sent').concat(getInvoicesByStatus('partial'));
+  const acceptedQuotes = quotes.filter(quote => quote.status === 'accepted');
+  const unpaidCommissions = useMemo(() => {
+    return commissions.filter(commission => commission.status === 'pending');
+  }, [commissions]);
+  const unpaidInvoices = useMemo(() => {
+    return invoices.filter(invoice =>
+      invoice.status === 'sent' || invoice.status === 'partial'
+    );
+  }, [invoices]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -81,7 +155,11 @@ export default function FinancesPage() {
       return;
     }
 
-    // Generate invoices for all accepted quotes
+    // TODO: Refactor to use TanStack Query mutations instead of stores
+    alert('Invoice generation temporarily disabled during migration to TanStack Query');
+    return;
+
+    /* // Generate invoices for all accepted quotes
     let invoicesCreated = 0;
 
     for (const quote of acceptedQuotes) {
@@ -174,7 +252,7 @@ export default function FinancesPage() {
       window.location.reload(); // Refresh to show new data
     } else {
       alert('Failed to create invoices. Please try again.');
-    }
+    } */
   };
 
   const handlePayCommissions = () => {
@@ -185,10 +263,12 @@ export default function FinancesPage() {
 
     // Mark all unpaid commissions as paid
     const commissionIds = unpaidCommissions.map(c => c.id);
-    bulkMarkAsPaid(commissionIds, 'bank_transfer');
+    bulkMarkAsPaid.mutate({
+      ids: commissionIds,
+      paymentMethod: 'bank_transfer'
+    });
 
     alert(`Successfully paid ${commissionIds.length} commission(s)!`);
-    window.location.reload(); // Refresh to show updated data
   };
 
   const handleMarkInvoicesAsPaid = () => {
@@ -199,11 +279,14 @@ export default function FinancesPage() {
 
     // Mark all unpaid invoices as paid
     unpaidInvoices.forEach(invoice => {
-      markInvoiceAsPaid(invoice.id, 'bank_transfer', `TXN-${Date.now()}`);
+      markInvoiceAsPaid.mutate({
+        id: invoice.id,
+        paymentMethod: 'bank_transfer',
+        transactionId: `TXN-${Date.now()}`
+      });
     });
 
     alert(`Successfully marked ${unpaidInvoices.length} invoice(s) as paid!`);
-    window.location.reload(); // Refresh to show updated revenue
   };
 
   if (!user) {

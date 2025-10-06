@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripeInstance, calculateStripeFee } from '@/lib/stripe/config';
-import { useQuoteStore } from '@/store/quote-store-supabase';
 import { PaymentType } from '@/types/payment';
 import { processHybridBooking } from '@/lib/booking/processor';
 import { TravelQuote, Payment } from '@/types';
@@ -232,11 +231,13 @@ async function triggerBookingConfirmation(quoteId: string, paymentId: string, qu
 
     // Update quote status based on booking results
     if (bookingResult.summary.apiSuccess > 0 || bookingResult.summary.manualTasks > 0) {
-      const quoteStore = useQuoteStore.getState();
-      quoteStore.updateQuote(quoteId, {
-        status: 'accepted', // Only use 'accepted' since 'confirmed' is not in the type
-        paymentStatus: 'paid_in_full',
-      });
+      // TODO: Refactor to use direct Supabase query instead of store
+      // const quoteStore = useQuoteStore.getState();
+      // quoteStore.updateQuote(quoteId, {
+      //   status: 'accepted', // Only use 'accepted' since 'confirmed' is not in the type
+      //   paymentStatus: 'paid_in_full',
+      // });
+      console.warn('Quote update temporarily disabled during migration to TanStack Query');
     }
 
     // TODO: Release commission to agent

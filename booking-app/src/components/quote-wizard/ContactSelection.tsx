@@ -1,31 +1,37 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useContactStore } from '@/store/contact-store-supabase';
+import { useState, useMemo } from 'react';
+import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
 import { Contact } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ContactForm } from '@/components/contacts/ContactForm';
 import { getContactDisplayName } from '@/lib/utils';
-import { Search, Plus, User } from 'lucide-react';
+import { Search, Plus, User, Loader2 } from 'lucide-react';
 
 interface ContactSelectionProps {
   onContactSelect: (contact: Contact) => void;
 }
 
 export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
-  const { contacts, searchContacts } = useContactStore();
+  const { data: contacts = [], isLoading } = useContactsQuery();
   const [searchQuery, setSearchQuery] = useState('');
   const [showNewContactForm, setShowNewContactForm] = useState(false);
   const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
-  const [isHydrated, setIsHydrated] = useState(false);
 
-  const filteredContacts = searchContacts(searchQuery);
+  // Filter contacts based on search query
+  const filteredContacts = useMemo(() => {
+    if (!searchQuery.trim()) return contacts;
 
-  // Handle hydration
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+    const query = searchQuery.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(query) ||
+      contact.email.toLowerCase().includes(query) ||
+      contact.phone?.toLowerCase().includes(query) ||
+      contact.company?.toLowerCase().includes(query) ||
+      contact.tags?.some(tag => tag.toLowerCase().includes(query))
+    );
+  }, [contacts, searchQuery]);
 
   const handleContactSelect = (contact: Contact) => {
     setSelectedContactId(contact.id);
@@ -81,8 +87,9 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
       </div>
 
       {/* Contact List */}
-      {!isHydrated ? (
-        <div className="text-center py-12 text-gray-500">
+      {isLoading ? (
+        <div className="text-center py-12 text-gray-500 flex items-center justify-center gap-2">
+          <Loader2 className="w-5 h-5 animate-spin" />
           Loading contacts...
         </div>
       ) : filteredContacts.length > 0 ? (

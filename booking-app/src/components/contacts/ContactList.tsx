@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useContactStore } from '@/store/contact-store-supabase';
+import { useState, useMemo } from 'react';
+import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
+import { useContactMutations } from '@/hooks/mutations/useContactMutations';
 import { Contact } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,12 +11,20 @@ import { ContactCard } from './ContactCard';
 import { Plus, Search, Users, TrendingUp } from 'lucide-react';
 
 export function ContactList() {
-  const { contacts, searchContacts, deleteContact } = useContactStore();
+  const { data: contacts = [] } = useContactsQuery();
+  const { deleteContact } = useContactMutations();
   const [searchQuery, setSearchQuery] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
-  const filteredContacts = searchContacts(searchQuery);
+  const filteredContacts = useMemo(() => {
+    if (!searchQuery.trim()) return contacts;
+    const query = searchQuery.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(query) ||
+      contact.email.toLowerCase().includes(query)
+    );
+  }, [contacts, searchQuery]);
 
   const handleEdit = (contact: Contact) => {
     setEditingContact(contact);
@@ -24,7 +33,7 @@ export function ContactList() {
 
   const handleDelete = (contactId: string) => {
     if (confirm('Are you sure you want to delete this contact?')) {
-      deleteContact(contactId);
+      deleteContact.mutate(contactId);
     }
   };
 

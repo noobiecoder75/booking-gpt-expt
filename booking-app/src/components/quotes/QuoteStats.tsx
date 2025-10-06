@@ -1,17 +1,45 @@
 'use client';
 
-import { useQuoteStore } from '@/store/quote-store-supabase';
-import { useInvoiceStore } from '@/store/invoice-store-supabase';
+import { useMemo } from 'react';
+import { useQuotesQuery } from '@/hooks/queries/useQuotesQuery';
+import { useInvoicesQuery } from '@/hooks/queries/useInvoicesQuery';
 import { formatCurrency } from '@/lib/utils';
 import { FileText, Send, CheckCircle, XCircle, DollarSign, TrendingUp, Briefcase } from 'lucide-react';
 
 export function QuoteStats() {
-  const { getQuotesStats } = useQuoteStore();
-  const { getTotalRevenue } = useInvoiceStore();
-  const stats = getQuotesStats();
+  const { data: quotes = [] } = useQuotesQuery();
+  const { data: invoices = [] } = useInvoicesQuery();
+
+  const stats = useMemo(() => {
+    const totalQuotes = quotes.length;
+    const draftQuotes = quotes.filter(q => q.status === 'draft').length;
+    const sentQuotes = quotes.filter(q => q.status === 'sent').length;
+    const acceptedQuotes = quotes.filter(q => q.status === 'accepted').length;
+    const rejectedQuotes = quotes.filter(q => q.status === 'rejected').length;
+    const totalRevenue = quotes
+      .filter(q => q.status === 'accepted')
+      .reduce((sum, q) => sum + q.totalCost, 0);
+    const averageQuoteValue = totalQuotes > 0
+      ? quotes.reduce((sum, q) => sum + q.totalCost, 0) / totalQuotes
+      : 0;
+
+    return {
+      totalQuotes,
+      draftQuotes,
+      sentQuotes,
+      acceptedQuotes,
+      rejectedQuotes,
+      totalRevenue,
+      averageQuoteValue,
+    };
+  }, [quotes]);
 
   // Get actual revenue from paid invoices instead of accepted quotes
-  const actualRevenue = getTotalRevenue();
+  const actualRevenue = useMemo(() => {
+    return invoices
+      .filter(inv => inv.status === 'paid')
+      .reduce((sum, inv) => sum + inv.amount, 0);
+  }, [invoices]);
 
   // Quote status cards (row 1)
   const quoteStatusCards = [

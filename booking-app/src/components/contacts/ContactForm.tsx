@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useContactStore } from '@/store/contact-store-supabase';
+import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
+import { useContactMutations } from '@/hooks/mutations/useContactMutations';
 import { Contact } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +16,8 @@ interface ContactFormProps {
 }
 
 export function ContactForm({ contact, onClose }: ContactFormProps) {
-  const { addContact, updateContact, findContactByEmail, syncStatus } = useContactStore();
+  const { data: contacts = [] } = useContactsQuery();
+  const { addContact, updateContact } = useContactMutations();
   const [loading, setLoading] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -51,7 +53,7 @@ export function ContactForm({ contact, onClose }: ContactFormProps) {
 
     // Duplicate email check (only for new contacts)
     if (!contact) {
-      const existingContact = findContactByEmail(formData.email);
+      const existingContact = contacts.find(c => c.email.toLowerCase() === formData.email.toLowerCase());
       if (existingContact) {
         newErrors.email = 'A contact with this email already exists';
       }
@@ -94,10 +96,10 @@ export function ContactForm({ contact, onClose }: ContactFormProps) {
 
       if (contact) {
         // Update existing contact
-        await updateContact(contact.id, contactData);
+        await updateContact.mutateAsync({ id: contact.id, updates: contactData });
       } else {
         // Add new contact
-        await addContact(contactData);
+        await addContact.mutateAsync(contactData);
       }
 
       onClose();

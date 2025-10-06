@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useInvoiceStore } from '@/store/invoice-store-supabase';
-import { useExpenseStore } from '@/store/expense-store';
-import { useCommissionStore } from '@/store/commission-store-supabase';
+import { useInvoicesQuery } from '@/hooks/queries/useInvoicesQuery';
+import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
+import { useCommissionsQuery } from '@/hooks/queries/useCommissionsQuery';
 import { useTransactionStore } from '@/store/transaction-store';
 import { DollarSign, FileText, TrendingUp, Users, TrendingDown, Percent, CreditCard } from 'lucide-react';
 import { RevenueTrendChart } from './RevenueTrendChart';
@@ -14,9 +14,9 @@ import { ActionItemsCard } from './ActionItemsCard';
 
 export function FinancialOverview() {
   // Select base state arrays
-  const invoices = useInvoiceStore((state) => state.invoices);
-  const expenses = useExpenseStore((state) => state.expenses);
-  const commissions = useCommissionStore((state) => state.commissions);
+  const { data: invoices = [] } = useInvoicesQuery();
+  const { data: expenses = [] } = useExpensesQuery();
+  const { data: commissions = [] } = useCommissionsQuery();
   const transactions = useTransactionStore((state) => state.transactions);
 
   // Compute derived values with useMemo

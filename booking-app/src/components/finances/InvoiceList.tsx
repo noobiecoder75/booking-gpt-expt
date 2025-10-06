@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useInvoiceStore } from '@/store/invoice-store-supabase';
+import { useState, useMemo } from 'react';
+import { useInvoicesQuery } from '@/hooks/queries/useInvoicesQuery';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -27,22 +27,32 @@ export function InvoiceList() {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const allInvoices = useInvoiceStore((state) => state.invoices);
-  const searchInvoices = useInvoiceStore((state) => state.searchInvoices);
+  const { data: allInvoices = [] } = useInvoicesQuery();
 
   // Filter invoices
-  let filteredInvoices = searchQuery
-    ? searchInvoices(searchQuery)
-    : allInvoices;
+  const filteredInvoices = useMemo(() => {
+    let filtered = allInvoices;
 
-  if (statusFilter !== 'all') {
-    filteredInvoices = filteredInvoices.filter((inv) => inv.status === statusFilter);
-  }
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((inv) =>
+        inv.invoiceNumber.toLowerCase().includes(query) ||
+        inv.customerName.toLowerCase().includes(query) ||
+        inv.customerEmail.toLowerCase().includes(query)
+      );
+    }
 
-  // Sort by date (newest first)
-  filteredInvoices = [...filteredInvoices].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+    // Status filter
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter((inv) => inv.status === statusFilter);
+    }
+
+    // Sort by date (newest first)
+    return [...filtered].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [allInvoices, searchQuery, statusFilter]);
 
   const getStatusBadge = (status: InvoiceStatus) => {
     const variants: Record<InvoiceStatus, string> = {

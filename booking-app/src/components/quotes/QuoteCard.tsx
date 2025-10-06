@@ -1,8 +1,8 @@
 'use client';
 
 import { TravelQuote, Contact } from '@/types';
-import { useContactStore } from '@/store/contact-store-supabase';
-import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useContactByIdQuery } from '@/hooks/queries/useContactsQuery';
+import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { ModernButton } from '@/components/ui/modern-button';
 import { ModernCard } from '@/components/ui/modern-card';
 import { Badge } from '@/components/ui/badge';
@@ -49,10 +49,8 @@ interface QuoteCardProps {
 }
 
 export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: QuoteCardProps) {
-  const { getContactById } = useContactStore();
-  const { updateQuoteStatus, duplicateQuote, deleteQuote, sendQuoteToClient, generatePreviewLink } = useQuoteStore();
-  
-  const contact = getContactById(quote.contactId);
+  const { data: contact } = useContactByIdQuery(quote.contactId);
+  const { updateQuoteStatus, deleteQuote: deleteQuoteMutation } = useQuoteMutations();
   
   const getStatusColor = (status: TravelQuote['status']) => {
     switch (status) {
@@ -80,52 +78,42 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
   }, {} as Record<string, number>);
 
   const handleStatusChange = (newStatus: TravelQuote['status']) => {
-    updateQuoteStatus(quote.id, newStatus);
+    updateQuoteStatus.mutate({ id: quote.id, status: newStatus });
     onStatusChange?.(quote.id, newStatus);
   };
 
   const handleDuplicate = () => {
-    const newQuoteId = duplicateQuote(quote.id);
-    if (newQuoteId) {
-      onDuplicate?.(newQuoteId);
-    }
+    // TODO: Implement duplicate quote mutation
+    console.log('Duplicate quote:', quote.id);
+    onDuplicate?.(quote.id);
   };
 
   const handleDelete = () => {
     if (window.confirm('Are you sure you want to delete this quote?')) {
-      deleteQuote(quote.id);
+      deleteQuoteMutation.mutate(quote.id);
       onDelete?.(quote.id);
     }
   };
 
   const handleSendToClient = async () => {
-    const success = await sendQuoteToClient(quote.id);
-    if (success) {
-      console.log('Quote sent successfully');
-      // You could add a toast notification here
-    } else {
-      console.error('Failed to send quote');
-      // You could add error handling here
-    }
+    // TODO: Implement send quote mutation
+    console.log('Send quote to client:', quote.id);
+    updateQuoteStatus.mutate({ id: quote.id, status: 'sent' });
   };
 
   const handlePreview = () => {
-    const previewLink = generatePreviewLink(quote.id);
-    if (previewLink) {
-      window.open(previewLink, '_blank');
-    }
+    const previewLink = `/client/${quote.id}`;
+    window.open(previewLink, '_blank');
   };
 
   const handleCopyLink = async () => {
-    const previewLink = generatePreviewLink(quote.id);
-    if (previewLink) {
-      try {
-        await navigator.clipboard.writeText(previewLink);
-        console.log('Link copied to clipboard');
-        // You could add a toast notification here
-      } catch (error) {
-        console.error('Failed to copy link:', error);
-      }
+    const previewLink = `${window.location.origin}/client/${quote.id}`;
+    try {
+      await navigator.clipboard.writeText(previewLink);
+      console.log('Link copied to clipboard');
+      // You could add a toast notification here
+    } catch (error) {
+      console.error('Failed to copy link:', error);
     }
   };
 

@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useExpenseStore } from '@/store/expense-store';
+import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
+import { useExpenseMutations } from '@/hooks/mutations/useExpenseMutations';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -30,19 +31,8 @@ import { Expense, ExpenseCategory } from '@/types/financial';
 
 export default function ExpensesPage() {
   const { user } = useAuthStore();
-  const {
-    expenses,
-    createExpense,
-    updateExpense,
-    deleteExpense,
-    getExpensesByCategory,
-    getExpensesByCategoryTotals,
-    getExpensesByDateRange,
-    getTotalExpenses,
-    getExpenseReport,
-    searchExpenses,
-    approveExpense
-  } = useExpenseStore();
+  const { data: expenses = [] } = useExpensesQuery();
+  const { updateExpense, deleteExpense, approveExpense } = useExpenseMutations();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<ExpenseCategory | 'all'>('all');
@@ -64,7 +54,13 @@ export default function ExpensesPage() {
     let filtered = expenses;
 
     if (searchQuery.trim()) {
-      filtered = searchExpenses(searchQuery.trim());
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(expense =>
+        expense.description.toLowerCase().includes(query) ||
+        expense.vendor?.toLowerCase().includes(query) ||
+        expense.category.toLowerCase().includes(query) ||
+        expense.subcategory?.toLowerCase().includes(query)
+      );
     }
 
     if (categoryFilter !== 'all') {
@@ -77,7 +73,7 @@ export default function ExpensesPage() {
     });
 
     setFilteredExpenses(filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-  }, [expenses, searchQuery, categoryFilter, selectedPeriod, searchExpenses]);
+  }, [expenses, searchQuery, categoryFilter, selectedPeriod]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -126,12 +122,15 @@ export default function ExpensesPage() {
   };
 
   // Calculate statistics
-  const totalExpenses = getTotalExpenses(selectedPeriod.startDate, selectedPeriod.endDate);
-  const expensesByCategory = getExpensesByCategoryTotals(selectedPeriod.startDate, selectedPeriod.endDate);
+  const totalExpenses = filteredExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+
+  const expensesByCategory = filteredExpenses.reduce((acc, expense) => {
+    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+    return acc;
+  }, {} as Record<ExpenseCategory, number>);
+
   const unapprovedExpenses = filteredExpenses.filter(expense => !expense.approvedBy).length;
   const totalVendors = new Set(expenses.filter(e => e.vendor).map(e => e.vendor)).size;
-
-  const expenseReport = getExpenseReport(selectedPeriod.startDate, selectedPeriod.endDate);
 
   const categories: Array<{ value: ExpenseCategory; label: string }> = [
     { value: 'supplier_payment', label: 'Supplier Payments' },
@@ -387,7 +386,7 @@ export default function ExpensesPage() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => approveExpense(expense.id, user?.name || 'Admin')}
+                                  onClick={() => approveExpense.mutate({ id: expense.id, approvedBy: user?.id || '' })}
                                 >
                                   <CheckCircle className="w-4 h-4" />
                                 </Button>

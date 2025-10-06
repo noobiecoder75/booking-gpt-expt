@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import { TravelQuote, Contact } from '@/types';
-import { useQuoteStore } from '@/store/quote-store-supabase';
-import { useContactStore } from '@/store/contact-store-supabase';
+import { useQuoteByIdQuery } from '@/hooks/queries/useQuotesQuery';
+import { useContactByIdQuery } from '@/hooks/queries/useContactsQuery';
+import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { ClientQuoteView } from '@/components/client/ClientQuoteView';
 import { ModernCard } from '@/components/ui/modern-card';
 import { Loader2 } from 'lucide-react';
@@ -28,53 +29,21 @@ const validateAccessToken = (token: string, quoteId: string): boolean => {
 export default function ClientQuotePage() {
   const params = useParams();
   const quoteId = params.quoteId as string;
-  const [quote, setQuote] = useState<TravelQuote | null>(null);
-  const [contact, setContact] = useState<Contact | null>(null);
-  const [loading, setLoading] = useState(true);
   const [accessDenied, setAccessDenied] = useState(false);
+  const { updateQuoteStatus } = useQuoteMutations();
 
-  const { getQuoteById } = useQuoteStore();
-  const { getContactById } = useContactStore();
+  const { data: quote, isLoading: quoteLoading } = useQuoteByIdQuery(quoteId);
+  const { data: contact, isLoading: contactLoading } = useContactByIdQuery(quote?.contactId);
+
+  const loading = quoteLoading || contactLoading;
 
   useEffect(() => {
-    const loadQuoteData = async () => {
-      try {
-        // Check access token
-        const token = getAccessToken();
-        if (!token || !validateAccessToken(token, quoteId)) {
-          setAccessDenied(true);
-          setLoading(false);
-          return;
-        }
-
-        // Load quote data
-        const quoteData = getQuoteById(quoteId);
-        if (!quoteData) {
-          notFound();
-          return;
-        }
-
-        // Load contact data
-        const contactData = getContactById(quoteData.contactId);
-        if (!contactData) {
-          notFound();
-          return;
-        }
-
-        setQuote(quoteData);
-        setContact(contactData);
-      } catch (error) {
-        console.error('Failed to load quote:', error);
-        notFound();
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (quoteId) {
-      loadQuoteData();
+    // Check access token
+    const token = getAccessToken();
+    if (!token || !validateAccessToken(token, quoteId)) {
+      setAccessDenied(true);
     }
-  }, [quoteId, getQuoteById, getContactById]);
+  }, [quoteId]);
 
   const handleQuoteAction = (action: 'accept' | 'reject' | 'message' | 'payment') => {
     console.log('Quote action:', action, 'for quote:', quoteId);
@@ -82,16 +51,16 @@ export default function ClientQuotePage() {
 
     // Update quote status if accepting/rejecting
     if (action === 'accept' || action === 'reject') {
-      const { updateQuoteStatus } = useQuoteStore.getState();
-      updateQuoteStatus(quoteId, action === 'accept' ? 'accepted' : 'rejected');
+      updateQuoteStatus.mutate({
+        id: quoteId,
+        status: action === 'accept' ? 'accepted' : 'rejected'
+      });
     }
 
-    // Reload quote after payment to get updated status
+    // Payment action would typically trigger a payment flow
     if (action === 'payment') {
-      const updatedQuote = getQuoteById(quoteId);
-      if (updatedQuote) {
-        setQuote(updatedQuote);
-      }
+      // TODO: Implement payment integration
+      console.log('Payment action triggered for quote:', quoteId);
     }
   };
 

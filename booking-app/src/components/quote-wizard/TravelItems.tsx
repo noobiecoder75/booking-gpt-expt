@@ -5,7 +5,7 @@ import { Calendar, momentLocalizer, View, SlotInfo, ToolbarProps } from 'react-b
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import moment from 'moment';
 import { TravelQuote, TravelItem, CalendarEvent } from '@/types';
-import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -33,7 +33,7 @@ interface TravelItemsProps {
 }
 
 export function TravelItems({ quote, onComplete }: TravelItemsProps) {
-  const { addItemToQuote, removeItemFromQuote, updateItemInQuote } = useQuoteStore();
+  const { addItemToQuote, removeItemFromQuote, updateItemInQuote } = useQuoteMutations();
   const [view, setView] = useState<View>('month'); // Default to month view for better overview
   const [date, setDate] = useState(new Date(quote.travelDates.start));
   const [showFlightBuilder, setShowFlightBuilder] = useState(false);
@@ -42,12 +42,12 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
   const [showTransferBuilder, setShowTransferBuilder] = useState(false);
   const [viewMode, setViewMode] = useState<'calendar' | 'list'>('calendar');
   const [filteredItems, setFilteredItems] = useState<TravelItem[]>([]);
-  
+
   // Edit functionality
   const [editingItem, setEditingItem] = useState<TravelItem | null>(null);
   const [quickEditItem, setQuickEditItem] = useState<TravelItem | null>(null);
   const [quickEditPosition, setQuickEditPosition] = useState<{ x: number; y: number } | null>(null);
-  
+
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -64,12 +64,8 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
   // Ref to store last click coordinates for context menu positioning
   const lastClickPosition = useRef({ x: 0, y: 0 });
 
-  const currentQuote = useQuoteStore(state => 
-    state.quotes.find(q => q.id === quote.id)
-  ) || quote;
-
   // Use filtered items if available, otherwise use all items
-  const displayItems = filteredItems.length > 0 || currentQuote.items.length === 0 ? filteredItems : currentQuote.items;
+  const displayItems = filteredItems.length > 0 || quote.items.length === 0 ? filteredItems : quote.items;
 
   // Calculate dynamic calendar height based on viewport and responsive breakpoints
   const calculateCalendarHeight = useMemo(() => {
@@ -245,9 +241,13 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
       
       const newEnd = originalEnd ? new Date(newStart.getTime() + timeDiff) : undefined;
       
-      updateItemInQuote(quote.id, event.id, {
-        startDate: newStart.toISOString(),
-        endDate: newEnd ? newEnd.toISOString() : undefined,
+      updateItemInQuote.mutate({
+        quoteId: quote.id,
+        itemId: event.id,
+        updates: {
+          startDate: newStart.toISOString(),
+          endDate: newEnd ? newEnd.toISOString() : undefined,
+        },
       });
       
       // Show a brief confirmation
@@ -259,22 +259,26 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
       // Batched update for better performance
       console.log(`${itemName} moved to ${newDate} at ${newTime}`);
     }
-  }, [currentQuote.items, quote.id, updateItemInQuote]);
+  }, [quote.items, quote.id, updateItemInQuote]);
 
   // Handle event resize
   const handleEventResize = useCallback(({ event, start, end }: { event: CalendarEvent; start: Date; end: Date }) => {
-    const item = currentQuote.items.find(item => item.id === event.id);
+    const item = quote.items.find(item => item.id === event.id);
     if (item) {
-      updateItemInQuote(quote.id, event.id, {
-        startDate: start.toISOString(),
-        endDate: end.toISOString(),
+      updateItemInQuote.mutate({
+        quoteId: quote.id,
+        itemId: event.id,
+        updates: {
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
+        },
       });
-      
+
       // Show resize confirmation
       const duration = Math.round((end.getTime() - start.getTime()) / (1000 * 60)); // minutes
       console.log(`${item.name} duration changed to ${duration} minutes`);
     }
-  }, [currentQuote.items, quote.id, updateItemInQuote]);
+  }, [quote.items, quote.id, updateItemInQuote]);
 
   // Enhanced event styling with smart positioning
   const eventStyleGetter = (event: CalendarEvent) => {
@@ -309,13 +313,20 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
 
   // Add new travel item
   const handleAddItem = (itemData: Omit<TravelItem, 'id'>) => {
-    addItemToQuote(quote.id, itemData);
+    addItemToQuote.mutate({
+      quoteId: quote.id,
+      item: itemData,
+    });
   };
 
   // Handle quick edit save
   const handleQuickEditSave = (updates: Partial<TravelItem>) => {
     if (!quickEditItem) return;
-    updateItemInQuote(quote.id, quickEditItem.id, updates);
+    updateItemInQuote.mutate({
+      quoteId: quote.id,
+      itemId: quickEditItem.id,
+      updates,
+    });
     setQuickEditItem(null);
     setQuickEditPosition(null);
   };
@@ -323,14 +334,21 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
   // Handle full edit save
   const handleFullEditSave = (updates: Partial<TravelItem>) => {
     if (!editingItem) return;
-    updateItemInQuote(quote.id, editingItem.id, updates);
+    updateItemInQuote.mutate({
+      quoteId: quote.id,
+      itemId: editingItem.id,
+      updates,
+    });
     setEditingItem(null);
   };
 
   // Handle item deletion
   const handleDeleteItem = () => {
     if (!editingItem) return;
-    removeItemFromQuote(quote.id, editingItem.id);
+    removeItemFromQuote.mutate({
+      quoteId: quote.id,
+      itemId: editingItem.id,
+    });
     setEditingItem(null);
   };
 
@@ -625,7 +643,10 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
                 onEditItem={(item) => setEditingItem(item)}
                 onDeleteItem={(itemId) => {
                   if (confirm('Remove this item?')) {
-                    removeItemFromQuote(quote.id, itemId);
+                    removeItemFromQuote.mutate({
+                      quoteId: quote.id,
+                      itemId,
+                    });
                   }
                 }}
               />

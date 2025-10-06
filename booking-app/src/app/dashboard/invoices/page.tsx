@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useInvoiceStore } from '@/store/invoice-store-supabase';
+import { useInvoicesQuery } from '@/hooks/queries/useInvoicesQuery';
+import { useInvoiceMutations } from '@/hooks/mutations/useInvoiceMutations';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { InvoiceModal } from '@/components/invoices/InvoiceModal';
@@ -32,18 +33,13 @@ import { Invoice, InvoiceStatus } from '@/types/financial';
 
 export default function InvoicesPage() {
   const { user } = useAuthStore();
+  const { data: invoices = [] } = useInvoicesQuery();
   const {
-    invoices,
-    getInvoicesByStatus,
-    getOverdueInvoices,
-    searchInvoices,
     markInvoiceAsSent,
     markInvoiceAsPaid,
-    updateInvoiceStatus,
-    getTotalRevenue,
-    getTotalOutstanding,
-    getOverdueAmount
-  } = useInvoiceStore();
+    updateInvoice,
+    voidInvoice
+  } = useInvoiceMutations();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all');
@@ -55,7 +51,12 @@ export default function InvoicesPage() {
     let filtered = invoices;
 
     if (searchQuery.trim()) {
-      filtered = searchInvoices(searchQuery.trim());
+      const query = searchQuery.trim().toLowerCase();
+      filtered = filtered.filter(invoice =>
+        invoice.invoiceNumber.toLowerCase().includes(query) ||
+        invoice.customerName.toLowerCase().includes(query) ||
+        invoice.customerEmail.toLowerCase().includes(query)
+      );
     }
 
     if (statusFilter !== 'all') {
@@ -63,7 +64,7 @@ export default function InvoicesPage() {
     }
 
     setFilteredInvoices(filtered);
-  }, [invoices, searchQuery, statusFilter, searchInvoices]);
+  }, [invoices, searchQuery, statusFilter]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -118,15 +119,19 @@ export default function InvoicesPage() {
 
       switch (selectedAction) {
         case 'Send Invoice':
-          markInvoiceAsSent(invoice.id);
+          markInvoiceAsSent.mutate(invoice.id);
           alert('Invoice marked as sent!');
           break;
         case 'Mark as Paid':
-          markInvoiceAsPaid(invoice.id, 'bank_transfer', `TXN-${Date.now()}`);
+          markInvoiceAsPaid.mutate({
+            id: invoice.id,
+            paymentMethod: 'bank_transfer',
+            transactionId: `TXN-${Date.now()}`
+          });
           alert('Invoice marked as paid!');
           break;
         case 'Cancel Invoice':
-          updateInvoiceStatus(invoice.id, 'cancelled');
+          voidInvoice.mutate({ id: invoice.id, reason: 'Cancelled by user' });
           alert('Invoice cancelled!');
           break;
         case 'Duplicate Invoice':
@@ -196,13 +201,37 @@ export default function InvoicesPage() {
 
   // Summary statistics
   const totalInvoices = invoices.length;
-  const draftInvoices = getInvoicesByStatus('draft').length;
-  const paidInvoices = getInvoicesByStatus('paid').length;
-  const overdueInvoices = getOverdueInvoices().length;
+  const draftInvoices = invoices.filter(inv => inv.status === 'draft').length;
+  const paidInvoices = invoices.filter(inv => inv.status === 'paid').length;
+  const overdueInvoices = useMemo(() => {
+    const now = new Date();
+    return invoices.filter(inv => {
+      if (inv.status === 'paid' || inv.status === 'cancelled' || inv.status === 'void') return false;
+      return new Date(inv.dueDate) < now;
+    }).length;
+  }, [invoices]);
 
-  const totalRevenue = getTotalRevenue();
-  const totalOutstanding = getTotalOutstanding();
-  const overdueAmount = getOverdueAmount();
+  const totalRevenue = useMemo(() => {
+    return invoices
+      .filter(inv => inv.status === 'paid')
+      .reduce((sum, inv) => sum + inv.total, 0);
+  }, [invoices]);
+
+  const totalOutstanding = useMemo(() => {
+    return invoices
+      .filter(inv => inv.status !== 'paid' && inv.status !== 'cancelled' && inv.status !== 'void')
+      .reduce((sum, inv) => sum + (inv.remainingAmount || inv.total), 0);
+  }, [invoices]);
+
+  const overdueAmount = useMemo(() => {
+    const now = new Date();
+    return invoices
+      .filter(inv => {
+        if (inv.status === 'paid' || inv.status === 'cancelled' || inv.status === 'void') return false;
+        return new Date(inv.dueDate) < now;
+      })
+      .reduce((sum, inv) => sum + (inv.remainingAmount || inv.total), 0);
+  }, [invoices]);
 
   if (!user) {
     return <div>Please log in to view invoices.</div>;

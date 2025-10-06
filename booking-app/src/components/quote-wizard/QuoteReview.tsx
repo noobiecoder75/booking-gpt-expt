@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { TravelQuote, Contact } from '@/types';
-import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
 import { formatCurrency, getContactDisplayName, formatDate, detectDestinationMismatches, DestinationMismatch } from '@/lib/utils';
 import { Plane, Hotel, MapPin, Car, FileText, Send, AlertTriangle, X } from 'lucide-react';
@@ -14,17 +14,13 @@ interface QuoteReviewProps {
 }
 
 export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
-  const { updateQuote } = useQuoteStore();
+  const { updateQuote } = useQuoteMutations();
   const [showMismatchModal, setShowMismatchModal] = useState(false);
   const [detectedMismatches, setDetectedMismatches] = useState<DestinationMismatch[]>([]);
 
-  const currentQuote = useQuoteStore(state => 
-    state.quotes.find(q => q.id === quote.id)
-  ) || quote;
-
   const handleSendQuote = () => {
     // Check for destination mismatches before sending
-    const mismatches = detectDestinationMismatches(currentQuote.items);
+    const mismatches = detectDestinationMismatches(quote.items);
 
     if (mismatches.length > 0) {
       // Show warning modal
@@ -46,14 +42,20 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
         mismatches: detectedMismatches,
       };
 
-      updateQuote(quote.id, {
-        status: 'sent',
-        validationOverrides: [validationOverride]
+      updateQuote.mutate({
+        id: quote.id,
+        updates: {
+          status: 'sent',
+          validationOverrides: [validationOverride],
+        },
       });
 
       console.log('⚠️  Destination mismatch override recorded:', validationOverride);
     } else {
-      updateQuote(quote.id, { status: 'sent' });
+      updateQuote.mutate({
+        id: quote.id,
+        updates: { status: 'sent' },
+      });
     }
 
     setShowMismatchModal(false);
@@ -61,7 +63,10 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
   };
 
   const handleSaveDraft = () => {
-    updateQuote(quote.id, { status: 'draft' });
+    updateQuote.mutate({
+      id: quote.id,
+      updates: { status: 'draft' },
+    });
     onComplete();
   };
 

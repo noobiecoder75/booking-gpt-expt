@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useTaskStore } from '@/store/task-store-supabase';
+import { useTaskMutations } from '@/hooks/mutations/useTaskMutations';
 import { Upload, X, FileText, Image as ImageIcon, File, CheckCircle } from 'lucide-react';
 
 interface DocumentUploadProps {
@@ -10,12 +10,13 @@ interface DocumentUploadProps {
 }
 
 export function DocumentUpload({ taskId, onUploadComplete }: DocumentUploadProps) {
-  const { addAttachment, getAttachmentsByTask, completeTask } = useTaskStore();
+  const { completeTask } = useTaskMutations();
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const attachments = getAttachmentsByTask(taskId);
+  // TODO: Implement attachment query when attachments are migrated to Supabase
+  const attachments: any[] = [];
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -49,17 +50,17 @@ export function DocumentUpload({ taskId, onUploadComplete }: DocumentUploadProps
         // Convert file to base64 for storage
         const base64 = await fileToBase64(file);
 
-        // Add attachment to store
-        addAttachment({
-          taskId,
-          fileName: file.name,
-          fileType: file.type,
-          fileSize: file.size,
-          fileData: base64,
-          uploadedBy: 'current-user', // TODO: Get from auth store
-          uploadedByName: 'Current User',
-          documentType: inferDocumentType(file.name),
-        });
+        // TODO: Implement attachment upload when attachments are migrated to Supabase
+        // addAttachment({
+        //   taskId,
+        //   fileName: file.name,
+        //   fileType: file.type,
+        //   fileSize: file.size,
+        //   fileData: base64,
+        //   uploadedBy: 'current-user', // TODO: Get from auth store
+        //   uploadedByName: 'Current User',
+        //   documentType: inferDocumentType(file.name),
+        // });
 
         console.log('✅ [Document Upload] Uploaded:', file.name);
       } catch (error) {
@@ -118,7 +119,10 @@ export function DocumentUpload({ taskId, onUploadComplete }: DocumentUploadProps
 
   const handleCompleteTask = () => {
     if (attachments.length > 0) {
-      completeTask(taskId, `Uploaded ${attachments.length} document(s)`);
+      completeTask.mutate({
+        id: taskId,
+        completionNotes: `Uploaded ${attachments.length} document(s)`
+      });
       onUploadComplete?.();
     } else {
       alert('Please upload at least one document before completing');

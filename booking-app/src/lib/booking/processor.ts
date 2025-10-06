@@ -1,5 +1,6 @@
-import { useTaskStore } from '@/store/task-store-supabase';
-import { useQuoteStore } from '@/store/quote-store-supabase';
+// TODO: Refactor to accept task mutations as parameters or use server-side approach
+// import { useTaskStore } from '@/store/task-store-supabase';
+// import { useQuoteStore } from '@/store/quote-store-supabase';
 
 /**
  * Booking Processor - Handles hybrid booking logic
@@ -247,20 +248,25 @@ async function bookSabreItem(
  * Create manual booking tasks for offline items or failed API items
  */
 function createManualBookingTasks(item: QuoteItem, quote: Quote): string[] {
-  const taskStore = useTaskStore.getState();
+  // TODO: Refactor to use server-side task creation or accept task mutations as parameter
+  // This needs to be called from a React component context to use hooks
+  // const taskStore = useTaskStore.getState();
+  //
+  // const taskIds = taskStore.generateTasksFromQuoteItem({
+  //   id: item.id,
+  //   quoteId: quote.id,
+  //   type: item.type,
+  //   name: item.name,
+  //   supplierSource: item.supplierSource,
+  //   details: item.details,
+  //   customerId: quote.customerId,
+  //   customerName: quote.customerName,
+  // });
+  //
+  // return taskIds;
 
-  const taskIds = taskStore.generateTasksFromQuoteItem({
-    id: item.id,
-    quoteId: quote.id,
-    type: item.type,
-    name: item.name,
-    supplierSource: item.supplierSource,
-    details: item.details,
-    customerId: quote.customerId,
-    customerName: quote.customerName,
-  });
-
-  return taskIds;
+  console.warn('Task creation temporarily disabled during migration to TanStack Query');
+  return [];
 }
 
 /**
@@ -275,7 +281,11 @@ function generateMockRateKey(): string {
  * This tracks what we pay to the supplier (HotelBeds, etc.)
  */
 async function createSupplierExpense(item: QuoteItem, quote: Quote): Promise<void> {
-  try {
+  // TODO: Refactor to use server-side expense creation or accept expense mutations as parameter
+  console.warn('Supplier expense creation temporarily disabled during migration to TanStack Query');
+  return;
+
+  /* try {
     const { useExpenseStore } = await import('@/store/expense-store');
 
     // Get supplier cost from item (populated during quote creation)
@@ -297,7 +307,7 @@ async function createSupplierExpense(item: QuoteItem, quote: Quote): Promise<voi
     const expenseId = useExpenseStore.getState().createExpense(expense);
   } catch (error: any) {
     // Don't throw - expense creation failure shouldn't block booking
-  }
+  } */
 }
 
 /**

@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripeInstance, formatAmountForStripe, calculateRefundAmount } from '@/lib/stripe/config';
-import { usePaymentStore } from '@/store/payment-store-supabase';
-import { useQuoteStore } from '@/store/quote-store-supabase';
-import { useCommissionStore } from '@/store/commission-store-supabase';
 import { RefundCalculation } from '@/types/payment';
 
 export async function POST(request: NextRequest) {
@@ -16,19 +13,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const paymentStore = usePaymentStore.getState();
-    const quoteStore = useQuoteStore.getState();
+    // TODO: Refactor to use direct Supabase queries instead of stores
+    // const paymentStore = usePaymentStore.getState();
+    // const quoteStore = useQuoteStore.getState();
 
-    const payment = paymentStore.getPaymentById(paymentId);
-    const quote = quoteStore.quotes.find((q) => q.id === quoteId);
+    // const payment = paymentStore.getPaymentById(paymentId);
+    // const quote = quoteStore.quotes.find((q) => q.id === quoteId);
 
-    if (!payment) {
-      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
-    }
+    // if (!payment) {
+    //   return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
+    // }
 
-    if (!quote) {
-      return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
-    }
+    // if (!quote) {
+    //   return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
+    // }
+
+    // Temporarily return error during migration
+    console.warn('Refund API temporarily disabled during migration to TanStack Query');
+    return NextResponse.json(
+      { error: 'Refund functionality temporarily disabled during system upgrade' },
+      { status: 503 }
+    );
 
     // Calculate refund amount based on cancellation policy
     const refundCalculation = calculateRefundForQuote(quote);

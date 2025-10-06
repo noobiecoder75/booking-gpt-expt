@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useTaskStore } from '@/store/task-store-supabase';
-import { TaskStatus, TaskPriority, TaskType } from '@/types/task';
+import { useTasksQuery } from '@/hooks/queries/useTasksQuery';
+import { useTaskMutations } from '@/hooks/mutations/useTaskMutations';
+import { TaskStatus, TaskPriority, TaskType, BookingTask } from '@/types/task';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { MainLayout } from '@/components/layout/MainLayout';
 import {
@@ -28,13 +29,12 @@ export default function TasksPage() {
 }
 
 function TasksContent() {
+  const { data: tasks = [] } = useTasksQuery();
   const {
-    tasks,
     updateTaskStatus,
     assignTask,
     completeTask,
-    getTaskSummary,
-  } = useTaskStore();
+  } = useTaskMutations();
 
   const [statusFilter, setStatusFilter] = useState<TaskStatus | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'all'>('all');
@@ -92,7 +92,52 @@ function TasksContent() {
     });
   }, [tasks, statusFilter, priorityFilter, searchQuery]);
 
-  const summary = getTaskSummary();
+  // Calculate task summary
+  const summary = useMemo(() => {
+    const total = tasks.length;
+    const pending = tasks.filter(t => t.status === 'pending').length;
+    const inProgress = tasks.filter(t => t.status === 'in_progress').length;
+    const completed = tasks.filter(t => t.status === 'completed').length;
+    const blocked = tasks.filter(t => t.status === 'blocked').length;
+    const cancelled = tasks.filter(t => t.status === 'cancelled').length;
+
+    const now = new Date();
+    const overdue = tasks.filter(t => {
+      if (t.dueDate && t.status !== 'completed' && t.status !== 'cancelled') {
+        return new Date(t.dueDate) < now;
+      }
+      return false;
+    }).length;
+
+    const dueToday = tasks.filter(t => {
+      if (t.dueDate && t.status !== 'completed' && t.status !== 'cancelled') {
+        const dueDate = new Date(t.dueDate);
+        return dueDate.toDateString() === now.toDateString();
+      }
+      return false;
+    }).length;
+
+    const dueSoon = tasks.filter(t => {
+      if (t.dueDate && t.status !== 'completed' && t.status !== 'cancelled') {
+        const dueDate = new Date(t.dueDate);
+        const threeDaysFromNow = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+        return dueDate > now && dueDate <= threeDaysFromNow;
+      }
+      return false;
+    }).length;
+
+    return {
+      total,
+      pending,
+      inProgress,
+      completed,
+      blocked,
+      cancelled,
+      overdue,
+      dueToday,
+      dueSoon,
+    };
+  }, [tasks]);
 
   const getStatusIcon = (status: TaskStatus) => {
     switch (status) {
@@ -294,7 +339,7 @@ function TasksContent() {
                     <div className="flex gap-2 mt-3">
                       {task.status === 'pending' && (
                         <button
-                          onClick={() => updateTaskStatus(task.id, 'in_progress')}
+                          onClick={() => updateTaskStatus.mutate({ id: task.id, status: 'in_progress' })}
                           className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
                         >
                           Start
@@ -303,7 +348,7 @@ function TasksContent() {
 
                       {task.status === 'in_progress' && (
                         <button
-                          onClick={() => completeTask(task.id)}
+                          onClick={() => completeTask.mutate({ id: task.id })}
                           className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
                         >
                           Complete

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useContactStore } from '@/store/contact-store-supabase';
-import { useQuoteStore } from '@/store/quote-store-supabase';
+import { useContactByIdQuery } from '@/hooks/queries/useContactsQuery';
+import { useQuoteByIdQuery } from '@/hooks/queries/useQuotesQuery';
+import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Contact, TravelQuote } from '@/types';
 import { ModernButton } from '@/components/ui/modern-button';
 import { ModernCard } from '@/components/ui/modern-card';
@@ -27,30 +28,21 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   const [currentQuote, setCurrentQuote] = useState<Partial<TravelQuote> | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  const { addQuote, updateQuote, getQuoteById, setCurrentQuote: setStoreCurrentQuote } = useQuoteStore();
-  const { addQuoteToContact, getContactById } = useContactStore();
+  const { addQuote, updateQuote } = useQuoteMutations();
 
   // Load existing quote if editing
+  const { data: existingQuote } = useQuoteByIdQuery(editQuoteId || undefined);
+  const { data: existingContact } = useContactByIdQuery(existingQuote?.contactId);
+
   useEffect(() => {
-    if (editQuoteId) {
-      const existingQuote = getQuoteById(editQuoteId);
-      if (existingQuote) {
-        setCurrentQuote(existingQuote);
-        setIsEditMode(true);
-        
-        // Load the associated contact
-        const contact = getContactById(existingQuote.contactId);
-        if (contact) {
-          setSelectedContact(contact);
-          // Skip contact selection step in edit mode
-          setCurrentStep('details');
-        }
-        
-        // Set current quote in store for timeline integration
-        setStoreCurrentQuote(existingQuote);
-      }
+    if (existingQuote && existingContact) {
+      setCurrentQuote(existingQuote);
+      setSelectedContact(existingContact);
+      setIsEditMode(true);
+      // Skip contact selection step in edit mode
+      setCurrentStep('details');
     }
-  }, [editQuoteId, getQuoteById, getContactById, setStoreCurrentQuote]);
+  }, [existingQuote, existingContact]);
 
   const steps = [
     { id: 'contact', label: 'Select Contact', description: 'Choose or create a contact' },
@@ -81,21 +73,23 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
     if (isEditMode && currentQuote?.id) {
       // Update existing quote
-      await updateQuote(currentQuote.id, {
-        title: quoteData.title || currentQuote.title,
-        travelDates: quoteData.travelDates || currentQuote.travelDates,
-        ...quoteData,
+      await updateQuote.mutateAsync({
+        id: currentQuote.id,
+        updates: {
+          title: quoteData.title || currentQuote.title,
+          travelDates: quoteData.travelDates || currentQuote.travelDates,
+          ...quoteData,
+        },
       });
 
-      // Get updated quote from store
-      const updatedQuote = getQuoteById(currentQuote.id);
-      if (updatedQuote) {
-        setCurrentQuote(updatedQuote);
-        setStoreCurrentQuote(updatedQuote);
-      }
+      // Update local state with new data
+      setCurrentQuote({
+        ...currentQuote,
+        ...quoteData,
+      });
     } else {
       // Create new quote
-      const newQuoteId = await addQuote({
+      const newQuoteId = await addQuote.mutateAsync({
         contactId: selectedContact.id,
         title: quoteData.title || 'New Travel Quote',
         items: [],
@@ -107,15 +101,19 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
         },
       });
 
-      // Link quote to contact
-      addQuoteToContact(selectedContact.id, newQuoteId);
-
-      // Wait for quote to be available in store
-      const quote = getQuoteById(newQuoteId);
-      if (quote) {
-        setCurrentQuote(quote);
-        setStoreCurrentQuote(quote);
-      }
+      // Set the new quote in local state
+      setCurrentQuote({
+        id: newQuoteId,
+        contactId: selectedContact.id,
+        title: quoteData.title || 'New Travel Quote',
+        items: [],
+        totalCost: 0,
+        status: 'draft',
+        travelDates: quoteData.travelDates || {
+          start: new Date(),
+          end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        },
+      });
     }
 
     handleNext();
