@@ -42,8 +42,14 @@ export default function LoginPage() {
 
       console.log('🔀 Redirecting to:', redirectTo);
 
-      // Use Next.js router for smooth navigation
-      router.push(redirectTo);
+      // Refresh router to sync auth state with middleware
+      router.refresh();
+
+      // Use replace instead of push to avoid keeping login page in history
+      router.replace(redirectTo);
+
+      // Keep loading state active during redirect
+      // (will unmount when navigation completes)
     } catch (error: any) {
       console.error('❌ Login error:', error);
       setError(error.message || 'An error occurred during login');

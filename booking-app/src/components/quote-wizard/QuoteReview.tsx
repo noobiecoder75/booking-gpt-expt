@@ -95,26 +95,26 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
       <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-200">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-gray-900">{currentQuote.title}</h3>
+            <h3 className="text-xl font-semibold text-gray-900">{quote.title}</h3>
             <p className="text-gray-600 mt-1">
               For {getContactDisplayName(contact.firstName, contact.lastName)}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              Travel: {formatDate(currentQuote.travelDates.start)} - {formatDate(currentQuote.travelDates.end)}
+              Travel: {formatDate(quote.travelDates.start)} - {formatDate(quote.travelDates.end)}
             </p>
           </div>
           <div className="text-right space-y-1">
             <div className="flex items-center justify-end space-x-3 text-xs text-gray-600">
-              <span>Cost: {formatCurrency(currentQuote.items.reduce((sum, item) => sum + (item.supplierCost || item.price * 0.80), 0))}</span>
+              <span>Cost: {formatCurrency(quote.items.reduce((sum, item) => sum + (item.supplierCost || item.price * 0.80), 0))}</span>
               <span className="text-green-600 font-medium">
-                +Markup: {formatCurrency(currentQuote.items.reduce((sum, item) => {
+                +Markup: {formatCurrency(quote.items.reduce((sum, item) => {
                   const supplierCost = item.supplierCost || item.price * 0.80;
                   return sum + (item.price - supplierCost);
                 }, 0))}
               </span>
             </div>
             <div className="text-2xl font-bold text-blue-600">
-              {formatCurrency(currentQuote.totalCost)}
+              {formatCurrency(quote.totalCost)}
             </div>
             <div className="text-sm text-gray-500">Client Total</div>
           </div>
@@ -144,11 +144,11 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
 
       {/* Travel Items */}
       <div className="bg-white rounded-lg border border-gray-200 p-6">
-        <h4 className="font-semibold text-gray-900 mb-4">Travel Items ({currentQuote.items.length})</h4>
-        
-        {currentQuote.items.length > 0 ? (
+        <h4 className="font-semibold text-gray-900 mb-4">Travel Items ({quote.items.length})</h4>
+
+        {quote.items.length > 0 ? (
           <div className="space-y-4">
-            {currentQuote.items.map((item) => (
+            {quote.items.map((item) => (
               <div key={item.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                 <div className="flex items-center space-x-3">
                   <div className="text-blue-600">
@@ -184,7 +184,7 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               <div className="font-semibold text-lg text-gray-900">Total:</div>
               <div className="font-bold text-xl text-blue-600">
-                {formatCurrency(currentQuote.totalCost)}
+                {formatCurrency(quote.totalCost)}
               </div>
             </div>
           </div>

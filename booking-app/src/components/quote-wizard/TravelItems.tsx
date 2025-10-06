@@ -98,18 +98,18 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
     
     // Use viewport height as primary constraint
     const viewportBasedHeight = viewportHeight * viewportPercentage;
-    
+
     // Item density adjustment (minimal impact)
-    const itemCount = currentQuote.items.length;
+    const itemCount = quote.items.length;
     const itemAdjustment = Math.min(itemCount * 15, 100); // Max 100px adjustment
-    
+
     const calculatedHeight = Math.min(
       maxHeight,
       Math.max(baseHeight, viewportBasedHeight + itemAdjustment)
     );
-    
+
     return Math.floor(calculatedHeight);
-  }, [currentQuote.items.length]);
+  }, [quote.items.length]);
 
   // Detect overlapping events for smart positioning
   const detectOverlappingEvents = useCallback((events: CalendarEvent[]) => {
@@ -210,7 +210,7 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
 
   // Handle event selection (clicking existing event)
   const handleSelectEvent = useCallback((event: CalendarEvent, e: React.SyntheticEvent) => {
-    const item = currentQuote.items.find(item => item.id === event.id);
+    const item = quote.items.find(item => item.id === event.id);
     if (!item) return;
 
     // Get click position for popover - use the actual mouse event if available
@@ -222,11 +222,11 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
 
     setQuickEditItem(item);
     setQuickEditPosition(position);
-  }, [currentQuote.items]);
+  }, [quote.items]);
 
   // Handle event drag and drop with debouncing for better performance
   const handleEventDrop = useCallback(({ event, start, end }: { event: CalendarEvent; start: Date; end: Date }) => {
-    const item = currentQuote.items.find(item => item.id === event.id);
+    const item = quote.items.find(item => item.id === event.id);
     if (item) {
       // Preserve the original time when moving dates
       const originalStart = new Date(item.startDate);
@@ -466,7 +466,7 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
 
   // Enhanced event component with overlap indicator (memoized for performance)
   const EventComponent = memo<{ event: CalendarEvent }>(function EventComponent({ event }) {
-    const item = currentQuote.items.find(item => item.id === event.id);
+    const item = quote.items.find(item => item.id === event.id);
     if (!item) return <div>{event.title}</div>;
     
     const overlaps = detectOverlappingEvents(events);
@@ -536,7 +536,7 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
 
       {/* Filter Controls */}
       <FilterControls
-        items={currentQuote.items}
+        items={quote.items}
         onFilterChange={setFilteredItems}
         className="mb-4"
       />
@@ -629,7 +629,7 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
                 showMultiDayTimes
                 className="bg-white rounded-lg"
                 tooltipAccessor={(event: CalendarEvent) => {
-                  const item = currentQuote.items.find(item => item.id === event.id);
+                  const item = quote.items.find(item => item.id === event.id);
                   if (!item) return event.title;
                   return `${event.title}\n${formatCurrency(item.price * item.quantity)}\nClick to edit • Drag to move`;
                 }}
@@ -656,21 +656,21 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
       </div>
 
       {/* Floating Summary Bar */}
-      {currentQuote.items.length > 0 && (
+      {quote.items.length > 0 && (
         <div className="fixed bottom-4 left-4 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-40">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-1 rounded-full">
-                {currentQuote.items.length} item{currentQuote.items.length !== 1 ? 's' : ''}
+                {quote.items.length} item{quote.items.length !== 1 ? 's' : ''}
               </div>
               <span className="text-gray-600 text-sm">added to quote</span>
             </div>
             <div className="flex items-center space-x-3">
               <div className="text-right space-y-1">
                 <div className="flex items-center justify-end space-x-3 text-xs text-gray-500">
-                  <span>Cost: {formatCurrency(currentQuote.items.reduce((sum, item) => sum + (item.supplierCost || item.price * 0.80), 0))}</span>
+                  <span>Cost: {formatCurrency(quote.items.reduce((sum, item) => sum + (item.supplierCost || item.price * 0.80), 0))}</span>
                   <span className="text-green-600">
-                    +Markup: {formatCurrency(currentQuote.items.reduce((sum, item) => {
+                    +Markup: {formatCurrency(quote.items.reduce((sum, item) => {
                       const supplierCost = item.supplierCost || item.price * 0.80;
                       return sum + (item.price - supplierCost);
                     }, 0))}
@@ -678,7 +678,7 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
                 </div>
                 <div className="text-sm text-gray-600">Client Total</div>
                 <div className="text-lg font-bold text-gray-900">
-                  {formatCurrency(currentQuote.totalCost)}
+                  {formatCurrency(quote.totalCost)}
                 </div>
               </div>
               <Button onClick={onComplete} className="min-w-[140px]">
@@ -690,7 +690,7 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
       )}
 
       {/* Bottom padding to prevent content overlap */}
-      {currentQuote.items.length > 0 && <div className="h-20" />}
+      {quote.items.length > 0 && <div className="h-20" />}
 
       {/* Flight Builder Modal */}
       {showFlightBuilder && (
