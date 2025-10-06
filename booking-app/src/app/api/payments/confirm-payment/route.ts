@@ -210,10 +210,6 @@ export async function POST(request: NextRequest) {
 
     console.log('✅ [Confirm Payment] Payment confirmed successfully');
 
-    // Safely extract receipt URL
-    const receiptUrl = typeof paymentIntent.latest_charge === 'object' ? paymentIntent.latest_charge?.receipt_url || null : null;
-    console.log('📧 [Confirm Payment] Receipt URL:', receiptUrl || 'Not available');
-
     return NextResponse.json({
       success: true,
       paymentId,
