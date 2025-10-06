@@ -88,6 +88,9 @@ export function useQuoteMutations() {
 
   const addItemToQuote = useMutation({
     mutationFn: async ({ quoteId, item }: { quoteId: string; item: Omit<TravelItem, 'id'> }) => {
+      console.log('[addItemToQuote] START - quoteId:', quoteId);
+      console.log('[addItemToQuote] - item to add:', item);
+
       // Fetch current quote to get items
       const { data: quote, error: fetchError } = await supabase
         .from('quotes')
@@ -95,11 +98,18 @@ export function useQuoteMutations() {
         .eq('id', quoteId)
         .single();
 
-      if (fetchError) throw fetchError;
+      if (fetchError) {
+        console.error('[addItemToQuote] Fetch error:', fetchError);
+        throw fetchError;
+      }
 
       const items = quote.items || [];
       const newItem = { ...item, id: crypto.randomUUID() };
       const updatedItems = [...items, newItem];
+
+      console.log('[addItemToQuote] - Current items from DB:', items);
+      console.log('[addItemToQuote] - New item with ID:', newItem);
+      console.log('[addItemToQuote] - Updated items array:', updatedItems);
 
       // Update quote with new items array
       const { error } = await supabase
@@ -107,11 +117,20 @@ export function useQuoteMutations() {
         .update({ items: updatedItems })
         .eq('id', quoteId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('[addItemToQuote] Update error:', error);
+        throw error;
+      }
+
+      console.log('[addItemToQuote] ✓ SUCCESS - Item added to database');
       return newItem.id;
     },
     onSuccess: () => {
+      console.log('[addItemToQuote] onSuccess - Invalidating queries');
       queryClient.invalidateQueries({ queryKey: ['quotes', user?.id] });
+    },
+    onError: (error) => {
+      console.error('[addItemToQuote] onError - Mutation failed:', error);
     },
   });
 

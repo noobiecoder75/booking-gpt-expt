@@ -168,6 +168,11 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
         // Fallback to local state for new quotes before first save
         const liveQuote = existingQuote || currentQuote;
 
+        console.log('[QuoteWizard] Items step rendering');
+        console.log('[QuoteWizard] - existingQuote:', existingQuote);
+        console.log('[QuoteWizard] - currentQuote:', currentQuote);
+        console.log('[QuoteWizard] - liveQuote (used):', liveQuote);
+
         if (!liveQuote?.id) {
           return (
             <div className="text-center py-8">

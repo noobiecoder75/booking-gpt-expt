@@ -313,10 +313,17 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
 
   // Add new travel item
   const handleAddItem = (itemData: Omit<TravelItem, 'id'>) => {
+    console.log('[TravelItems] handleAddItem called');
+    console.log('[TravelItems] - quote object:', quote);
+    console.log('[TravelItems] - quote.id:', quote.id);
+    console.log('[TravelItems] - item data:', itemData);
+
     addItemToQuote.mutate({
       quoteId: quote.id,
       item: itemData,
     });
+
+    console.log('[TravelItems] - addItemToQuote.mutate called');
   };
 
   // Handle quick edit save
