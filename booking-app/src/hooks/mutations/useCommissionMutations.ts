@@ -119,6 +119,46 @@ export function useCommissionMutations() {
     },
   });
 
+  const approve = useMutation({
+    mutationFn: async (commissionId: string) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('commissions')
+        .update({
+          status: 'approved',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', commissionId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['commissions', user?.id] });
+    },
+  });
+
+  const bulkApprove = useMutation({
+    mutationFn: async (ids: string[]) => {
+      if (!user?.id) throw new Error('User not authenticated');
+
+      const { error } = await supabase
+        .from('commissions')
+        .update({
+          status: 'approved',
+          updated_at: new Date().toISOString(),
+        })
+        .in('id', ids)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['commissions', user?.id] });
+    },
+  });
+
   const bulkMarkAsPaid = useMutation({
     mutationFn: async ({
       ids,
@@ -218,6 +258,8 @@ export function useCommissionMutations() {
     createCommission,
     updateCommission,
     deleteCommission,
+    approve,
+    bulkApprove,
     markAsPaid,
     bulkMarkAsPaid,
     generateCommissionFromBooking,

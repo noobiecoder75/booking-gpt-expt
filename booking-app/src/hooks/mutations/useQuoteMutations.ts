@@ -17,10 +17,13 @@ export function useQuoteMutations() {
         .insert({
           user_id: user.id,
           contact_id: quote.contactId,
+          quote_number: `Q-${Date.now()}-${Math.random().toString(36).substring(7)}`,
           title: quote.title,
           status: quote.status,
           total_amount: quote.totalCost,
+          currency: 'USD',
           items: quote.items || [],
+          notes: null,
         })
         .select()
         .single();

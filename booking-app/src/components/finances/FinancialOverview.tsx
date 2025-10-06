@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useInvoicesQuery } from '@/hooks/queries/useInvoicesQuery';
 import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
 import { useCommissionsQuery } from '@/hooks/queries/useCommissionsQuery';
-import { useTransactionStore } from '@/store/transaction-store';
+import { useTransactionsQuery } from '@/hooks/queries/useTransactionsQuery';
 import { DollarSign, FileText, TrendingUp, Users, TrendingDown, Percent, CreditCard } from 'lucide-react';
 import { RevenueTrendChart } from './RevenueTrendChart';
 import { ExpenseCategoryChart } from './ExpenseCategoryChart';
@@ -17,7 +17,7 @@ export function FinancialOverview() {
   const { data: invoices = [] } = useInvoicesQuery();
   const { data: expenses = [] } = useExpensesQuery();
   const { data: commissions = [] } = useCommissionsQuery();
-  const transactions = useTransactionStore((state) => state.transactions);
+  const { data: transactions = [] } = useTransactionsQuery();
 
   // Compute derived values with useMemo
   const totalRevenue = useMemo(

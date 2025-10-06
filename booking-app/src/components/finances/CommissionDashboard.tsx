@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
-import { useCommissionStore } from '@/store/commission-store-supabase';
+import { useState, useMemo } from 'react';
+import { useCommissionsQuery } from '@/hooks/queries/useCommissionsQuery';
+import { useCommissionMutations } from '@/hooks/mutations/useCommissionMutations';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,20 +27,36 @@ import { CheckCircle, Clock, DollarSign, TrendingUp } from 'lucide-react';
 export function CommissionDashboard() {
   const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'all'>('all');
 
-  const allCommissions = useCommissionStore((state) => state.commissions);
-  const totalEarned = useCommissionStore((state) => state.getTotalCommissionsEarned());
-  const totalPaid = useCommissionStore((state) => state.getTotalCommissionsPaid());
-  const totalPending = useCommissionStore((state) => state.getTotalCommissionsPending());
+  const { data: allCommissions = [] } = useCommissionsQuery();
+  const { approve, markAsPaid } = useCommissionMutations();
+
+  const totalEarned = useMemo(() => {
+    return allCommissions.reduce((sum, com) => sum + com.commissionAmount, 0);
+  }, [allCommissions]);
+
+  const totalPaid = useMemo(() => {
+    return allCommissions
+      .filter(com => com.status === 'paid')
+      .reduce((sum, com) => sum + com.commissionAmount, 0);
+  }, [allCommissions]);
+
+  const totalPending = useMemo(() => {
+    return allCommissions
+      .filter(com => com.status === 'pending')
+      .reduce((sum, com) => sum + com.commissionAmount, 0);
+  }, [allCommissions]);
 
   // Filter commissions
-  let filteredCommissions = statusFilter === 'all'
-    ? allCommissions
-    : allCommissions.filter((com) => com.status === statusFilter);
+  const filteredCommissions = useMemo(() => {
+    let filtered = statusFilter === 'all'
+      ? allCommissions
+      : allCommissions.filter((com) => com.status === statusFilter);
 
-  // Sort by date (newest first)
-  filteredCommissions = [...filteredCommissions].sort(
-    (a, b) => new Date(b.earnedDate).getTime() - new Date(a.earnedDate).getTime()
-  );
+    // Sort by date (newest first)
+    return [...filtered].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [allCommissions, statusFilter]);
 
   const getStatusBadge = (status: CommissionStatus) => {
     const variants: Record<CommissionStatus, string> = {
@@ -57,11 +74,14 @@ export function CommissionDashboard() {
   };
 
   const handleApprove = (commissionId: string) => {
-    useCommissionStore.getState().approveCommission(commissionId);
+    approve.mutate(commissionId);
   };
 
   const handleMarkAsPaid = (commissionId: string) => {
-    useCommissionStore.getState().markCommissionAsPaid(commissionId, 'bank_transfer');
+    markAsPaid.mutate({
+      id: commissionId,
+      paymentMethod: 'bank_transfer'
+    });
   };
 
   return (

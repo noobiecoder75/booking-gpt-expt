@@ -1,6 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripeInstance, formatAmountForStripe, calculateRefundAmount } from '@/lib/stripe/config';
 import { RefundCalculation } from '@/types/payment';
+import { createClient } from '@supabase/supabase-js';
+
+// Helper to get Supabase client for API routes
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,27 +28,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Refactor to use direct Supabase queries instead of stores
-    // const paymentStore = usePaymentStore.getState();
-    // const quoteStore = useQuoteStore.getState();
+    const supabase = getSupabaseClient();
 
-    // const payment = paymentStore.getPaymentById(paymentId);
-    // const quote = quoteStore.quotes.find((q) => q.id === quoteId);
+    // Fetch payment
+    const { data: payment, error: paymentError } = await supabase
+      .from('payments')
+      .select('*')
+      .eq('id', paymentId)
+      .single();
 
-    // if (!payment) {
-    //   return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
-    // }
+    if (paymentError || !payment) {
+      return NextResponse.json({ error: 'Payment not found' }, { status: 404 });
+    }
 
-    // if (!quote) {
-    //   return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
-    // }
+    // Fetch quote with items
+    const { data: quote, error: quoteError } = await supabase
+      .from('quotes')
+      .select('*')
+      .eq('id', quoteId)
+      .single();
 
-    // Temporarily return error during migration
-    console.warn('Refund API temporarily disabled during migration to TanStack Query');
-    return NextResponse.json(
-      { error: 'Refund functionality temporarily disabled during system upgrade' },
-      { status: 503 }
-    );
+    if (quoteError || !quote) {
+      return NextResponse.json({ error: 'Quote not found' }, { status: 404 });
+    }
 
     // Calculate refund amount based on cancellation policy
     const refundCalculation = calculateRefundForQuote(quote);
@@ -53,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     // Process refund via Stripe
     const refund = await stripe.refunds.create({
-      payment_intent: payment.stripePaymentIntentId,
+      payment_intent: payment.stripe_payment_intent_id,
       amount: formatAmountForStripe(refundCalculation.refundAmount),
       reason: 'requested_by_customer',
       metadata: {
@@ -66,17 +83,20 @@ export async function POST(request: NextRequest) {
     });
 
     // Update payment record
-    paymentStore.updatePayment(paymentId, {
-      status: 'refunded',
-      refundedAt: new Date().toISOString(),
-      notes: `Refunded: ${refundCalculation.refundPercentage}% (Service fee: $${refundCalculation.serviceFee.toFixed(2)}) - ${reason || 'Customer cancellation'}`,
-    });
+    await supabase
+      .from('payments')
+      .update({
+        status: 'refunded',
+      })
+      .eq('id', paymentId);
 
     // Update quote status
-    quoteStore.updateQuote(quoteId, {
-      status: 'rejected',
-      paymentStatus: 'refunded',
-    });
+    await supabase
+      .from('quotes')
+      .update({
+        status: 'cancelled',
+      })
+      .eq('id', quoteId);
 
     // Clawback agent commission if applicable
     if (refundCalculation.shouldClawbackCommission) {
@@ -200,29 +220,32 @@ function calculateRefundForQuote(quote: any): RefundCalculation {
  * Clawback agent commission on refund
  */
 async function clawbackAgentCommission(quoteId: string, clawbackAmount: number) {
-  const commissionStore = useCommissionStore.getState();
-  const commissions = commissionStore.commissions.filter((c) => c.quoteId === quoteId);
+  const supabase = getSupabaseClient();
+
+  // Find commissions for this quote
+  const { data: commissions, error } = await supabase
+    .from('commissions')
+    .select('*')
+    .eq('quote_id', quoteId);
+
+  if (error || !commissions) {
+    console.error('Failed to fetch commissions for clawback:', error);
+    return;
+  }
 
   for (const commission of commissions) {
     if (commission.status === 'paid') {
-      // Create negative commission entry for clawback
-      commissionStore.createCommission({
-        agentId: commission.agentId,
-        agentName: commission.agentName,
-        bookingId: commission.bookingId,
-        quoteId: commission.quoteId,
-        customerId: commission.customerId,
-        customerName: commission.customerName,
-        bookingAmount: commission.bookingAmount,
-        commissionRate: commission.commissionRate,
-        commissionAmount: -commission.commissionAmount, // Negative amount
-        status: 'pending',
-        earnedDate: new Date().toISOString(),
-        notes: `Clawback due to refund on quote ${quoteId}`,
-      });
-    } else if (commission.status === 'pending' || commission.status === 'approved') {
-      // If not yet paid, mark as disputed/cancelled
-      commissionStore.updateCommissionStatus(commission.id, 'disputed');
+      // Mark as clawed back
+      await supabase
+        .from('commissions')
+        .update({ status: 'clawed_back' })
+        .eq('id', commission.id);
+    } else if (commission.status === 'pending' || commission.status === 'released') {
+      // Mark as clawed back if not yet paid
+      await supabase
+        .from('commissions')
+        .update({ status: 'clawed_back' })
+        .eq('id', commission.id);
     }
   }
 

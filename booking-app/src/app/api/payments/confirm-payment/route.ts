@@ -4,6 +4,21 @@ import { PaymentType } from '@/types/payment';
 import { processHybridBooking } from '@/lib/booking/processor';
 import { TravelQuote, Payment } from '@/types';
 import { RateSource } from '@/types/rate';
+import { createClient } from '@supabase/supabase-js';
+
+// Helper to get Supabase client for API routes
+function getSupabaseClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false
+      }
+    }
+  );
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,81 +72,98 @@ export async function POST(request: NextRequest) {
       currency: paymentIntent.currency
     });
 
-    // Record payment in payment store
-    const { usePaymentStore } = await import('@/store/payment-store');
+    // Record payment in database
+    const supabase = getSupabaseClient();
     const stripeFee = calculateStripeFee(paymentAmount);
+    const receiptUrl = typeof paymentIntent.latest_charge === 'object' ? paymentIntent.latest_charge?.receipt_url || undefined : undefined;
 
-    const paymentId = usePaymentStore.getState().createPayment({
-      quoteId,
-      type: paymentType,
-      amount: paymentAmount,
-      currency: paymentIntent.currency,
-      status: 'completed',
-      stripePaymentIntentId: paymentIntentId,
-      stripeCustomerId: paymentIntent.customer as string | undefined,
-      paymentMethod: 'credit_card',
-      processingFee: stripeFee,
-      createdAt: new Date().toISOString(),
-      paidAt: new Date().toISOString(),
-      receiptUrl: typeof paymentIntent.latest_charge === 'object' ? paymentIntent.latest_charge?.receipt_url || undefined : undefined,
-    });
+    const { data: payment, error: paymentError } = await supabase
+      .from('payments')
+      .insert({
+        quote_id: quoteId,
+        amount: paymentAmount,
+        currency: paymentIntent.currency,
+        type: paymentType,
+        status: 'succeeded',
+        stripe_payment_intent_id: paymentIntentId,
+        stripe_customer_id: paymentIntent.customer as string | undefined,
+        payment_method: 'credit_card',
+        paid_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (paymentError) throw paymentError;
+    const paymentId = payment.id;
 
     console.log('💾 [Confirm Payment] Payment record created:', paymentId);
 
     // Record payment received transaction
-    const { useTransactionStore } = await import('@/store/transaction-store');
-    const paymentTransactionId = useTransactionStore.getState().createTransaction({
-      type: 'payment_received',
-      status: 'completed',
-      amount: paymentAmount,
-      currency: paymentIntent.currency,
-      quoteId,
-      paymentId,
-      customerId: quote.contactId,
-      description: `Payment received: ${paymentType === 'full' ? 'Full payment' : 'Deposit (30%)'} for quote ${quoteId}`,
-      metadata: {
-        paymentType,
-        stripePaymentIntentId: paymentIntentId,
-        processingFee: stripeFee,
-      },
-    });
+    // TODO: Refactor to use direct Supabase query instead of store
+    // const { useTransactionStore } = await import('@/store/transaction-store');
+    // const paymentTransactionId = useTransactionStore.getState().createTransaction({
+    //   type: 'payment_received',
+    //   status: 'completed',
+    //   amount: paymentAmount,
+    //   currency: paymentIntent.currency,
+    //   quoteId,
+    //   paymentId,
+    //   customerId: quote.contactId,
+    //   description: `Payment received: ${paymentType === 'full' ? 'Full payment' : 'Deposit (30%)'} for quote ${quoteId}`,
+    //   metadata: {
+    //     paymentType,
+    //     stripePaymentIntentId: paymentIntentId,
+    //     processingFee: stripeFee,
+    //   },
+    // });
 
-    console.log('📝 [Confirm Payment] Payment transaction recorded:', paymentTransactionId);
+    const paymentTransactionId = `TXN-${Date.now()}`; // Temporary placeholder
+    console.log('📝 [Confirm Payment] Payment transaction recording disabled during migration');
 
     // Record Stripe processing fee as expense
-    const { useExpenseStore } = await import('@/store/expense-store');
-    const expenseId = useExpenseStore.getState().createExpense({
-      category: 'technology',
-      subcategory: 'payment_processing',
-      description: `Stripe processing fee for payment ${paymentId}`,
-      amount: stripeFee,
-      currency: paymentIntent.currency,
-      vendor: 'Stripe',
-      date: new Date().toISOString().split('T')[0],
-      paymentMethod: 'auto_deducted',
-      receiptUrl: typeof paymentIntent.latest_charge === 'object' ? paymentIntent.latest_charge?.receipt_url || undefined : undefined,
-    });
+    const { data: expense, error: expenseError } = await supabase
+      .from('expenses')
+      .insert({
+        user_id: quote.userId || quote.agentId, // Get from quote
+        category: 'technology',
+        subcategory: 'payment_processing',
+        description: `Stripe processing fee for payment ${paymentId}`,
+        amount: stripeFee,
+        currency: paymentIntent.currency,
+        vendor: 'Stripe',
+        date: new Date().toISOString().split('T')[0],
+        payment_method: 'auto_deducted',
+        receipt_url: receiptUrl,
+        status: 'approved',
+      })
+      .select()
+      .single();
 
-    console.log('💸 [Confirm Payment] Stripe fee recorded as expense:', expenseId);
+    if (expenseError) {
+      console.error('Failed to create expense:', expenseError);
+    } else {
+      console.log('💸 [Confirm Payment] Stripe fee recorded as expense:', expense.id);
+    }
 
     // Record expense transaction
-    const expenseTransactionId = useTransactionStore.getState().createTransaction({
-      type: 'expense_recorded',
-      status: 'completed',
-      amount: stripeFee,
-      currency: paymentIntent.currency,
-      quoteId,
-      paymentId,
-      expenseId,
-      description: `Stripe processing fee for payment ${paymentId}`,
-      relatedTransactions: [paymentTransactionId],
-      metadata: {
-        vendor: 'Stripe',
-        category: 'technology',
-      },
-    });
+    // TODO: Refactor to use direct Supabase query instead of store
+    // const expenseTransactionId = useTransactionStore.getState().createTransaction({
+    //   type: 'expense_recorded',
+    //   status: 'completed',
+    //   amount: stripeFee,
+    //   currency: paymentIntent.currency,
+    //   quoteId,
+    //   paymentId,
+    //   expenseId,
+    //   description: `Stripe processing fee for payment ${paymentId}`,
+    //   relatedTransactions: [paymentTransactionId],
+    //   metadata: {
+    //     vendor: 'Stripe',
+    //     category: 'technology',
+    //   },
+    // });
 
-    console.log('📝 [Confirm Payment] Expense transaction recorded:', expenseTransactionId);
+    console.log('📝 [Confirm Payment] Expense transaction recording disabled during migration');
 
     // Generate invoice from quote
     const invoiceId = await generateInvoiceForPayment(quote, quoteId, paymentId, paymentType, paymentTransactionId);
@@ -311,125 +343,46 @@ async function generateInvoiceForPayment(
   paymentTransactionId: string
 ): Promise<string | null> {
   try {
-    const { useInvoiceStore } = await import('@/store/invoice-store');
-    const { useContactStore } = await import('@/store/contact-store');
+    const supabase = getSupabaseClient();
 
     // Get customer details from contact
-    const contact = useContactStore.getState().getContactById(quote.contactId);
+    const { data: contact } = await supabase
+      .from('contacts')
+      .select('*')
+      .eq('id', quote.contactId)
+      .single();
 
-    const customerData = {
-      customerId: quote.contactId,
-      customerName: contact?.name || contact ? `${contact.firstName} ${contact.lastName}` : 'Unknown Customer',
-      customerEmail: contact?.email || '',
-      customerAddress: contact?.address,
-    };
+    const subtotal = quote.totalCost;
+    const total = subtotal;
+    const paidAmount = paymentType === 'full' ? total : total * 0.3;
+    const remainingAmount = total - paidAmount;
 
-    // Generate invoice from quote
-    const invoiceId = useInvoiceStore.getState().generateInvoiceFromQuote(
-      quoteId,
-      customerData,
-      'Payment due upon booking',
-      0 // Due immediately since payment already made
-    );
+    // Create invoice
+    const { data: invoice, error: invoiceError } = await supabase
+      .from('invoices')
+      .insert({
+        quote_id: quoteId,
+        user_id: quote.userId || quote.agentId,
+        amount: total,
+        currency: 'USD',
+        status: paymentType === 'full' ? 'paid' : 'sent',
+        due_date: new Date().toISOString().split('T')[0],
+      })
+      .select()
+      .single();
 
-    if (!invoiceId) {
-      console.error('❌ [Invoice] Failed to generate invoice');
-      return null;
-    }
+    if (invoiceError) throw invoiceError;
+    const invoiceId = invoice.id;
 
-    // Update invoice with actual quote items
-    const invoice = useInvoiceStore.getState().getInvoiceById(invoiceId);
-    if (!invoice) {
-      console.error('❌ [Invoice] Invoice not found after generation');
-      return null;
-    }
+    console.log('✅ [Invoice] Invoice created:', invoiceId);
 
-    {
-      const invoiceItems = quote.items.map((item) => ({
-        id: crypto.randomUUID(),
-        description: `${item.type.toUpperCase()}: ${item.name || item.details?.hotelName || item.details?.activityName || 'Travel Service'}`,
-        quantity: 1,
-        unitPrice: item.price,
-        total: item.price,
-        taxRate: 0,
-        taxAmount: 0,
-      }));
+    // Update payment with invoice ID
+    await supabase
+      .from('payments')
+      .update({ invoice_id: invoiceId })
+      .eq('id', paymentId);
 
-      const subtotal = quote.totalCost;
-      const taxRate = 0; // Tax can be configured later
-      const taxAmount = 0;
-      const total = subtotal;
-      const paidAmount = paymentType === 'full' ? total : total * 0.3;
-      const remainingAmount = total - paidAmount;
-
-      useInvoiceStore.getState().updateInvoice(invoiceId, {
-        items: invoiceItems,
-        subtotal,
-        taxRate,
-        taxAmount,
-        total,
-        paidAmount,
-        remainingAmount,
-        status: paymentType === 'full' ? 'paid' : 'partial',
-      });
-
-      // Link payment to invoice
-      useInvoiceStore.getState().addPayment(invoiceId, {
-        amount: paidAmount,
-        method: 'credit_card',
-        status: 'completed',
-        processedDate: new Date().toISOString(),
-        transactionId: paymentId,
-      } as Omit<Payment, 'id'>);
-    }
-
-    // Update payment record with invoiceId
-    const { usePaymentStore } = await import('@/store/payment-store');
-    usePaymentStore.getState().updatePayment(paymentId, { invoiceId });
-
-    // Record invoice creation transaction
-    const { useTransactionStore } = await import('@/store/transaction-store');
-    const invoiceTransactionId = useTransactionStore.getState().createTransaction({
-      type: 'invoice_created',
-      status: 'completed',
-      amount: invoice.total,
-      currency: 'usd',
-      quoteId,
-      invoiceId,
-      paymentId,
-      customerId: quote.contactId,
-      description: `Invoice ${invoice.invoiceNumber} created for quote ${quoteId}`,
-      relatedTransactions: [paymentTransactionId],
-      metadata: {
-        invoiceNumber: invoice.invoiceNumber,
-        paymentType,
-        status: invoice.status,
-      },
-    });
-
-    console.log('📝 [Invoice] Invoice transaction recorded:', invoiceTransactionId);
-
-    // Record invoice paid/partial payment transaction
-    const invoicePaidTransactionId = useTransactionStore.getState().createTransaction({
-      type: 'invoice_paid',
-      status: 'completed',
-      amount: paymentType === 'full' ? invoice.total : invoice.total * 0.3,
-      currency: 'usd',
-      quoteId,
-      invoiceId,
-      paymentId,
-      customerId: quote.contactId,
-      description: `Invoice ${invoice.invoiceNumber} ${paymentType === 'full' ? 'paid in full' : 'partially paid (30% deposit)'}`,
-      relatedTransactions: [paymentTransactionId, invoiceTransactionId],
-      metadata: {
-        invoiceNumber: invoice.invoiceNumber,
-        paymentType,
-        paidAmount: invoice.paidAmount,
-        remainingAmount: invoice.remainingAmount,
-      },
-    });
-
-    console.log('📝 [Invoice] Invoice payment transaction recorded:', invoicePaidTransactionId);
+    console.log('📝 [Invoice] Invoice and payment linked successfully');
 
     return invoiceId;
   } catch (error) {
@@ -449,57 +402,39 @@ async function generateCommissionForBooking(
   paymentTransactionId: string
 ): Promise<string | null> {
   try {
-    const { useCommissionStore } = await import('@/store/commission-store');
-    const { useContactStore } = await import('@/store/contact-store');
+    const supabase = getSupabaseClient();
 
     // Get customer details
-    const contact = useContactStore.getState().getContactById(quote.contactId);
+    const { data: contact } = await supabase
+      .from('contacts')
+      .select('*')
+      .eq('id', quote.contactId)
+      .single();
 
-    // Generate commission (uses default agent for now)
-    const commissionId = useCommissionStore.getState().generateCommissionFromBooking({
-      agentId: 'agent-001', // TODO: Get from quote or user session
-      agentName: 'Default Agent', // TODO: Get from agent data
-      bookingId: paymentId, // Use paymentId as booking reference
-      quoteId,
-      invoiceId: invoiceId || undefined, // Link to invoice
-      customerId: quote.contactId,
-      customerName: contact?.name || contact ? `${contact.firstName} ${contact.lastName}` : 'Unknown Customer',
-      bookingAmount: quote.totalCost,
-      bookingType: quote.items[0]?.type || 'hotel', // Use first item type
-      quoteCommissionRate: quote.commissionRate, // If quote has custom rate
-    });
+    // Calculate commission (default 10% or use quote's custom rate)
+    const commissionRate = quote.commissionRate || 10;
+    const commissionAmount = (quote.totalCost * commissionRate) / 100;
 
-    console.log('✅ [Commission] Generated commission:', commissionId);
+    // Create commission record
+    const { data: commission, error: commissionError } = await supabase
+      .from('commissions')
+      .insert({
+        user_id: quote.userId || quote.agentId,
+        booking_id: paymentId, // Use paymentId as booking reference
+        quote_id: quoteId,
+        amount: commissionAmount,
+        currency: 'USD',
+        status: 'pending',
+        type: 'agent_markup',
+      })
+      .select()
+      .single();
 
-    // Record commission creation transaction
-    const commission = useCommissionStore.getState().getCommissionById(commissionId);
-    if (commission) {
-      const { useTransactionStore } = await import('@/store/transaction-store');
-      const commissionTransactionId = useTransactionStore.getState().createTransaction({
-        type: 'commission_created',
-        status: 'completed',
-        amount: commission.commissionAmount,
-        currency: 'usd',
-        quoteId,
-        invoiceId: invoiceId || undefined,
-        paymentId,
-        commissionId,
-        agentId: commission.agentId,
-        customerId: quote.contactId,
-        description: `Commission created for ${commission.agentName}: ${commission.commissionRate}% on $${commission.bookingAmount}`,
-        relatedTransactions: [paymentTransactionId],
-        metadata: {
-          agentName: commission.agentName,
-          commissionRate: commission.commissionRate,
-          bookingAmount: commission.bookingAmount,
-          status: commission.status,
-        },
-      });
+    if (commissionError) throw commissionError;
 
-      console.log('📝 [Commission] Commission transaction recorded:', commissionTransactionId);
-    }
+    console.log('✅ [Commission] Generated commission:', commission.id);
 
-    return commissionId;
+    return commission.id;
   } catch (error) {
     console.error('❌ [Commission] Generation failed:', error);
     return null;
@@ -517,10 +452,7 @@ async function createSupplierExpenses(
   paymentTransactionId: string
 ) {
   try {
-    const { useExpenseStore } = await import('@/store/expense-store');
-    const { useContactStore } = await import('@/store/contact-store');
-    const { useTransactionStore } = await import('@/store/transaction-store');
-
+    const supabase = getSupabaseClient();
     let expensesCreated = 0;
 
     for (const item of quote.items) {
@@ -534,54 +466,57 @@ async function createSupplierExpenses(
       const supplierSource = item.supplierSource || 'offline_agent';
 
       // Find or create supplier contact
-      const contactStore = useContactStore.getState();
-      let supplierContact = contactStore.findSupplierByName(supplier);
+      const { data: existingSupplier } = await supabase
+        .from('contacts')
+        .select('*')
+        .eq('name', supplier)
+        .eq('user_id', quote.userId || quote.agentId)
+        .single();
 
-      if (!supplierContact) {
+      let supplierId = existingSupplier?.id;
+
+      if (!existingSupplier) {
         console.log(`📝 [Supplier Expense] Creating new supplier: ${supplier}`);
-        const supplierId = contactStore.createSupplierFromRate(supplier, supplierSource);
-        supplierContact = contactStore.getContactById(supplierId);
+        const { data: newSupplier } = await supabase
+          .from('contacts')
+          .insert({
+            user_id: quote.userId || quote.agentId,
+            name: supplier,
+            company: supplier,
+            tags: ['supplier'],
+          })
+          .select()
+          .single();
+
+        supplierId = newSupplier?.id;
       }
 
       // Create expense record
-      const expenseId = useExpenseStore.getState().createExpense({
-        category: 'supplier_payment',
-        subcategory: item.type, // hotel, activity, transfer, etc.
-        description: `Supplier cost for ${item.type}: ${item.name}`,
-        amount: item.supplierCost,
-        currency: 'usd',
-        vendor: supplier,
-        supplierId: supplierContact?.id,
-        date: item.startDate?.split('T')[0] || new Date().toISOString().split('T')[0],
-        status: 'pending', // Awaiting actual payment to supplier
-        bookingId: quoteId,
-        notes: `Auto-generated from booking ${paymentId}. Source: ${supplierSource}`,
-      });
+      const { data: expense, error: expenseError } = await supabase
+        .from('expenses')
+        .insert({
+          user_id: quote.userId || quote.agentId,
+          category: 'supplier_payment',
+          subcategory: item.type,
+          description: `Supplier cost for ${item.type}: ${item.name}`,
+          amount: item.supplierCost,
+          currency: 'USD',
+          vendor: supplier,
+          supplier_id: supplierId,
+          date: item.startDate?.split('T')[0] || new Date().toISOString().split('T')[0],
+          status: 'pending',
+          booking_id: quoteId,
+          notes: `Auto-generated from booking ${paymentId}. Source: ${supplierSource}`,
+        })
+        .select()
+        .single();
 
-      console.log(`✅ [Supplier Expense] Created expense ${expenseId} for ${supplier}: $${item.supplierCost}`);
+      if (expenseError) {
+        console.error(`Failed to create expense for ${supplier}:`, expenseError);
+        continue;
+      }
 
-      // Create transaction record
-      const transactionId = useTransactionStore.getState().createTransaction({
-        type: 'supplier_payment',
-        status: 'pending',
-        amount: item.supplierCost,
-        currency: 'usd',
-        quoteId,
-        paymentId,
-        expenseId,
-        description: `Supplier payment due for ${item.name}`,
-        relatedTransactions: [paymentTransactionId],
-        metadata: {
-          itemType: item.type,
-          itemName: item.name,
-          supplier,
-          source: supplierSource as RateSource,
-          dueDate: item.startDate,
-          supplierId: supplierContact?.id,
-        },
-      });
-
-      console.log(`📝 [Supplier Expense] Transaction recorded: ${transactionId}`);
+      console.log(`✅ [Supplier Expense] Created expense ${expense.id} for ${supplier}: $${item.supplierCost}`);
       expensesCreated++;
     }
 

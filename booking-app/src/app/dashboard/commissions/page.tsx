@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useCommissionStore } from '@/store/commission-store-supabase';
+import { useCommissionsQuery } from '@/hooks/queries/useCommissionsQuery';
+import { useCommissionMutations } from '@/hooks/mutations/useCommissionMutations';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
 import {
@@ -27,20 +28,8 @@ import { Commission, CommissionStatus } from '@/types/financial';
 
 export default function CommissionsPage() {
   const { user } = useAuthStore();
-  const {
-    commissions,
-    getCommissionsByStatus,
-    getCommissionsByAgent,
-    searchCommissions,
-    getTotalCommissionsEarned,
-    getTotalCommissionsPaid,
-    getTotalCommissionsPending,
-    getCommissionAnalytics,
-    approveCommission,
-    markCommissionAsPaid,
-    bulkApproveCommissions,
-    bulkMarkAsPaid
-  } = useCommissionStore();
+  const { data: commissions = [] } = useCommissionsQuery();
+  const { approve, bulkApprove, markAsPaid, bulkMarkAsPaid } = useCommissionMutations();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<CommissionStatus | 'all'>('all');
@@ -52,7 +41,12 @@ export default function CommissionsPage() {
     let filtered = commissions;
 
     if (searchQuery.trim()) {
-      filtered = searchCommissions(searchQuery.trim());
+      const query = searchQuery.trim().toLowerCase();
+      filtered = filtered.filter(commission =>
+        commission.agentName.toLowerCase().includes(query) ||
+        commission.customerName.toLowerCase().includes(query) ||
+        commission.bookingId.toLowerCase().includes(query)
+      );
     }
 
     if (statusFilter !== 'all') {
@@ -64,7 +58,7 @@ export default function CommissionsPage() {
     }
 
     setFilteredCommissions(filtered);
-  }, [commissions, searchQuery, statusFilter, agentFilter, searchCommissions]);
+  }, [commissions, searchQuery, statusFilter, agentFilter]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -116,31 +110,85 @@ export default function CommissionsPage() {
   };
 
   const handleBulkApprove = () => {
-    bulkApproveCommissions(selectedCommissions);
+    bulkApprove.mutate(selectedCommissions);
     setSelectedCommissions([]);
   };
 
   const handleBulkPay = () => {
-    bulkMarkAsPaid(selectedCommissions, 'bank_transfer');
+    bulkMarkAsPaid.mutate({
+      ids: selectedCommissions,
+      paymentMethod: 'bank_transfer'
+    });
     setSelectedCommissions([]);
   };
 
   // Get unique agents for filter
-  const agents = Array.from(new Set(commissions.map(c => c.agentId)))
-    .map(agentId => {
-      const commission = commissions.find(c => c.agentId === agentId);
-      return { id: agentId, name: commission?.agentName || 'Unknown' };
-    });
+  const agents = useMemo(() => {
+    return Array.from(new Set(commissions.map(c => c.agentId)))
+      .map(agentId => {
+        const commission = commissions.find(c => c.agentId === agentId);
+        return { id: agentId, name: commission?.agentName || 'Unknown' };
+      });
+  }, [commissions]);
 
   // Summary statistics
-  const totalEarned = getTotalCommissionsEarned();
-  const totalPaid = getTotalCommissionsPaid();
-  const totalPending = getTotalCommissionsPending();
-  const pendingCommissions = getCommissionsByStatus('pending').length;
-  const approvedCommissions = getCommissionsByStatus('approved').length;
+  const totalEarned = useMemo(() => {
+    return commissions.reduce((sum, c) => sum + c.commissionAmount, 0);
+  }, [commissions]);
+
+  const totalPaid = useMemo(() => {
+    return commissions
+      .filter(c => c.status === 'paid')
+      .reduce((sum, c) => sum + c.commissionAmount, 0);
+  }, [commissions]);
+
+  const totalPending = useMemo(() => {
+    return commissions
+      .filter(c => c.status === 'pending' || c.status === 'approved')
+      .reduce((sum, c) => sum + c.commissionAmount, 0);
+  }, [commissions]);
+
+  const pendingCommissions = useMemo(() => {
+    return commissions.filter(c => c.status === 'pending').length;
+  }, [commissions]);
+
+  const approvedCommissions = useMemo(() => {
+    return commissions.filter(c => c.status === 'approved').length;
+  }, [commissions]);
 
   // Commission analytics
-  const commissionAnalytics = getCommissionAnalytics();
+  const commissionAnalytics = useMemo(() => {
+    const agentMap = new Map<string, {
+      agentId: string;
+      agentName: string;
+      totalCommissions: number;
+      totalBookings: number;
+      commissionRate: number;
+      averageCommission: number;
+    }>();
+
+    commissions.forEach(commission => {
+      const existing = agentMap.get(commission.agentId) || {
+        agentId: commission.agentId,
+        agentName: commission.agentName,
+        totalCommissions: 0,
+        totalBookings: 0,
+        commissionRate: commission.commissionRate,
+        averageCommission: 0,
+      };
+
+      existing.totalCommissions += commission.commissionAmount;
+      existing.totalBookings += 1;
+      agentMap.set(commission.agentId, existing);
+    });
+
+    return Array.from(agentMap.values())
+      .map(agent => ({
+        ...agent,
+        averageCommission: agent.totalCommissions / agent.totalBookings,
+      }))
+      .sort((a, b) => b.totalCommissions - a.totalCommissions);
+  }, [commissions]);
 
   if (!user) {
     return <div>Please log in to view commissions.</div>;
@@ -410,7 +458,7 @@ export default function CommissionsPage() {
                                 <Button
                                   size="sm"
                                   variant="outline"
-                                  onClick={() => approveCommission(commission.id)}
+                                  onClick={() => approve.mutate(commission.id)}
                                 >
                                   <CheckCircle className="w-4 h-4" />
                                 </Button>
@@ -418,7 +466,10 @@ export default function CommissionsPage() {
                               {commission.status === 'approved' && (
                                 <Button
                                   size="sm"
-                                  onClick={() => markCommissionAsPaid(commission.id, 'bank_transfer')}
+                                  onClick={() => markAsPaid.mutate({
+                                    id: commission.id,
+                                    paymentMethod: 'bank_transfer'
+                                  })}
                                 >
                                   <DollarSign className="w-4 h-4" />
                                 </Button>
