@@ -125,34 +125,34 @@ export function Sidebar() {
 
   const navItems = [
     {
-      href: '/quotes',
+      href: '/dashboard/quotes',
       label: 'Dashboard',
       icon: LayoutDashboard,
-      active: pathname === '/quotes'
+      active: pathname === '/dashboard/quotes'
     },
     {
-      href: '/contacts',
+      href: '/dashboard/contacts',
       label: 'Contacts',
       icon: Users,
-      active: pathname === '/contacts'
+      active: pathname === '/dashboard/contacts'
     },
     {
-      href: '/timeline',
+      href: '/dashboard/timeline',
       label: 'Timeline',
       icon: Calendar,
-      active: pathname === '/timeline'
+      active: pathname === '/dashboard/timeline'
     },
     {
-      href: '/admin/finances',
+      href: '/dashboard/finances',
       label: 'Finances',
       icon: TrendingUp,
-      active: pathname?.startsWith('/admin/finances')
+      active: pathname?.startsWith('/dashboard/finances')
     },
     {
-      href: '/tasks',
+      href: '/dashboard/tasks',
       label: 'Tasks',
       icon: ClipboardList,
-      active: pathname?.startsWith('/tasks')
+      active: pathname?.startsWith('/dashboard/tasks')
     },
     {
       href: '/admin/rates',
@@ -178,10 +178,10 @@ export function Sidebar() {
   }, [pathname]);
 
   const createQuoteItem = {
-    href: '/quote-wizard',
+    href: '/dashboard/quote-wizard',
     label: 'Create Quote',
     icon: Plus,
-    active: pathname?.startsWith('/quote-wizard'),
+    active: pathname?.startsWith('/dashboard/quote-wizard'),
     highlight: true
   };
 
@@ -220,18 +220,17 @@ export function Sidebar() {
         <div className="p-4 border-b border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between">
             {!collapsed && (
-              <Link href="/quotes" className="flex items-center space-x-3">
+              <Link href="/dashboard/quotes" className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">BookingGPT</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full ml-2">Pro</span>
+                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">TravelFlow</span>
                 </div>
               </Link>
             )}
             {collapsed && (
-              <Link href="/quotes" className="flex justify-center">
+              <Link href="/dashboard/quotes" className="flex justify-center">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
@@ -382,13 +381,12 @@ export function Sidebar() {
           <aside className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
             {/* Header */}
             <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-              <Link href="/quotes" className="flex items-center space-x-3">
+              <Link href="/dashboard/quotes" className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">BookingGPT</span>
-                  <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full ml-2">Pro</span>
+                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">TravelFlow</span>
                 </div>
               </Link>
             </div>

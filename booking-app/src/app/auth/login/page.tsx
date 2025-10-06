@@ -38,7 +38,7 @@ export default function LoginPage() {
 
       // Get redirect destination
       const params = new URLSearchParams(window.location.search);
-      const redirectTo = params.get('redirectTo') || '/quotes';
+      const redirectTo = params.get('redirectTo') || '/dashboard/quotes';
 
       console.log('🔀 Redirecting to:', redirectTo);
 

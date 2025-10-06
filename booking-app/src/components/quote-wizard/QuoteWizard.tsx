@@ -130,7 +130,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     alert(isEditMode ? 'Quote updated successfully!' : 'Quote created successfully!');
 
     // Redirect to quotes dashboard
-    router.push('/quotes');
+    router.push('/dashboard/quotes');
   };
 
   const handleSaveAndExit = () => {
@@ -138,7 +138,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       // Save current state if we have a quote
       alert('Quote saved as draft');
     }
-    router.push('/quotes');
+    router.push('/dashboard/quotes');
   };
 
   const renderStepContent = () => {
@@ -260,7 +260,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
             <ModernButton
               variant="ghost"
-              onClick={() => router.push('/quotes')}
+              onClick={() => router.push('/dashboard/quotes')}
             >
               <X className="w-4 h-4 mr-2" />
               Cancel

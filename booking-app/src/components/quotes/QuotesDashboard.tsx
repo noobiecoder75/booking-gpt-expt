@@ -181,7 +181,7 @@ export function QuotesDashboard() {
           <h2 className="text-2xl font-bold text-gray-900 mb-2">All Quotes</h2>
           <p className="text-gray-600">Manage and track your travel quotes with advanced filtering</p>
         </div>
-        <Link href="/quote-wizard">
+        <Link href="/dashboard/quote-wizard">
           <Button size="lg" className="shadow-soft hover-lift">
             <Plus className="w-5 h-5 mr-2" />
             Create New Quote
@@ -249,7 +249,7 @@ export function QuotesDashboard() {
                 <p className="text-gray-600 mb-6 max-w-md mx-auto">
                   Start creating travel quotes for your clients. Use the quote wizard to build detailed itineraries with flights, hotels, and activities.
                 </p>
-                <Link href="/quote-wizard">
+                <Link href="/dashboard/quote-wizard">
                   <Button size="lg" className="shadow-soft hover-lift">
                     <Plus className="w-5 h-5 mr-2" />
                     Create Your First Quote

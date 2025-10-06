@@ -18,7 +18,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
       <ol className="flex items-center space-x-2 text-sm">
         <li>
           <Link
-            href="/quotes"
+            href="/dashboard/quotes"
             className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             <Home className="w-4 h-4" />
