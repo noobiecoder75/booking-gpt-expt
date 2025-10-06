@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useContactStore } from '@/store/contact-store-supabase';
-import { useQuoteStore } from '@/store/quote-store-supabase';
-import { useInvoiceStore } from '@/store/invoice-store-supabase';
+import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
+import { useContactMutations } from '@/hooks/mutations/useContactMutations';
+import { useQuotesByContactQuery } from '@/hooks/queries/useQuotesQuery';
+import { useInvoicesByCustomerQuery } from '@/hooks/queries/useInvoicesQuery';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ContactForm } from '@/components/contacts/ContactForm';
@@ -37,40 +38,41 @@ import {
 } from 'lucide-react';
 
 export default function ContactsPage() {
-  const { contacts, fetchContacts, syncStatus, addContact, updateContact, deleteContact, searchContacts } = useContactStore();
-  const { getQuotesByContact, quotes } = useQuoteStore();
-  const { getInvoicesByCustomer, invoices } = useInvoiceStore();
+  // React Query hooks
+  const { data: contacts = [], isLoading, error, refetch } = useContactsQuery();
+  const { addContact, updateContact, deleteContact } = useContactMutations();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [showContactForm, setShowContactForm] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
 
-  // Fetch contacts on mount
-  useEffect(() => {
-    console.log('[ContactsPage] Component mounted, fetching contacts');
-    fetchContacts();
-    return () => {
-      console.log('[ContactsPage] Component unmounted');
-    };
-  }, [fetchContacts]);
+  // Get quotes and invoices for selected contact
+  const { data: contactQuotes = [] } = useQuotesByContactQuery(selectedContact?.id);
+  const { data: contactInvoices = [] } = useInvoicesByCustomerQuery(selectedContact?.id);
+
+  // Filter contacts based on search query
+  const filteredContacts = useMemo(() => {
+    if (!searchQuery.trim()) return contacts;
+
+    const query = searchQuery.toLowerCase();
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(query) ||
+      contact.email.toLowerCase().includes(query) ||
+      contact.phone?.toLowerCase().includes(query) ||
+      contact.company?.toLowerCase().includes(query) ||
+      contact.tags?.some(tag => tag.toLowerCase().includes(query))
+    );
+  }, [contacts, searchQuery]);
 
   useEffect(() => {
-    console.log('[ContactsPage] Filtering contacts:', {
+    console.log('[ContactsPage] Contacts loaded:', {
       totalContacts: contacts.length,
       searchQuery,
-      syncStatus
+      filtered: filteredContacts.length
     });
-    if (searchQuery.trim()) {
-      const filtered = searchContacts(searchQuery.trim());
-      console.log('[ContactsPage] Search results:', filtered.length);
-      setFilteredContacts(filtered);
-    } else {
-      setFilteredContacts(contacts);
-    }
-  }, [contacts, searchQuery, searchContacts, syncStatus]);
+  }, [contacts.length, searchQuery, filteredContacts.length]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -80,28 +82,25 @@ export default function ContactsPage() {
   };
 
   const getCustomerValue = (contactId: string) => {
-    const customerInvoices = getInvoicesByCustomer(contactId);
     // Only count paid invoices as actual customer value
-    return customerInvoices
+    return contactInvoices
       .filter(invoice => invoice.status === 'paid')
       .reduce((total, invoice) => total + invoice.total, 0);
   };
 
   const getCustomerOutstanding = (contactId: string) => {
-    const customerInvoices = getInvoicesByCustomer(contactId);
     // Calculate outstanding amount from unpaid invoices
-    return customerInvoices
+    return contactInvoices
       .filter(invoice => invoice.status !== 'paid' && invoice.status !== 'cancelled')
       .reduce((total, invoice) => total + invoice.remainingAmount, 0);
   };
 
   const getCustomerBookings = (contactId: string) => {
-    return getQuotesByContact(contactId).filter(quote => quote.status === 'accepted').length;
+    return contactQuotes.filter(quote => quote.status === 'accepted').length;
   };
 
   const getLastBookingDate = (contactId: string) => {
-    const customerQuotes = getQuotesByContact(contactId);
-    const acceptedQuotes = customerQuotes.filter(quote => quote.status === 'accepted');
+    const acceptedQuotes = contactQuotes.filter(quote => quote.status === 'accepted');
     if (acceptedQuotes.length === 0) return null;
 
     const latest = acceptedQuotes.sort((a, b) =>
@@ -145,18 +144,16 @@ export default function ContactsPage() {
 
   // Customer 360 view component
   const Customer360View = ({ contact }: { contact: Contact }) => {
-    const customerQuotes = getQuotesByContact(contact.id);
-    const customerInvoices = getInvoicesByCustomer(contact.id);
     const totalValue = getCustomerValue(contact.id);
     const outstandingAmount = getCustomerOutstanding(contact.id);
     const totalBookings = getCustomerBookings(contact.id);
     const lastBooking = getLastBookingDate(contact.id);
     const tierInfo = getCustomerTier(totalValue);
 
-    const acceptedQuotes = customerQuotes.filter(q => q.status === 'accepted');
-    const pendingQuotes = customerQuotes.filter(q => q.status === 'sent');
-    const paidInvoices = customerInvoices.filter(i => i.status === 'paid');
-    const outstandingInvoices = customerInvoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled');
+    const acceptedQuotes = contactQuotes.filter(q => q.status === 'accepted');
+    const pendingQuotes = contactQuotes.filter(q => q.status === 'sent');
+    const paidInvoices = contactInvoices.filter(i => i.status === 'paid');
+    const outstandingInvoices = contactInvoices.filter(i => i.status !== 'paid' && i.status !== 'cancelled');
 
     return (
       <div className="space-y-6">
@@ -439,7 +436,7 @@ export default function ContactsPage() {
                 <Button
                   className="mt-4 md:mt-0"
                   onClick={handleAddContact}
-                  disabled={syncStatus === 'syncing'}
+                  disabled={isLoading}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Add Contact
@@ -500,27 +497,27 @@ export default function ContactsPage() {
               </div>
 
               {/* Loading State */}
-              {syncStatus === 'syncing' && (
+              {isLoading && (
                 <div className="flex items-center justify-center py-8 mb-6">
                   <Loader2 className="w-6 h-6 animate-spin text-blue-600 mr-2" />
-                  <span className="text-gray-600">Loading contacts...</span>
+                  <span className="text-gray-600 dark:text-gray-400">Loading contacts...</span>
                 </div>
               )}
 
               {/* Error State */}
-              {syncStatus === 'error' && (
-                <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md flex items-start">
-                  <AlertCircle className="w-5 h-5 text-red-600 mr-3 mt-0.5" />
+              {error && (
+                <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md flex items-start">
+                  <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-3 mt-0.5" />
                   <div>
-                    <h3 className="text-sm font-medium text-red-800">Failed to load contacts</h3>
-                    <p className="text-sm text-red-600 mt-1">
-                      There was an error loading your contacts. Please try again.
+                    <h3 className="text-sm font-medium text-red-800 dark:text-red-300">Failed to load contacts</h3>
+                    <p className="text-sm text-red-600 dark:text-red-400 mt-1">
+                      {error instanceof Error ? error.message : 'There was an error loading your contacts. Please try again.'}
                     </p>
                     <Button
                       variant="outline"
                       size="sm"
                       className="mt-3"
-                      onClick={() => fetchContacts()}
+                      onClick={() => refetch()}
                     >
                       Retry
                     </Button>
@@ -537,7 +534,7 @@ export default function ContactsPage() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="pl-10"
-                    disabled={syncStatus === 'syncing'}
+                    disabled={isLoading}
                   />
                 </div>
               </div>

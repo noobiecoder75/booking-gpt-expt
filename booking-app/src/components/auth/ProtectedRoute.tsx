@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { AppNav } from '@/components/navigation/AppNav';
@@ -21,18 +21,24 @@ export function ProtectedRoute({
   const router = useRouter();
   const pathname = usePathname();
   const { user, profile, loading } = useAuth();
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
+    // Prevent multiple redirects
+    if (hasRedirected.current) return;
+
     if (!loading && requireAuth && !user) {
-      // Store the attempted URL to redirect back after login
+      hasRedirected.current = true;
       const returnUrl = pathname;
-      router.push(`/auth/login?redirectTo=${encodeURIComponent(returnUrl)}`);
+      router.replace(`/auth/login?redirectTo=${encodeURIComponent(returnUrl)}`);
+      return;
     }
 
     // Check role-based access
     if (!loading && user && allowedRoles && profile) {
       if (!allowedRoles.includes(profile.role as any)) {
-        router.push('/unauthorized');
+        hasRedirected.current = true;
+        router.replace('/unauthorized');
       }
     }
   }, [user, profile, loading, requireAuth, allowedRoles, pathname, router]);

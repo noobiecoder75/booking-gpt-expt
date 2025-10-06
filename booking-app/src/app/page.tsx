@@ -20,8 +20,64 @@ import {
 } from 'lucide-react';
 
 export default function Home() {
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': 'https://travelflow.com/#organization',
+        name: 'TravelFlow',
+        url: 'https://travelflow.com',
+        logo: {
+          '@type': 'ImageObject',
+          url: 'https://travelflow.com/logo.png',
+        },
+        sameAs: [
+          'https://twitter.com/travelflow',
+          'https://www.linkedin.com/company/travelflow',
+        ],
+      },
+      {
+        '@type': 'WebSite',
+        '@id': 'https://travelflow.com/#website',
+        url: 'https://travelflow.com',
+        name: 'TravelFlow',
+        publisher: {
+          '@id': 'https://travelflow.com/#organization',
+        },
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: 'https://travelflow.com/search?q={search_term_string}',
+          'query-input': 'required name=search_term_string',
+        },
+      },
+      {
+        '@type': 'SoftwareApplication',
+        name: 'TravelFlow',
+        applicationCategory: 'BusinessApplication',
+        operatingSystem: 'Web',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+          description: '14-day free trial',
+        },
+        aggregateRating: {
+          '@type': 'AggregateRating',
+          ratingValue: '4.9',
+          ratingCount: '500',
+        },
+        description: 'AI-powered travel booking management and quote building platform for travel agencies',
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
         <div className="container mx-auto px-4">
@@ -30,21 +86,19 @@ export default function Home() {
               <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
                 <Sparkles className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-gray-100">BookingGPT</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">v4.2</span>
+              <span className="text-xl font-bold text-gray-900 dark:text-gray-100">TravelFlow</span>
             </div>
 
             <div className="hidden md:flex items-center space-x-8">
               <Link href="#features" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Features</Link>
-              <Link href="/quotes" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Dashboard</Link>
-              <Link href="/contacts" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Contacts</Link>
-              <Link href="/modern-ui" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Modern UI</Link>
+              <Link href="/pricing" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Pricing</Link>
+              <Link href="/dashboard/quotes" className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors">Dashboard</Link>
               <DarkModeToggle />
               <ModernButton variant="outline" size="sm" asChild>
                 <Link href="/auth/login">Sign In</Link>
               </ModernButton>
               <ModernButton variant="primary" size="sm" asChild>
-                <Link href="/quote-wizard">Get Started</Link>
+                <Link href="/auth/signup">Get Started</Link>
               </ModernButton>
             </div>
           </div>
@@ -62,28 +116,28 @@ export default function Home() {
             </div>
             
             <h1 className="text-6xl md:text-7xl font-bold text-white mb-6 leading-tight">
-              Travel Booking
+              AI-Powered Travel
               <span className="block text-gradient bg-clip-text text-transparent bg-gradient-to-r from-cyan-200 to-yellow-200">
-                Reimagined
+                Management Platform
               </span>
             </h1>
-            
+
             <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed">
-              The complete contact-driven travel management system with intelligent quote building and visual timeline planning
+              Streamline your travel business with intelligent quote building, contact management, and automated workflows
             </p>
             
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
               <ModernButton size="lg" className="text-lg px-8 py-4" asChild>
-                <Link href="/quote-wizard">
+                <Link href="/auth/signup">
                   <Zap className="w-5 h-5 mr-2" />
                   Start Free Trial
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Link>
               </ModernButton>
               <ModernButton size="lg" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-4" asChild>
-                <Link href="/demo">
+                <Link href="/dashboard/quotes">
                   <FileText className="w-5 h-5 mr-2" />
-                  View Demo
+                  View Dashboard
                 </Link>
               </ModernButton>
             </div>
@@ -197,26 +251,26 @@ export default function Home() {
             <span className="block">Travel Business?</span>
           </h2>
           <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-            Join hundreds of travel professionals already using BookingGPT to streamline their workflow
+            Join hundreds of travel professionals already using TravelFlow to streamline their workflow
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
             <ModernButton size="lg" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-4" asChild>
-              <Link href="/contacts">
+              <Link href="/dashboard/contacts">
                 <Users className="w-5 h-5 mr-2" />
                 Manage Contacts
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </ModernButton>
             <ModernButton size="lg" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-4" asChild>
-              <Link href="/quotes">
+              <Link href="/dashboard/quotes">
                 <BarChart3 className="w-5 h-5 mr-2" />
                 Quote Dashboard
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
             </ModernButton>
             <ModernButton size="lg" variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-4" asChild>
-              <Link href="/quote-wizard">
+              <Link href="/dashboard/quote-wizard">
                 <FileText className="w-5 h-5 mr-2" />
                 Create Quote
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -241,26 +295,30 @@ export default function Home() {
                 <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">BookingGPT</span>
+                <span className="text-xl font-bold text-white">TravelFlow</span>
               </div>
               <p className="text-gray-400 mb-6 max-w-md">
-                The complete contact-driven travel booking system built with modern technology for travel professionals.
+                Streamline your travel business with AI-powered booking management, intelligent quoting, and automated workflows.
               </p>
-              <div className="flex flex-wrap gap-4 text-sm">
-                <span className="bg-gray-800 px-3 py-1 rounded-full">Next.js 15.5</span>
-                <span className="bg-gray-800 px-3 py-1 rounded-full">React 19</span>
-                <span className="bg-gray-800 px-3 py-1 rounded-full">TypeScript</span>
-                <span className="bg-gray-800 px-3 py-1 rounded-full">Tailwind CSS</span>
+              <div className="flex items-center gap-4 text-sm text-gray-400">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  <span>Enterprise Security</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Headphones className="w-4 h-4" />
+                  <span>24/7 Support</span>
+                </div>
               </div>
             </div>
             
             <div>
               <h4 className="text-white font-semibold mb-4">Quick Access</h4>
               <div className="space-y-2">
-                <Link href="/quotes" className="block hover:text-white transition-colors">View Quotes</Link>
-                <Link href="/timeline" className="block hover:text-white transition-colors">Timeline</Link>
-                <Link href="/contacts" className="block hover:text-white transition-colors">Contacts</Link>
-                <Link href="/demo" className="block hover:text-white transition-colors">Demo</Link>
+                <Link href="/dashboard/quotes" className="block hover:text-white transition-colors">View Quotes</Link>
+                <Link href="/dashboard/timeline" className="block hover:text-white transition-colors">Timeline</Link>
+                <Link href="/dashboard/contacts" className="block hover:text-white transition-colors">Contacts</Link>
+                <Link href="/pricing" className="block hover:text-white transition-colors">Pricing</Link>
               </div>
             </div>
             
@@ -277,7 +335,7 @@ export default function Home() {
           
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between">
             <p className="text-gray-400 text-sm">
-              © 2024 BookingGPT. All rights reserved.
+              © 2024 TravelFlow. All rights reserved.
             </p>
             <div className="flex items-center gap-6 mt-4 md:mt-0">
               <Link href="#" className="text-gray-400 hover:text-white transition-colors text-sm">Privacy</Link>

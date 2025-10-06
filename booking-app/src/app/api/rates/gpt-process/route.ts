@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { parseFile, validateFile } from '@/lib/parsers/file-parser';
 import { extractRatesWithGPT } from '@/lib/gpt/rate-extractor';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request: NextRequest) {
   try {
     console.log('🚀 [GPT Process] Request received');

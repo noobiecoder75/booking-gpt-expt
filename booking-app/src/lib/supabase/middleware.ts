@@ -34,21 +34,8 @@ export async function updateSession(request: NextRequest) {
     error,
   } = await supabase.auth.getUser();
 
-  // Protected routes
-  const protectedPaths = [
-    '/admin',
-    '/quotes',
-    '/quote-wizard',
-    '/bookings',
-    '/finances',
-    '/commissions',
-    '/timeline',
-    '/tasks',
-    '/invoices',
-    '/contacts',
-    '/expenses',
-    '/team',
-  ];
+  // Protected routes - all dashboard routes and admin
+  const protectedPaths = ['/admin', '/dashboard'];
 
   const isProtectedPath = protectedPaths.some((path) =>
     request.nextUrl.pathname.startsWith(path)
@@ -69,8 +56,8 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect to dashboard if accessing auth routes while logged in
   if (isAuthPath && user) {
-    // Check if there's a redirectTo parameter, otherwise default to /quotes
-    const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/quotes';
+    // Check if there's a redirectTo parameter, otherwise default to /dashboard/quotes
+    const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/dashboard/quotes';
     return NextResponse.redirect(new URL(redirectTo, request.url));
   }
 

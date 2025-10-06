@@ -12,17 +12,11 @@ export function createClient() {
         autoRefreshToken: true,
         // Persist session in localStorage
         persistSession: true,
-        // Detect session from URL (for OAuth callbacks)
-        detectSessionInUrl: true,
+        // Detect session from URL ONLY on callback route
+        detectSessionInUrl: false,
         // Use PKCE flow for enhanced security
         flowType: 'pkce',
       },
-      // Enable realtime for auth state changes
-      realtime: {
-        params: {
-          eventsPerSecond: 10
-        }
-      }
     }
   );
 }

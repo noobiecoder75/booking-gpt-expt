@@ -59,52 +59,52 @@ export function AppNav() {
 
   const navItems = [
     {
-      href: '/quotes',
+      href: '/dashboard/quotes',
       label: 'Dashboard',
       icon: LayoutDashboard,
-      active: pathname === '/quotes'
+      active: pathname === '/dashboard/quotes'
     },
     {
-      href: '/contacts',
+      href: '/dashboard/contacts',
       label: 'Contacts',
       icon: Users,
-      active: pathname === '/contacts'
+      active: pathname === '/dashboard/contacts'
     },
     {
-      href: '/timeline',
+      href: '/dashboard/timeline',
       label: 'Timeline',
       icon: Calendar,
-      active: pathname === '/timeline'
+      active: pathname === '/dashboard/timeline'
     },
     {
-      href: '/finances',
+      href: '/dashboard/finances',
       label: 'Finances',
       icon: TrendingUp,
-      active: pathname?.startsWith('/finances')
+      active: pathname?.startsWith('/dashboard/finances')
     },
     {
-      href: '/invoices',
+      href: '/dashboard/invoices',
       label: 'Invoices',
       icon: Receipt,
-      active: pathname?.startsWith('/invoices')
+      active: pathname?.startsWith('/dashboard/invoices')
     },
     {
-      href: '/commissions',
+      href: '/dashboard/commissions',
       label: 'Commissions',
       icon: DollarSign,
-      active: pathname?.startsWith('/commissions')
+      active: pathname?.startsWith('/dashboard/commissions')
     },
     {
-      href: '/expenses',
+      href: '/dashboard/expenses',
       label: 'Expenses',
       icon: CreditCard,
-      active: pathname?.startsWith('/expenses')
+      active: pathname?.startsWith('/dashboard/expenses')
     },
     {
-      href: '/quote-wizard',
+      href: '/dashboard/quote-wizard',
       label: 'Create Quote',
       icon: Plus,
-      active: pathname?.startsWith('/quote-wizard'),
+      active: pathname?.startsWith('/dashboard/quote-wizard'),
       highlight: true
     },
   ];
@@ -114,12 +114,11 @@ export function AppNav() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/quotes" className="flex items-center space-x-2">
+          <Link href="/dashboard/quotes" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">BookingGPT</span>
-            <span className="text-sm text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">Pro</span>
+            <span className="text-xl font-bold text-gray-900">TravelFlow</span>
           </Link>
 
           {/* Desktop Navigation */}

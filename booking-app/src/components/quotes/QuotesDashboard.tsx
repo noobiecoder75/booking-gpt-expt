@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { useQuoteStore } from '@/store/quote-store-supabase';
-import { useContactStore } from '@/store/contact-store-supabase';
+import { useQuotesQuery } from '@/hooks/queries/useQuotesQuery';
 import { TravelQuote } from '@/types';
 import { QuoteCard } from './QuoteCard';
 import { QuoteFilters, QuoteFilterOptions } from './QuoteFilters';
@@ -13,8 +12,7 @@ import Link from 'next/link';
 import moment from 'moment';
 
 export function QuotesDashboard() {
-  const { quotes, searchQuotes, getQuotesByStatus, getQuotesByDateRange, syncStatus } = useQuoteStore();
-  const { contacts } = useContactStore();
+  const { data: quotes = [], isLoading, error } = useQuotesQuery();
   const [filters, setFilters] = useState<QuoteFilterOptions>({
     searchQuery: '',
     status: 'all',
@@ -36,7 +34,11 @@ export function QuotesDashboard() {
 
     // Apply search filter
     if (filters.searchQuery) {
-      result = searchQuotes(filters.searchQuery);
+      const query = filters.searchQuery.toLowerCase();
+      result = result.filter(quote =>
+        quote.title.toLowerCase().includes(query) ||
+        quote.id.toLowerCase().includes(query)
+      );
     }
 
     // Apply status filter
@@ -89,7 +91,7 @@ export function QuotesDashboard() {
     });
 
     return result;
-  }, [quotes, filters, searchQuotes, isHydrated]);
+  }, [quotes, filters, isHydrated]);
 
   const handleFilterChange = (newFilters: QuoteFilterOptions) => {
     setFilters(newFilters);
@@ -215,7 +217,7 @@ export function QuotesDashboard() {
       ) : (
         <div className="text-center py-16">
           <div className="glass-card rounded-2xl p-12 max-w-lg mx-auto">
-            {syncStatus === 'error' ? (
+            {error ? (
               // Error state
               <div>
                 <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6">

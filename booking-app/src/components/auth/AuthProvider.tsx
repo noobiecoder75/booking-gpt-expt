@@ -66,57 +66,54 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         // Get initial session
         const { data: { session } } = await supabase.auth.getSession();
         console.log('🔷 AuthProvider: Session retrieved:', session ? 'Found' : 'Not found');
-        console.log('🔷 AuthProvider: User:', session?.user?.email || 'No user');
 
         setSession(session);
         setUser(session?.user ?? null);
 
         if (session?.user) {
-          console.log('🔷 AuthProvider: Fetching profile for user:', session.user.id);
           const profileData = await fetchProfile(session.user.id);
-          console.log('🔷 AuthProvider: Profile fetched:', profileData ? 'Success' : 'Failed');
-          console.log('🔷 AuthProvider: Profile data:', profileData);
           setProfile(profileData);
-        } else {
-          console.log('🔷 AuthProvider: No user session, skipping profile fetch');
         }
       } catch (error) {
         console.error('❌ AuthProvider: Error initializing auth:', error);
       } finally {
-        console.log('🔷 AuthProvider: Loading complete, setting loading=false');
         setLoading(false);
       }
     };
 
     initAuth();
 
-    // Listen for auth changes
+    // Listen for auth changes with deduplication
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, newSession) => {
       console.log('🔔 AuthProvider: Auth state changed, event:', event);
-      console.log('🔔 AuthProvider: New session:', session ? 'Found' : 'Not found');
 
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        console.log('🔔 AuthProvider: Fetching profile after state change');
-        const profileData = await fetchProfile(session.user.id);
-        setProfile(profileData);
-      } else {
-        console.log('🔔 AuthProvider: Clearing profile (no session)');
+      // Only update if session actually changed
+      if (event === 'SIGNED_OUT') {
+        setSession(null);
+        setUser(null);
         setProfile(null);
-      }
+        setLoading(false);
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        // Only fetch profile if we don't already have it or user changed
+        const userChanged = newSession?.user?.id !== user?.id;
 
-      console.log('🔔 AuthProvider: State change complete, setting loading=false');
-      setLoading(false);
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+
+        if (newSession?.user && userChanged) {
+          const profileData = await fetchProfile(newSession.user.id);
+          setProfile(profileData);
+        }
+        setLoading(false);
+      }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, [supabase, user?.id]);
 
   const signOut = async () => {
     try {
