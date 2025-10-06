@@ -73,52 +73,57 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   const handleQuoteDetailsComplete = async (quoteData: Partial<TravelQuote>) => {
     if (!selectedContact) return;
 
-    if (isEditMode && currentQuote?.id) {
-      // Update existing quote
-      await updateQuote.mutateAsync({
-        id: currentQuote.id,
-        updates: {
-          title: quoteData.title || currentQuote.title,
-          travelDates: quoteData.travelDates || currentQuote.travelDates,
+    try {
+      if (isEditMode && currentQuote?.id) {
+        // Update existing quote
+        await updateQuote.mutateAsync({
+          id: currentQuote.id,
+          updates: {
+            title: quoteData.title || currentQuote.title,
+            travelDates: quoteData.travelDates || currentQuote.travelDates,
+            ...quoteData,
+          },
+        });
+
+        // Update local state with new data
+        setCurrentQuote({
+          ...currentQuote,
           ...quoteData,
-        },
-      });
+        });
+      } else {
+        // Create new quote
+        const newQuoteId = await addQuote.mutateAsync({
+          contactId: selectedContact.id,
+          title: quoteData.title || 'New Travel Quote',
+          items: [],
+          totalCost: 0,
+          status: 'draft',
+          travelDates: quoteData.travelDates || {
+            start: new Date(),
+            end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+          },
+        });
 
-      // Update local state with new data
-      setCurrentQuote({
-        ...currentQuote,
-        ...quoteData,
-      });
-    } else {
-      // Create new quote
-      const newQuoteId = await addQuote.mutateAsync({
-        contactId: selectedContact.id,
-        title: quoteData.title || 'New Travel Quote',
-        items: [],
-        totalCost: 0,
-        status: 'draft',
-        travelDates: quoteData.travelDates || {
-          start: new Date(),
-          end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-        },
-      });
+        // Set the new quote in local state
+        setCurrentQuote({
+          id: newQuoteId,
+          contactId: selectedContact.id,
+          title: quoteData.title || 'New Travel Quote',
+          items: [],
+          totalCost: 0,
+          status: 'draft',
+          travelDates: quoteData.travelDates || {
+            start: new Date(),
+            end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          },
+        });
+      }
 
-      // Set the new quote in local state
-      setCurrentQuote({
-        id: newQuoteId,
-        contactId: selectedContact.id,
-        title: quoteData.title || 'New Travel Quote',
-        items: [],
-        totalCost: 0,
-        status: 'draft',
-        travelDates: quoteData.travelDates || {
-          start: new Date(),
-          end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-        },
-      });
+      handleNext();
+    } catch (error) {
+      console.error('[QuoteWizard] Error saving quote:', error);
+      alert(`Failed to save quote: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
     }
-
-    handleNext();
   };
 
   const handleItemsComplete = () => {
