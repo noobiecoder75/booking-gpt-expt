@@ -157,7 +157,7 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
               <DropdownMenuItem asChild>
-                <Link href={`/quote-wizard?edit=${quote.id}`} className="flex items-center">
+                <Link href={`/dashboard/quote-wizard?edit=${quote.id}`} className="flex items-center">
                   <Edit className="w-4 h-4 mr-2" />
                   Edit Quote
                 </Link>

@@ -30,8 +30,10 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
   const { addQuote, updateQuote } = useQuoteMutations();
 
-  // Load existing quote if editing
-  const { data: existingQuote } = useQuoteByIdQuery(editQuoteId || undefined);
+  // Load existing quote if editing OR after creation (to get live updates)
+  // This ensures we always have fresh data from the database after mutations
+  const quoteIdToFetch = editQuoteId || currentQuote?.id;
+  const { data: existingQuote } = useQuoteByIdQuery(quoteIdToFetch);
   const { data: existingContact } = useContactByIdQuery(existingQuote?.contactId);
 
   useEffect(() => {
@@ -157,16 +159,39 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
           />
         );
       case 'items':
+        // Use live quote data from database (auto-refetches after mutations)
+        // Fallback to local state for new quotes before first save
+        const liveQuote = existingQuote || currentQuote;
+
+        if (!liveQuote?.id) {
+          return (
+            <div className="text-center py-8">
+              <p className="text-gray-600">Please complete the quote details first.</p>
+            </div>
+          );
+        }
+
         return (
           <TravelItems
-            quote={currentQuote as TravelQuote}
+            quote={liveQuote as TravelQuote}
             onComplete={handleItemsComplete}
           />
         );
       case 'review':
+        // Use live quote data for review to show latest items
+        const reviewQuote = existingQuote || currentQuote;
+
+        if (!reviewQuote?.id) {
+          return (
+            <div className="text-center py-8">
+              <p className="text-gray-600">Please complete the previous steps first.</p>
+            </div>
+          );
+        }
+
         return (
           <QuoteReview
-            quote={currentQuote as TravelQuote}
+            quote={reviewQuote as TravelQuote}
             contact={selectedContact!}
             onComplete={handleQuoteComplete}
           />
