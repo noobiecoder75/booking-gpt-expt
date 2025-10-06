@@ -32,34 +32,72 @@ export function TimelineCalendar({
 
   // Convert quotes to calendar events
   const events = useMemo(() => {
+    console.log('[Calendar] Starting event conversion');
+    console.log('[Calendar] Total quotes fetched:', quotes.length);
+    console.log('[Calendar] Raw quotes:', quotes);
+
     let filteredQuotes = quotes;
 
     if (contactId) {
       filteredQuotes = filteredQuotes.filter(quote => quote.contactId === contactId);
+      console.log('[Calendar] Filtered by contactId:', contactId, '- Remaining quotes:', filteredQuotes.length);
     }
 
     if (statusFilters && statusFilters.length > 0) {
       filteredQuotes = filteredQuotes.filter(quote => statusFilters.includes(quote.status));
+      console.log('[Calendar] Filtered by status:', statusFilters, '- Remaining quotes:', filteredQuotes.length);
     }
+
+    console.log('[Calendar] Final filtered quotes:', filteredQuotes);
 
     const calendarEvents: CalendarEvent[] = [];
 
-    filteredQuotes.forEach(quote => {
-      quote.items.forEach((item: TravelItem) => {
-        const start = item.startDate instanceof Date ? item.startDate : new Date(item.startDate);
-        const end = item.endDate
-          ? (item.endDate instanceof Date ? item.endDate : new Date(item.endDate))
-          : start;
+    filteredQuotes.forEach((quote, quoteIndex) => {
+      console.log(`[Calendar] Processing quote ${quoteIndex + 1}/${filteredQuotes.length}:`, quote.id);
+      console.log(`[Calendar] Quote has ${quote.items?.length || 0} items`);
 
-        calendarEvents.push({
-          id: `${quote.id}-${item.id}`,
-          title: item.name,
-          start,
-          end,
-          resource: item,
-        });
+      if (!quote.items || quote.items.length === 0) {
+        console.warn(`[Calendar] Quote ${quote.id} has no items!`);
+        return;
+      }
+
+      quote.items.forEach((item: TravelItem, itemIndex: number) => {
+        console.log(`[Calendar]   Item ${itemIndex + 1}/${quote.items.length}:`, item);
+
+        try {
+          const start = item.startDate instanceof Date ? item.startDate : new Date(item.startDate);
+          const end = item.endDate
+            ? (item.endDate instanceof Date ? item.endDate : new Date(item.endDate))
+            : start;
+
+          console.log(`[Calendar]   Parsed dates - Start: ${start}, End: ${end}`);
+
+          if (isNaN(start.getTime())) {
+            console.error(`[Calendar]   Invalid start date for item ${item.id}:`, item.startDate);
+            return;
+          }
+
+          if (end && isNaN(end.getTime())) {
+            console.error(`[Calendar]   Invalid end date for item ${item.id}:`, item.endDate);
+          }
+
+          calendarEvents.push({
+            id: `${quote.id}-${item.id}`,
+            title: item.name,
+            start,
+            end,
+            resource: item,
+          });
+
+          console.log(`[Calendar]   ✓ Event created: ${item.name}`);
+        } catch (error) {
+          console.error(`[Calendar]   ✗ Error creating event for item ${item.id}:`, error);
+        }
       });
     });
+
+    console.log('[Calendar] Total events created:', calendarEvents.length);
+    console.log('[Calendar] Events array:', calendarEvents);
 
     return calendarEvents;
   }, [quotes, contactId, statusFilters]);

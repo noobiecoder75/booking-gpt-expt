@@ -4,17 +4,25 @@ import { TravelQuote } from '@/types';
 import { useAuth } from '@/components/auth/AuthProvider';
 
 function dbRowToQuote(row: any): TravelQuote {
-  return {
+  console.log('[useQuotesQuery] Converting DB row to quote:', row.id);
+  console.log('[useQuotesQuery] Raw DB row:', row);
+  console.log('[useQuotesQuery] Items from DB:', row.items);
+  console.log('[useQuotesQuery] Items type:', typeof row.items, 'Is array:', Array.isArray(row.items));
+
+  const items = row.items || [];
+  console.log('[useQuotesQuery] Final items array:', items, 'Length:', items.length);
+
+  const quote = {
     id: row.id,
     contactId: row.contact_id,
     title: row.title,
     status: row.status as TravelQuote['status'],
     totalCost: parseFloat(row.total_amount),
-    items: row.items || [],
-    travelDates: row.items && row.items.length > 0
+    items: items,
+    travelDates: items && items.length > 0
       ? {
-          start: new Date(row.items[0].startDate || row.created_at),
-          end: new Date(row.items[row.items.length - 1].endDate || row.created_at),
+          start: new Date(items[0].startDate || row.created_at),
+          end: new Date(items[items.length - 1].endDate || row.created_at),
         }
       : {
           start: new Date(),
@@ -22,15 +30,22 @@ function dbRowToQuote(row: any): TravelQuote {
         },
     createdAt: new Date(row.created_at),
   };
+
+  console.log('[useQuotesQuery] Converted quote:', quote);
+  return quote;
 }
 
 async function fetchQuotes(): Promise<TravelQuote[]> {
+  console.log('[useQuotesQuery] Fetching quotes from Supabase...');
   const supabase = getSupabaseBrowserClient();
 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) {
+    console.error('[useQuotesQuery] User not authenticated');
     throw new Error('Not authenticated');
   }
+
+  console.log('[useQuotesQuery] Fetching quotes for user:', user.id);
 
   const { data, error } = await supabase
     .from('quotes')
@@ -38,9 +53,18 @@ async function fetchQuotes(): Promise<TravelQuote[]> {
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    console.error('[useQuotesQuery] Error fetching quotes:', error);
+    throw error;
+  }
 
-  return (data || []).map(dbRowToQuote);
+  console.log('[useQuotesQuery] Raw data from Supabase:', data);
+  console.log('[useQuotesQuery] Number of quotes fetched:', data?.length || 0);
+
+  const quotes = (data || []).map(dbRowToQuote);
+  console.log('[useQuotesQuery] Final converted quotes:', quotes);
+
+  return quotes;
 }
 
 export function useQuotesQuery() {
