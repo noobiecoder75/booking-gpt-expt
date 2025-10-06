@@ -79,14 +79,33 @@ export function Sidebar() {
     setIsLoggingOut(true);
 
     try {
-      await signOut();
-      console.log('[Sidebar] SignOut successful, redirecting to /auth/login');
-      // Use window.location for hard redirect to ensure complete state cleanup
+      // Use the server-side logout route for more reliable session cleanup
+      console.log('[Sidebar] Calling server logout route');
+      const response = await fetch('/auth/logout', {
+        method: 'POST',
+        credentials: 'include' // Important for cookie handling
+      });
+
+      if (!response.ok) {
+        throw new Error(`Logout failed: ${response.status}`);
+      }
+
+      console.log('[Sidebar] Server logout successful, redirecting...');
+      // The logout route handles the redirect, but we'll ensure it happens
       window.location.href = '/auth/login';
     } catch (error) {
       console.error('[Sidebar] Logout error:', error);
-      console.log('[Sidebar] Force redirecting to /auth/login despite error');
-      // Force redirect even on error
+      console.log('[Sidebar] Attempting client-side logout as fallback');
+
+      // Fallback to client-side logout
+      try {
+        await signOut();
+      } catch (clientError) {
+        console.error('[Sidebar] Client-side logout also failed:', clientError);
+      }
+
+      // Force redirect regardless of errors
+      console.log('[Sidebar] Force redirecting to /auth/login');
       window.location.href = '/auth/login';
     }
   };

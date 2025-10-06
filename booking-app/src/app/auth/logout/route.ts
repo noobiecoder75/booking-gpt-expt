@@ -7,8 +7,8 @@ export async function POST(request: Request) {
   const supabase = await createClient();
 
   try {
-    // Sign out with local scope to clear cookies properly
-    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    // Sign out globally to clear both client and server sessions
+    const { error } = await supabase.auth.signOut();
 
     if (error) {
       console.error('❌ Logout route: Supabase signOut error:', error);

@@ -43,8 +43,8 @@ export async function performLogout(): Promise<{ success: boolean; error?: strin
   try {
     console.log('🔄 Starting logout process...');
 
-    // 1. Sign out from Supabase (clears auth cookies)
-    const { error } = await supabase.auth.signOut({ scope: 'local' });
+    // 1. Sign out from Supabase (clears both client and server sessions)
+    const { error } = await supabase.auth.signOut();
 
     if (error) {
       console.error('❌ Supabase signOut error:', error);

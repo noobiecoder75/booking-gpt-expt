@@ -122,8 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       console.log('🔄 AuthProvider: Starting signOut');
 
-      // Sign out with local scope (clears cookies properly)
-      const { error } = await supabase.auth.signOut({ scope: 'local' });
+      // Sign out globally (clears both client and server sessions)
+      const { error } = await supabase.auth.signOut();
 
       if (error) {
         console.error('❌ AuthProvider: signOut error:', error);

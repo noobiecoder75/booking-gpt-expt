@@ -30,12 +30,29 @@ export function AppNav() {
 
   const handleLogout = async () => {
     try {
-      await signOut();
-      // Use window.location for hard redirect to ensure complete state cleanup
+      // Use the server-side logout route for more reliable session cleanup
+      const response = await fetch('/auth/logout', {
+        method: 'POST',
+        credentials: 'include' // Important for cookie handling
+      });
+
+      if (!response.ok) {
+        throw new Error(`Logout failed: ${response.status}`);
+      }
+
+      // Server logout successful, redirect to login
       window.location.href = '/auth/login';
     } catch (error) {
       console.error('Logout error:', error);
-      // Force redirect even on error
+
+      // Fallback to client-side logout
+      try {
+        await signOut();
+      } catch (clientError) {
+        console.error('Client-side logout also failed:', clientError);
+      }
+
+      // Force redirect regardless of errors
       window.location.href = '/auth/login';
     }
   };
