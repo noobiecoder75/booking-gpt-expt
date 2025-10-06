@@ -59,6 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  // Initialize auth once on mount
   useEffect(() => {
     const initAuth = async () => {
       console.log('🔷 AuthProvider: Initializing...');
@@ -82,27 +83,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     initAuth();
+  }, []); // Empty deps - runs once on mount
 
-    // Listen for auth changes with deduplication
+  // Listen for auth state changes
+  useEffect(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
       console.log('🔔 AuthProvider: Auth state changed, event:', event);
 
-      // Only update if session actually changed
       if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
         setProfile(null);
         setLoading(false);
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        // Only fetch profile if we don't already have it or user changed
-        const userChanged = newSession?.user?.id !== user?.id;
-
         setSession(newSession);
         setUser(newSession?.user ?? null);
 
-        if (newSession?.user && userChanged) {
+        if (newSession?.user) {
           const profileData = await fetchProfile(newSession.user.id);
           setProfile(profileData);
         }
@@ -113,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase, user?.id]);
+  }, [supabase]); // Only depends on supabase
 
   const signOut = async () => {
     try {
