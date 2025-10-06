@@ -111,18 +111,31 @@ export function useQuoteMutations() {
       console.log('[addItemToQuote] - New item with ID:', newItem);
       console.log('[addItemToQuote] - Updated items array:', updatedItems);
 
-      // Update quote with new items array
-      const { error } = await supabase
+      // Update quote with new items array and verify it was saved
+      const { data, error } = await supabase
         .from('quotes')
         .update({ items: updatedItems })
-        .eq('id', quoteId);
+        .eq('id', quoteId)
+        .select('items')
+        .single();
 
       if (error) {
         console.error('[addItemToQuote] Update error:', error);
         throw error;
       }
 
-      console.log('[addItemToQuote] ✓ SUCCESS - Item added to database');
+      // Verify the data was actually saved
+      console.log('[addItemToQuote] - Database response:', data);
+      console.log('[addItemToQuote] - Verified items in DB:', data?.items);
+
+      if (!data || !data.items || data.items.length !== updatedItems.length) {
+        console.error('[addItemToQuote] VERIFICATION FAILED - Items count mismatch');
+        console.error('[addItemToQuote] - Expected items:', updatedItems);
+        console.error('[addItemToQuote] - Actual items in DB:', data?.items);
+        throw new Error(`Database verification failed: Expected ${updatedItems.length} items, got ${data?.items?.length || 0}`);
+      }
+
+      console.log('[addItemToQuote] ✓ SUCCESS - Item added and verified in database');
       return newItem.id;
     },
     onSuccess: () => {
