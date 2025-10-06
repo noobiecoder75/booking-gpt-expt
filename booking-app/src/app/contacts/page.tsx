@@ -10,6 +10,7 @@ import { useContactStore } from '@/store/contact-store-supabase';
 import { useQuoteStore } from '@/store/quote-store-supabase';
 import { useInvoiceStore } from '@/store/invoice-store-supabase';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { ContactForm } from '@/components/contacts/ContactForm';
 import { Contact } from '@/types';
 import {
@@ -411,7 +412,8 @@ export default function ContactsPage() {
   };
 
   return (
-    <MainLayout>
+    <ProtectedRoute>
+      <MainLayout>
         <div className="container mx-auto px-4 py-8">
           {viewMode === 'detail' && selectedContact ? (
             <>
@@ -636,6 +638,7 @@ export default function ContactsPage() {
             />
           )}
         </div>
-    </MainLayout>
+      </MainLayout>
+    </ProtectedRoute>
   );
 }

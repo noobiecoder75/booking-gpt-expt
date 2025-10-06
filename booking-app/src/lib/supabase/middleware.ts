@@ -45,6 +45,9 @@ export async function updateSession(request: NextRequest) {
     '/timeline',
     '/tasks',
     '/invoices',
+    '/contacts',
+    '/expenses',
+    '/team',
   ];
 
   const isProtectedPath = protectedPaths.some((path) =>
@@ -66,7 +69,9 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect to dashboard if accessing auth routes while logged in
   if (isAuthPath && user) {
-    return NextResponse.redirect(new URL('/quotes', request.url));
+    // Check if there's a redirectTo parameter, otherwise default to /quotes
+    const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/quotes';
+    return NextResponse.redirect(new URL(redirectTo, request.url));
   }
 
   return supabaseResponse;

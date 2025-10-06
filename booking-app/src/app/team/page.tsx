@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -123,8 +124,9 @@ export default function TeamPage() {
   }
 
   return (
-    <MainLayout>
-      <div className="container mx-auto px-4 py-8">
+    <ProtectedRoute>
+      <MainLayout>
+        <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
@@ -266,7 +268,8 @@ export default function TeamPage() {
             }}
           />
         )}
-      </div>
-    </MainLayout>
+        </div>
+      </MainLayout>
+    </ProtectedRoute>
   );
 }

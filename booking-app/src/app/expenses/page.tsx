@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useExpenseStore } from '@/store/expense-store';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import {
   CreditCard,
   Search,
@@ -148,7 +149,8 @@ export default function ExpensesPage() {
   }
 
   return (
-    <MainLayout>
+    <ProtectedRoute>
+      <MainLayout>
         <div className="container mx-auto px-4 py-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -409,6 +411,7 @@ export default function ExpensesPage() {
             </CardContent>
           </Card>
         </div>
-    </MainLayout>
+      </MainLayout>
+    </ProtectedRoute>
   );
 }
