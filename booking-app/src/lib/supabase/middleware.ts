@@ -55,20 +55,26 @@ export async function updateSession(request: NextRequest) {
   if (isProtectedPath && !user) {
     const redirectUrl = new URL('/auth/login', request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-    // Important: Use the existing response to preserve cookies
-    return NextResponse.redirect(redirectUrl, {
-      headers: supabaseResponse.headers,
+
+    // Create redirect response and manually transfer all headers to preserve cookies
+    const response = NextResponse.redirect(redirectUrl);
+    supabaseResponse.headers.forEach((value, key) => {
+      response.headers.set(key, value);
     });
+    return response;
   }
 
   // Redirect to dashboard if accessing auth routes while logged in
   if (isAuthPath && user) {
     // Check if there's a redirectTo parameter, otherwise default to /dashboard/quotes
     const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/dashboard/quotes';
-    // Important: Use the existing response to preserve cookies
-    return NextResponse.redirect(new URL(redirectTo, request.url), {
-      headers: supabaseResponse.headers,
+
+    // Create redirect response and manually transfer all headers to preserve cookies
+    const response = NextResponse.redirect(new URL(redirectTo, request.url));
+    supabaseResponse.headers.forEach((value, key) => {
+      response.headers.set(key, value);
     });
+    return response;
   }
 
   return supabaseResponse;
