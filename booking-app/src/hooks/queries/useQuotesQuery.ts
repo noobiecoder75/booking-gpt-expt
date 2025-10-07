@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { TravelQuote } from '@/types';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { calculateQuoteTotal } from '@/lib/utils';
 
 function dbRowToQuote(row: any): TravelQuote {
   console.log('[useQuotesQuery] Converting DB row to quote:', row.id);
@@ -12,12 +13,19 @@ function dbRowToQuote(row: any): TravelQuote {
   const items = row.items || [];
   console.log('[useQuotesQuery] Final items array:', items, 'Length:', items.length);
 
+  // Calculate total from items if total_amount is null/undefined, otherwise use database value
+  const totalCost = row.total_amount != null
+    ? parseFloat(row.total_amount)
+    : calculateQuoteTotal(items);
+
+  console.log('[useQuotesQuery] Total from DB:', row.total_amount, 'Calculated total:', totalCost);
+
   const quote = {
     id: row.id,
     contactId: row.contact_id,
     title: row.title,
     status: row.status as TravelQuote['status'],
-    totalCost: parseFloat(row.total_amount),
+    totalCost: totalCost,
     items: items,
     travelDates: row.travel_start_date && row.travel_end_date
       ? {

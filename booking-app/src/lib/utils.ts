@@ -51,6 +51,10 @@ export function getTravelItemColor(type: string): string {
   return colors[type as keyof typeof colors] || '#6B7280'; // gray fallback
 }
 
+export function calculateQuoteTotal(items: TravelItem[]): number {
+  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+}
+
 export function calculateTripDuration(startDate: Date | string, endDate: Date | string): number {
   const start = typeof startDate === 'string' ? new Date(startDate) : startDate;
   const end = typeof endDate === 'string' ? new Date(endDate) : endDate;

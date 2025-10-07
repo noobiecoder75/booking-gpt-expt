@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { TravelQuote, TravelItem } from '@/types';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { calculateQuoteTotal } from '@/lib/utils';
 
 export function useQuoteMutations() {
   const { user } = useAuth();
@@ -117,12 +118,19 @@ export function useQuoteMutations() {
       console.log('[addItemToQuote] - New item with ID:', newItem);
       console.log('[addItemToQuote] - Updated items array:', updatedItems);
 
-      // Update quote with new items array and verify it was saved
+      // Calculate new total
+      const totalAmount = calculateQuoteTotal(updatedItems);
+      console.log('[addItemToQuote] - Calculated total_amount:', totalAmount);
+
+      // Update quote with new items array and total amount
       const { data, error } = await supabase
         .from('quotes')
-        .update({ items: updatedItems })
+        .update({
+          items: updatedItems,
+          total_amount: totalAmount
+        })
         .eq('id', quoteId)
-        .select('items')
+        .select('items, total_amount')
         .single();
 
       if (error) {
@@ -133,6 +141,7 @@ export function useQuoteMutations() {
       // Verify the data was actually saved
       console.log('[addItemToQuote] - Database response:', data);
       console.log('[addItemToQuote] - Verified items in DB:', data?.items);
+      console.log('[addItemToQuote] - Verified total_amount in DB:', data?.total_amount);
 
       if (!data || !data.items || data.items.length !== updatedItems.length) {
         console.error('[addItemToQuote] VERIFICATION FAILED - Items count mismatch');
@@ -141,7 +150,7 @@ export function useQuoteMutations() {
         throw new Error(`Database verification failed: Expected ${updatedItems.length} items, got ${data?.items?.length || 0}`);
       }
 
-      console.log('[addItemToQuote] ✓ SUCCESS - Item added and verified in database');
+      console.log('[addItemToQuote] ✓ SUCCESS - Item added, total updated, and verified in database');
       return newItem.id;
     },
     onSuccess: () => {
@@ -169,10 +178,16 @@ export function useQuoteMutations() {
         item.id === itemId ? { ...item, ...updates } : item
       );
 
-      // Update quote with modified items array
+      // Calculate new total
+      const totalAmount = calculateQuoteTotal(updatedItems);
+
+      // Update quote with modified items array and total amount
       const { error } = await supabase
         .from('quotes')
-        .update({ items: updatedItems })
+        .update({
+          items: updatedItems,
+          total_amount: totalAmount
+        })
         .eq('id', quoteId);
 
       if (error) throw error;
@@ -196,10 +211,16 @@ export function useQuoteMutations() {
       const items = quote.items || [];
       const updatedItems = items.filter((item: TravelItem) => item.id !== itemId);
 
-      // Update quote with filtered items array
+      // Calculate new total
+      const totalAmount = calculateQuoteTotal(updatedItems);
+
+      // Update quote with filtered items array and total amount
       const { error } = await supabase
         .from('quotes')
-        .update({ items: updatedItems })
+        .update({
+          items: updatedItems,
+          total_amount: totalAmount
+        })
         .eq('id', quoteId);
 
       if (error) throw error;

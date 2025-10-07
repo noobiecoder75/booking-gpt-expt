@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { TravelQuote, Contact } from '@/types';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
-import { formatCurrency, getContactDisplayName, formatDate, detectDestinationMismatches, DestinationMismatch } from '@/lib/utils';
+import { formatCurrency, getContactDisplayName, formatDate, detectDestinationMismatches, DestinationMismatch, calculateQuoteTotal } from '@/lib/utils';
 import { Plane, Hotel, MapPin, Car, FileText, Send, AlertTriangle, X } from 'lucide-react';
 
 interface QuoteReviewProps {
@@ -17,6 +17,9 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
   const { updateQuote } = useQuoteMutations();
   const [showMismatchModal, setShowMismatchModal] = useState(false);
   const [detectedMismatches, setDetectedMismatches] = useState<DestinationMismatch[]>([]);
+
+  // Calculate total from items as fallback/safety measure
+  const displayTotal = calculateQuoteTotal(quote.items) || quote.totalCost;
 
   const handleSendQuote = () => {
     // Check for destination mismatches before sending
@@ -114,7 +117,7 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
               </span>
             </div>
             <div className="text-2xl font-bold text-blue-600">
-              {formatCurrency(quote.totalCost)}
+              {formatCurrency(displayTotal)}
             </div>
             <div className="text-sm text-gray-500">Client Total</div>
           </div>
@@ -184,7 +187,7 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
             <div className="flex items-center justify-between pt-4 border-t border-gray-200">
               <div className="font-semibold text-lg text-gray-900">Total:</div>
               <div className="font-bold text-xl text-blue-600">
-                {formatCurrency(quote.totalCost)}
+                {formatCurrency(displayTotal)}
               </div>
             </div>
           </div>
