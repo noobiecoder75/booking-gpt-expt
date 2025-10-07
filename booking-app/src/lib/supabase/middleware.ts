@@ -16,13 +16,14 @@ export async function updateSession(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({
-            request,
+          // Debug: Log cookies being set
+          console.log('[Middleware] Setting cookies:', cookiesToSet.map(c => ({ name: c.name, hasValue: !!c.value })));
+
+          // Set cookies on both request and response without recreating the response
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            supabaseResponse.cookies.set(name, value, options);
           });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
         },
       },
     }
@@ -33,6 +34,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
     error,
   } = await supabase.auth.getUser();
+
+  // Debug: Log auth status
+  console.log('[Middleware] Auth check - User:', user ? 'authenticated' : 'not authenticated', 'Path:', request.nextUrl.pathname);
 
   // Protected routes - all dashboard routes and admin
   const protectedPaths = ['/admin', '/dashboard'];

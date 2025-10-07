@@ -496,14 +496,6 @@ export default function ContactsPage() {
                 </Card>
               </div>
 
-              {/* Loading State */}
-              {isLoading && (
-                <div className="flex items-center justify-center py-8 mb-6">
-                  <Loader2 className="w-6 h-6 animate-spin text-blue-600 mr-2" />
-                  <span className="text-gray-600 dark:text-gray-400">Loading contacts...</span>
-                </div>
-              )}
-
               {/* Error State */}
               {error && (
                 <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md flex items-start">
@@ -545,13 +537,18 @@ export default function ContactsPage() {
                   <CardTitle>Contacts ({filteredContacts.length})</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {filteredContacts.length === 0 ? (
+                  {!isLoading && filteredContacts.length === 0 ? (
                     <div className="text-center py-8">
                       <Users className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No contacts found</h3>
                       <p className="text-gray-600 dark:text-gray-400">
                         {searchQuery ? 'Try adjusting your search criteria.' : 'Add your first contact to get started.'}
                       </p>
+                    </div>
+                  ) : isLoading ? (
+                    <div className="text-center py-8">
+                      <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
+                      <p className="text-gray-600 dark:text-gray-400">Loading your contacts...</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
