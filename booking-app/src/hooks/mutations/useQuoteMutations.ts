@@ -23,6 +23,8 @@ export function useQuoteMutations() {
           total_amount: quote.totalCost,
           currency: 'USD',
           items: quote.items || [],
+          travel_start_date: quote.travelDates.start.toISOString(),
+          travel_end_date: quote.travelDates.end.toISOString(),
           notes: null,
         })
         .select()
@@ -45,6 +47,10 @@ export function useQuoteMutations() {
       if (updates.status !== undefined) dbUpdate.status = updates.status;
       if (updates.totalCost !== undefined) dbUpdate.total_amount = updates.totalCost;
       if (updates.items !== undefined) dbUpdate.items = updates.items;
+      if (updates.travelDates !== undefined) {
+        dbUpdate.travel_start_date = updates.travelDates.start.toISOString();
+        dbUpdate.travel_end_date = updates.travelDates.end.toISOString();
+      }
 
       const { error } = await supabase
         .from('quotes')

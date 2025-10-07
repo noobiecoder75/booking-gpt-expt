@@ -19,7 +19,12 @@ function dbRowToQuote(row: any): TravelQuote {
     status: row.status as TravelQuote['status'],
     totalCost: parseFloat(row.total_amount),
     items: items,
-    travelDates: items && items.length > 0
+    travelDates: row.travel_start_date && row.travel_end_date
+      ? {
+          start: new Date(row.travel_start_date),
+          end: new Date(row.travel_end_date),
+        }
+      : items && items.length > 0
       ? {
           start: new Date(items[0].startDate || row.created_at),
           end: new Date(items[items.length - 1].endDate || row.created_at),
