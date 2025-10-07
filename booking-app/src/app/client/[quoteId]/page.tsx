@@ -3,8 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, notFound } from 'next/navigation';
 import { TravelQuote, Contact } from '@/types';
-import { useQuoteByIdQuery } from '@/hooks/queries/useQuotesQuery';
-import { useContactByIdQuery } from '@/hooks/queries/useContactsQuery';
+import { useClientQuoteQuery, useClientContactQuery } from '@/hooks/queries/useClientQuoteQuery';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { ClientQuoteView } from '@/components/client/ClientQuoteView';
 import { ModernCard } from '@/components/ui/modern-card';
@@ -24,20 +23,24 @@ export default function ClientQuotePage() {
   const params = useParams();
   const quoteId = params.quoteId as string;
   const [accessDenied, setAccessDenied] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
   const { updateQuoteStatus } = useQuoteMutations();
 
-  const { data: quote, isLoading: quoteLoading } = useQuoteByIdQuery(quoteId);
-  const { data: contact, isLoading: contactLoading } = useContactByIdQuery(quote?.contactId);
-
-  const loading = quoteLoading || contactLoading;
-
+  // Get token from URL
   useEffect(() => {
-    // Check access token
-    const token = getAccessToken();
-    if (!token || !validateClientAccessToken(token, quoteId)) {
+    const accessToken = getAccessToken();
+    if (!accessToken || !validateClientAccessToken(accessToken, quoteId)) {
       setAccessDenied(true);
+    } else {
+      setToken(accessToken);
     }
   }, [quoteId]);
+
+  // Use client queries that don't require authentication
+  const { data: quote, isLoading: quoteLoading, error: quoteError } = useClientQuoteQuery(quoteId, token);
+  const { data: contact, isLoading: contactLoading } = useClientContactQuery(quote?.contactId, token);
+
+  const loading = quoteLoading || contactLoading;
 
   const handleQuoteAction = (action: 'accept' | 'reject' | 'message' | 'payment') => {
     console.log('Quote action:', action, 'for quote:', quoteId);
@@ -90,8 +93,28 @@ export default function ClientQuotePage() {
     );
   }
 
+  if (quoteError || (!loading && !quote)) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-800 flex items-center justify-center">
+        <ModernCard className="max-w-md mx-auto text-center p-8">
+          <div className="w-16 h-16 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Quote Not Found</h1>
+          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            The quote you&apos;re looking for doesn&apos;t exist or has been removed.
+          </p>
+          <div className="text-sm text-gray-500 dark:text-gray-400">
+            Please contact your travel agent for assistance.
+          </div>
+        </ModernCard>
+      </div>
+    );
+  }
+
   if (!quote || !contact) {
-    notFound();
     return null;
   }
 
