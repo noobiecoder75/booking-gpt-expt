@@ -7,6 +7,7 @@ import { ModernButton } from '@/components/ui/modern-button';
 import { ModernCard } from '@/components/ui/modern-card';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, getContactDisplayName } from '@/lib/utils';
+import { generatePreviewLink } from '@/lib/client-links';
 import { 
   Calendar, 
   User, 
@@ -102,18 +103,20 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
   };
 
   const handlePreview = () => {
-    const previewLink = `/client/${quote.id}`;
+    const previewLink = generatePreviewLink(quote);
     window.open(previewLink, '_blank');
   };
 
   const handleCopyLink = async () => {
-    const previewLink = `${window.location.origin}/client/${quote.id}`;
+    const previewLink = generatePreviewLink(quote);
     try {
       await navigator.clipboard.writeText(previewLink);
-      console.log('Link copied to clipboard');
-      // You could add a toast notification here
+      console.log('Client link copied to clipboard:', previewLink);
+      // TODO: Add toast notification
+      alert('Client link copied to clipboard!');
     } catch (error) {
       console.error('Failed to copy link:', error);
+      alert('Failed to copy link');
     }
   };
 

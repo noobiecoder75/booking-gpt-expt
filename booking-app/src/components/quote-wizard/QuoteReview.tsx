@@ -5,7 +5,8 @@ import { TravelQuote, Contact } from '@/types';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
 import { formatCurrency, getContactDisplayName, formatDate, detectDestinationMismatches, DestinationMismatch, calculateQuoteTotal } from '@/lib/utils';
-import { Plane, Hotel, MapPin, Car, FileText, Send, AlertTriangle, X } from 'lucide-react';
+import { generateClientQuoteLink } from '@/lib/client-links';
+import { Plane, Hotel, MapPin, Car, FileText, Send, AlertTriangle, X, Copy, Check } from 'lucide-react';
 
 interface QuoteReviewProps {
   quote: TravelQuote;
@@ -17,9 +18,14 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
   const { updateQuote } = useQuoteMutations();
   const [showMismatchModal, setShowMismatchModal] = useState(false);
   const [detectedMismatches, setDetectedMismatches] = useState<DestinationMismatch[]>([]);
+  const [quoteSent, setQuoteSent] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   // Calculate total from items as fallback/safety measure
   const displayTotal = calculateQuoteTotal(quote.items) || quote.totalCost;
+
+  // Generate client link
+  const clientLink = generateClientQuoteLink(quote);
 
   const handleSendQuote = () => {
     // Check for destination mismatches before sending
@@ -62,7 +68,18 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
     }
 
     setShowMismatchModal(false);
-    onComplete();
+    setQuoteSent(true);
+  };
+
+  const handleCopyClientLink = async () => {
+    try {
+      await navigator.clipboard.writeText(clientLink);
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2000);
+    } catch (error) {
+      console.error('Failed to copy link:', error);
+      alert('Failed to copy client link');
+    }
   };
 
   const handleSaveDraft = () => {
@@ -196,17 +213,64 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
         )}
       </div>
 
+      {/* Client Link - Show after sending */}
+      {quoteSent && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h4 className="font-semibold text-green-900">Quote Sent Successfully!</h4>
+              <p className="text-sm text-green-700 mt-1">
+                Share this link with your client to view and respond to the quote:
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 bg-white rounded-lg p-3 border border-green-200">
+            <code className="flex-1 text-sm text-gray-700 overflow-x-auto">
+              {clientLink}
+            </code>
+            <Button
+              size="sm"
+              variant={linkCopied ? "default" : "outline"}
+              onClick={handleCopyClientLink}
+            >
+              {linkCopied ? (
+                <>
+                  <Check className="w-4 h-4 mr-1" />
+                  Copied!
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 mr-1" />
+                  Copy Link
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Actions */}
-      <div className="flex items-center justify-center space-x-4">
-        <Button variant="outline" onClick={handleSaveDraft} size="lg">
-          <FileText className="w-5 h-5 mr-2" />
-          Save as Draft
-        </Button>
-        <Button onClick={handleSendQuote} size="lg">
-          <Send className="w-5 h-5 mr-2" />
-          Send Quote to Client
-        </Button>
-      </div>
+      {!quoteSent && (
+        <div className="flex items-center justify-center space-x-4">
+          <Button variant="outline" onClick={handleSaveDraft} size="lg">
+            <FileText className="w-5 h-5 mr-2" />
+            Save as Draft
+          </Button>
+          <Button onClick={handleSendQuote} size="lg">
+            <Send className="w-5 h-5 mr-2" />
+            Send Quote to Client
+          </Button>
+        </div>
+      )}
+
+      {/* Done Button - Show after sending */}
+      {quoteSent && (
+        <div className="flex items-center justify-center">
+          <Button onClick={onComplete} size="lg">
+            Done
+          </Button>
+        </div>
+      )}
 
       {/* Destination Mismatch Modal */}
       {showMismatchModal && (

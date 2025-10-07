@@ -9,6 +9,7 @@ import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { ClientQuoteView } from '@/components/client/ClientQuoteView';
 import { ModernCard } from '@/components/ui/modern-card';
 import { Loader2 } from 'lucide-react';
+import { validateClientAccessToken } from '@/lib/client-links';
 
 // This would typically come from your backend API or URL params
 const getAccessToken = () => {
@@ -17,13 +18,6 @@ const getAccessToken = () => {
     return urlParams.get('token');
   }
   return null;
-};
-
-// In a real implementation, you'd validate the token against your backend
-const validateAccessToken = (token: string, quoteId: string): boolean => {
-  // For demo purposes, we'll accept any token that matches a pattern
-  // In production, this should validate against a secure backend
-  return token && token.length > 10;
 };
 
 export default function ClientQuotePage() {
@@ -40,7 +34,7 @@ export default function ClientQuotePage() {
   useEffect(() => {
     // Check access token
     const token = getAccessToken();
-    if (!token || !validateAccessToken(token, quoteId)) {
+    if (!token || !validateClientAccessToken(token, quoteId)) {
       setAccessDenied(true);
     }
   }, [quoteId]);
