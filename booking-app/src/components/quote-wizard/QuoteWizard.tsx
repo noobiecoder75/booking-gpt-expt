@@ -29,6 +29,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const { addQuote, updateQuote } = useQuoteMutations();
+  const isSubmitting = addQuote.isPending || updateQuote.isPending;
 
   // Load existing quote if editing OR after creation (to get live updates)
   // This ensures we always have fresh data from the database after mutations
@@ -73,7 +74,11 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   };
 
   const handleQuoteDetailsComplete = async (quoteData: Partial<TravelQuote>) => {
-    if (!selectedContact) return;
+    if (!selectedContact) {
+      alert('Please select a contact first. Returning to contact selection.');
+      setCurrentStep('contact');
+      return;
+    }
 
     try {
       if (isEditMode && currentQuote?.id) {
@@ -163,6 +168,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
             contact={selectedContact!}
             quote={isEditMode ? currentQuote : undefined}
             onComplete={handleQuoteDetailsComplete}
+            isSubmitting={isSubmitting}
           />
         );
       case 'items':

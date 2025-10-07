@@ -77,9 +77,11 @@ export async function POST(request: NextRequest) {
     const stripeFee = calculateStripeFee(paymentAmount);
     const receiptUrl = typeof paymentIntent.latest_charge === 'object' ? paymentIntent.latest_charge?.receipt_url || undefined : undefined;
 
+    // Insert payment record (requires migration 20250107_add_payment_fields.sql to be run first)
     const { data: payment, error: paymentError } = await supabase
       .from('payments')
       .insert({
+        user_id: quote.userId || quote.agentId,
         quote_id: quoteId,
         amount: paymentAmount,
         currency: paymentIntent.currency,
@@ -88,12 +90,16 @@ export async function POST(request: NextRequest) {
         stripe_payment_intent_id: paymentIntentId,
         stripe_customer_id: paymentIntent.customer as string | undefined,
         payment_method: 'credit_card',
+        payment_date: new Date().toISOString(),
         paid_at: new Date().toISOString(),
       })
       .select()
       .single();
 
-    if (paymentError) throw paymentError;
+    if (paymentError) {
+      console.error('❌ [Confirm Payment] Database error:', paymentError);
+      throw paymentError;
+    }
     const paymentId = payment.id;
 
     console.log('💾 [Confirm Payment] Payment record created:', paymentId);

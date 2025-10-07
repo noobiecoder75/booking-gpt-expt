@@ -7,15 +7,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { getContactDisplayName } from '@/lib/utils';
 import { useSettingsStore } from '@/store/settings-store';
-import { Percent, ChevronDown, ChevronUp, Settings, Info } from 'lucide-react';
+import { Percent, ChevronDown, ChevronUp, Settings, Info, Loader2 } from 'lucide-react';
 
 interface QuoteDetailsProps {
   contact: Contact;
   quote?: Partial<TravelQuote>;
   onComplete: (quoteData: Partial<TravelQuote>) => void;
+  isSubmitting?: boolean;
 }
 
-export function QuoteDetails({ contact, quote, onComplete }: QuoteDetailsProps) {
+export function QuoteDetails({ contact, quote, onComplete, isSubmitting = false }: QuoteDetailsProps) {
   const { settings, isValidCommissionRate } = useSettingsStore();
   const [formData, setFormData] = useState({
     title: '',
@@ -273,8 +274,15 @@ export function QuoteDetails({ contact, quote, onComplete }: QuoteDetailsProps) 
         </div>
 
         <div className="flex justify-center">
-          <Button type="submit" size="lg">
-            Continue to Add Travel Items
+          <Button type="submit" size="lg" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Saving Quote...
+              </>
+            ) : (
+              'Continue to Add Travel Items'
+            )}
           </Button>
         </div>
       </form>

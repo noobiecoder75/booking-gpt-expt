@@ -13,7 +13,7 @@ import { useCommissionMutations } from '@/hooks/mutations/useCommissionMutations
 import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
 import { useQuotesQuery } from '@/hooks/queries/useQuotesQuery';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { formatItemDetails } from '@/lib/travel-item-formatter';
 import {
@@ -30,7 +30,7 @@ import {
 } from 'lucide-react';
 
 export default function FinancesPage() {
-  const { user } = useAuthStore();
+  const { user } = useAuth();
   const { data: invoices = [] } = useInvoicesQuery();
   const { markInvoiceAsPaid, generateInvoiceFromQuote } = useInvoiceMutations();
   const { data: commissions = [] } = useCommissionsQuery();

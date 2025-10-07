@@ -223,13 +223,17 @@ export interface Database {
       payments: {
         Row: {
           id: string
-          booking_id: string
+          booking_id: string | null
           user_id: string
+          quote_id: string | null
           amount: number
           currency: string
           payment_method: string
           payment_date: string
+          paid_at: string | null
+          type: 'full' | 'deposit' | 'balance' | null
           stripe_payment_intent_id: string | null
+          stripe_customer_id: string | null
           status: 'pending' | 'processing' | 'succeeded' | 'failed' | 'refunded'
           metadata: Json | null
           created_at: string
@@ -237,13 +241,17 @@ export interface Database {
         }
         Insert: {
           id?: string
-          booking_id: string
+          booking_id?: string | null
           user_id: string
+          quote_id?: string | null
           amount: number
           currency?: string
           payment_method: string
           payment_date?: string
+          paid_at?: string | null
+          type?: 'full' | 'deposit' | 'balance' | null
           stripe_payment_intent_id?: string | null
+          stripe_customer_id?: string | null
           status?: 'pending' | 'processing' | 'succeeded' | 'failed' | 'refunded'
           metadata?: Json | null
           created_at?: string
@@ -251,13 +259,17 @@ export interface Database {
         }
         Update: {
           id?: string
-          booking_id?: string
+          booking_id?: string | null
           user_id?: string
+          quote_id?: string | null
           amount?: number
           currency?: string
           payment_method?: string
           payment_date?: string
+          paid_at?: string | null
+          type?: 'full' | 'deposit' | 'balance' | null
           stripe_payment_intent_id?: string | null
+          stripe_customer_id?: string | null
           status?: 'pending' | 'processing' | 'succeeded' | 'failed' | 'refunded'
           metadata?: Json | null
           created_at?: string

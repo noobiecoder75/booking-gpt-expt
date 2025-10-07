@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { useSettingsStore } from '@/store/settings-store';
 import { ModernCard } from '@/components/ui/modern-card';
 import { ModernButton } from '@/components/ui/modern-button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Settings,
   Save,
@@ -125,118 +127,111 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <DollarSign className="w-4 h-4 inline mr-1" />
             Global Default Rate (%)
           </label>
-          <input
+          <Input
             type="number"
             min="0"
             max="50"
             step="0.1"
             value={localSettings.defaultCommissionRate}
             onChange={(e) => handleInputChange('defaultCommissionRate', parseFloat(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">Fallback rate for all items</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Fallback rate for all items</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             <Plane className="w-4 h-4 inline mr-1" />
             Flight Commission (%)
           </label>
-          <input
+          <Input
             type="number"
             min="0"
             max="50"
             step="0.1"
             value={localSettings.flightCommissionRate}
             onChange={(e) => handleInputChange('flightCommissionRate', parseFloat(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">Default rate for flight bookings</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Default rate for flight bookings</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             🏨 Hotel Commission (%)
           </label>
-          <input
+          <Input
             type="number"
             min="0"
             max="50"
             step="0.1"
             value={localSettings.hotelCommissionRate}
             onChange={(e) => handleInputChange('hotelCommissionRate', parseFloat(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">Default rate for hotel bookings</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Default rate for hotel bookings</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             🎯 Activity Commission (%)
           </label>
-          <input
+          <Input
             type="number"
             min="0"
             max="50"
             step="0.1"
             value={localSettings.activityCommissionRate}
             onChange={(e) => handleInputChange('activityCommissionRate', parseFloat(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">Default rate for activity bookings</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Default rate for activity bookings</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             🚗 Transfer Commission (%)
           </label>
-          <input
+          <Input
             type="number"
             min="0"
             max="50"
             step="0.1"
             value={localSettings.transferCommissionRate}
             onChange={(e) => handleInputChange('transferCommissionRate', parseFloat(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">Default rate for transfer bookings</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Default rate for transfer bookings</p>
         </div>
       </div>
 
-      <div className="border-t pt-6">
-        <h4 className="text-lg font-medium text-gray-900 mb-4">Commission Bounds</h4>
+      <div className="border-t dark:border-gray-700 pt-6">
+        <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Commission Bounds</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Minimum Commission Rate (%)
             </label>
-            <input
+            <Input
               type="number"
               min="0"
               max="50"
               step="0.1"
               value={localSettings.minCommissionRate}
               onChange={(e) => handleInputChange('minCommissionRate', parseFloat(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Maximum Commission Rate (%)
             </label>
-            <input
+            <Input
               type="number"
               min="0"
               max="100"
               step="0.1"
               value={localSettings.maxCommissionRate}
               onChange={(e) => handleInputChange('maxCommissionRate', parseFloat(e.target.value) || 0)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -247,41 +242,38 @@ export default function AdminSettingsPage() {
   const renderCompanySettings = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
-        <input
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Name</label>
+        <Input
           type="text"
           value={localSettings.companyName}
           onChange={(e) => handleInputChange('companyName', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Company Email</label>
-        <input
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Email</label>
+        <Input
           type="email"
           value={localSettings.companyEmail}
           onChange={(e) => handleInputChange('companyEmail', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Company Phone</label>
-        <input
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Phone</label>
+        <Input
           type="tel"
           value={localSettings.companyPhone}
           onChange={(e) => handleInputChange('companyPhone', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Currency</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Currency</label>
         <select
           value={localSettings.currency}
           onChange={(e) => handleInputChange('currency', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
         >
           <option value="USD">USD - US Dollar</option>
           <option value="EUR">EUR - Euro</option>
@@ -292,12 +284,11 @@ export default function AdminSettingsPage() {
       </div>
 
       <div className="md:col-span-2">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Company Address</label>
-        <textarea
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Company Address</label>
+        <Textarea
           rows={3}
           value={localSettings.companyAddress}
           onChange={(e) => handleInputChange('companyAddress', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
     </div>
@@ -306,66 +297,62 @@ export default function AdminSettingsPage() {
   const renderBusinessSettings = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           <Calendar className="w-4 h-4 inline mr-1" />
           Default Payment Terms (days)
         </label>
-        <input
+        <Input
           type="number"
           min="1"
           max="365"
           value={localSettings.defaultPaymentTerms}
           onChange={(e) => handleInputChange('defaultPaymentTerms', parseInt(e.target.value) || 30)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <p className="text-xs text-gray-500 mt-1">Days customers have to pay invoices</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Days customers have to pay invoices</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Auto Quote Expiry (days)
         </label>
-        <input
+        <Input
           type="number"
           min="1"
           max="90"
           value={localSettings.autoQuoteExpiry}
           onChange={(e) => handleInputChange('autoQuoteExpiry', parseInt(e.target.value) || 14)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <p className="text-xs text-gray-500 mt-1">How long quotes remain valid</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">How long quotes remain valid</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           <Shield className="w-4 h-4 inline mr-1" />
           Approval Required Above ($)
         </label>
-        <input
+        <Input
           type="number"
           min="0"
           step="100"
           value={localSettings.requireApprovalAbove}
           onChange={(e) => handleInputChange('requireApprovalAbove', parseFloat(e.target.value) || 0)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <p className="text-xs text-gray-500 mt-1">Bookings above this amount need approval</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Bookings above this amount need approval</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
           Maximum Discount (%)
         </label>
-        <input
+        <Input
           type="number"
           min="0"
           max="50"
           step="1"
           value={localSettings.maxDiscountPercent}
           onChange={(e) => handleInputChange('maxDiscountPercent', parseFloat(e.target.value) || 0)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <p className="text-xs text-gray-500 mt-1">Maximum discount agents can apply</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Maximum discount agents can apply</p>
       </div>
     </div>
   );
@@ -374,47 +361,45 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Passport Expiry Warning (months)
           </label>
-          <input
+          <Input
             type="number"
             min="1"
             max="24"
             value={localSettings.passportExpiryWarning}
             onChange={(e) => handleInputChange('passportExpiryWarning', parseInt(e.target.value) || 6)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">Warn when passport expires within this time</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Warn when passport expires within this time</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Visa Reminder (days before travel)
           </label>
-          <input
+          <Input
             type="number"
             min="1"
             max="180"
             value={localSettings.visaReminderDays}
             onChange={(e) => handleInputChange('visaReminderDays', parseInt(e.target.value) || 30)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
-          <p className="text-xs text-gray-500 mt-1">Days before travel to remind about visa</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Days before travel to remind about visa</p>
         </div>
       </div>
 
       <div className="space-y-4">
-        <h4 className="text-lg font-medium text-gray-900">Default Requirements</h4>
+        <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Default Requirements</h4>
         <div className="space-y-3">
           <label className="flex items-center">
             <input
               type="checkbox"
               checked={localSettings.defaultTravelInsurance}
               onChange={(e) => handleInputChange('defaultTravelInsurance', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Default Travel Insurance Required</span>
+            <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Default Travel Insurance Required</span>
           </label>
 
           <label className="flex items-center">
@@ -422,9 +407,9 @@ export default function AdminSettingsPage() {
               type="checkbox"
               checked={localSettings.emergencyContactRequired}
               onChange={(e) => handleInputChange('emergencyContactRequired', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Emergency Contact Required</span>
+            <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Emergency Contact Required</span>
           </label>
         </div>
       </div>
@@ -434,16 +419,16 @@ export default function AdminSettingsPage() {
   const renderNotificationSettings = () => (
     <div className="space-y-6">
       <div className="space-y-4">
-        <h4 className="text-lg font-medium text-gray-900">Communication Preferences</h4>
+        <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Communication Preferences</h4>
         <div className="space-y-3">
           <label className="flex items-center">
             <input
               type="checkbox"
               checked={localSettings.emailNotifications}
               onChange={(e) => handleInputChange('emailNotifications', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">
+            <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
               <Mail className="w-4 h-4 inline mr-1" />
               Email Notifications
             </span>
@@ -454,9 +439,9 @@ export default function AdminSettingsPage() {
               type="checkbox"
               checked={localSettings.smsNotifications}
               onChange={(e) => handleInputChange('smsNotifications', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">SMS Notifications</span>
+            <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">SMS Notifications</span>
           </label>
 
           <label className="flex items-center">
@@ -464,9 +449,9 @@ export default function AdminSettingsPage() {
               type="checkbox"
               checked={localSettings.customerAutoEmails}
               onChange={(e) => handleInputChange('customerAutoEmails', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Automatic Customer Emails</span>
+            <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Automatic Customer Emails</span>
           </label>
 
           <label className="flex items-center">
@@ -474,9 +459,9 @@ export default function AdminSettingsPage() {
               type="checkbox"
               checked={localSettings.agentDailyDigest}
               onChange={(e) => handleInputChange('agentDailyDigest', e.target.checked)}
-              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              className="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
             />
-            <span className="ml-2 text-sm text-gray-700">Agent Daily Digest</span>
+            <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">Agent Daily Digest</span>
           </label>
         </div>
       </div>
@@ -486,11 +471,11 @@ export default function AdminSettingsPage() {
   const renderSystemSettings = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Timezone</label>
         <select
           value={localSettings.timezone}
           onChange={(e) => handleInputChange('timezone', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
         >
           <option value="America/New_York">Eastern Time</option>
           <option value="America/Chicago">Central Time</option>
@@ -501,11 +486,11 @@ export default function AdminSettingsPage() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Date Format</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Date Format</label>
         <select
           value={localSettings.dateFormat}
           onChange={(e) => handleInputChange('dateFormat', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
         >
           <option value="MM/DD/YYYY">MM/DD/YYYY</option>
           <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -514,11 +499,11 @@ export default function AdminSettingsPage() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Backup Frequency</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Backup Frequency</label>
         <select
           value={localSettings.backupFrequency}
           onChange={(e) => handleInputChange('backupFrequency', e.target.value as 'daily' | 'weekly' | 'monthly')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -527,23 +512,22 @@ export default function AdminSettingsPage() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Data Retention (months)</label>
-        <input
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Data Retention (months)</label>
+        <Input
           type="number"
           min="6"
           max="120"
           value={localSettings.dataRetentionMonths}
           onChange={(e) => handleInputChange('dataRetentionMonths', parseInt(e.target.value) || 24)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-2">Audit Log Level</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Audit Log Level</label>
         <select
           value={localSettings.auditLogLevel}
           onChange={(e) => handleInputChange('auditLogLevel', e.target.value as 'basic' | 'detailed' | 'verbose')}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
         >
           <option value="basic">Basic</option>
           <option value="detailed">Detailed</option>
@@ -569,12 +553,12 @@ export default function AdminSettingsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-blue-100 rounded-xl">
-          <Settings className="w-8 h-8 text-blue-600" />
+        <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+          <Settings className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Admin Settings</h1>
-          <p className="text-gray-600">Configure global application settings</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Admin Settings</h1>
+          <p className="text-gray-600 dark:text-gray-400">Configure global application settings</p>
         </div>
       </div>
 
@@ -586,24 +570,24 @@ export default function AdminSettingsPage() {
             <ModernCard key={section.id} className="overflow-hidden">
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
+                className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <IconComponent className="w-6 h-6 text-blue-600" />
+                  <IconComponent className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900">{section.title}</h3>
-                    <p className="text-sm text-gray-600">{section.description}</p>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{section.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{section.description}</p>
                   </div>
                 </div>
                 {section.expanded ? (
-                  <ChevronUp className="w-5 h-5 text-gray-400" />
+                  <ChevronUp className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-400" />
+                  <ChevronDown className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 )}
               </button>
 
               {section.expanded && (
-                <div className="px-6 pb-6 border-t border-gray-100">
+                <div className="px-6 pb-6 border-t border-gray-100 dark:border-gray-700">
                   <div className="pt-6">
                     {getSectionContent(section.id)}
                   </div>
@@ -615,7 +599,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between sticky bottom-6 bg-white p-4 rounded-lg shadow-lg border">
+      <div className="flex items-center justify-between sticky bottom-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
         <ModernButton
           variant="outline"
           onClick={handleReset}
@@ -627,7 +611,7 @@ export default function AdminSettingsPage() {
 
         <div className="flex items-center gap-3">
           {saveSuccess && (
-            <span className="text-green-600 font-medium">Settings saved successfully!</span>
+            <span className="text-green-600 dark:text-green-400 font-medium">Settings saved successfully!</span>
           )}
           <ModernButton
             onClick={handleSave}
@@ -636,7 +620,7 @@ export default function AdminSettingsPage() {
           >
             <Save className="w-4 h-4" />
             Save Changes
-            {hasChanges && <span className="ml-1 px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs">•</span>}
+            {hasChanges && <span className="ml-1 px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 rounded-full text-xs">•</span>}
           </ModernButton>
         </div>
       </div>

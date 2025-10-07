@@ -19,7 +19,7 @@ type ContactRow = {
   created_at: string;
 };
 
-function dbRowToContact(row: ContactRow): Contact {
+function dbRowToContact(row: ContactRow & { quotes?: Array<{ id: string }> }): Contact {
   return {
     id: row.id,
     firstName: row.first_name,
@@ -33,7 +33,7 @@ function dbRowToContact(row: ContactRow): Contact {
     company: row.company || undefined,
     notes: row.notes || undefined,
     tags: row.tags || undefined,
-    quotes: [],
+    quotes: (row.quotes || []).map(q => q.id),
     createdAt: new Date(row.created_at),
   };
 }
@@ -48,7 +48,7 @@ async function fetchContacts(): Promise<Contact[]> {
 
   const { data, error } = await supabase
     .from('contacts')
-    .select('*')
+    .select('*, quotes(id)')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
@@ -85,7 +85,7 @@ export function useContactByIdQuery(contactId: string | undefined) {
       const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from('contacts')
-        .select('*')
+        .select('*, quotes(id)')
         .eq('id', contactId)
         .single();
 
