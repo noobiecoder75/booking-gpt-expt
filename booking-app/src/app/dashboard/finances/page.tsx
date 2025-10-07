@@ -13,6 +13,7 @@ import { useCommissionMutations } from '@/hooks/mutations/useCommissionMutations
 import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
 import { useQuotesQuery } from '@/hooks/queries/useQuotesQuery';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
+import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { formatItemDetails } from '@/lib/travel-item-formatter';
@@ -34,9 +35,10 @@ export default function FinancesPage() {
   const { data: invoices = [] } = useInvoicesQuery();
   const { markInvoiceAsPaid, generateInvoiceFromQuote } = useInvoiceMutations();
   const { data: commissions = [] } = useCommissionsQuery();
-  const { bulkMarkAsPaid } = useCommissionMutations();
+  const { bulkMarkAsPaid, generateCommissionFromBooking } = useCommissionMutations();
   const { data: expenses = [] } = useExpensesQuery();
   const { data: quotes = [] } = useQuotesQuery();
+  const { data: contacts = [] } = useContactsQuery();
 
   const [dateRange, setDateRange] = useState('30'); // days
   const [selectedPeriod, setSelectedPeriod] = useState({
@@ -155,104 +157,86 @@ export default function FinancesPage() {
       return;
     }
 
-    // TODO: Refactor to use TanStack Query mutations instead of stores
-    alert('Invoice generation temporarily disabled during migration to TanStack Query');
-    return;
-
-    /* // Generate invoices for all accepted quotes
     let invoicesCreated = 0;
+    let commissionsCreated = 0;
+    const errors: string[] = [];
 
     for (const quote of acceptedQuotes) {
       try {
-        // Import stores to avoid circular dependencies
-        const { useInvoiceStore } = await import('@/store/invoice-store');
-        const { useCommissionStore } = await import('@/store/commission-store');
-        const { useContactStore } = await import('@/store/contact-store');
+        // Get customer data from contacts
+        const customer = contacts.find(c => c.id === quote.contactId);
 
-        const invoiceStore = useInvoiceStore.getState();
-        const commissionStore = useCommissionStore.getState();
-        const contactStore = useContactStore.getState();
+        if (!customer) {
+          errors.push(`Customer not found for quote ${quote.id}`);
+          continue;
+        }
 
-        // Get customer data
-        const customer = contactStore.getContactById(quote.contactId);
         const customerData = {
-          customerId: quote.contactId,
-          customerName: customer ? `${customer.firstName} ${customer.lastName}` : 'Unknown Customer',
-          customerEmail: customer?.email || 'unknown@example.com',
-          customerAddress: customer?.address
+          customerId: customer.id,
+          customerName: `${customer.firstName} ${customer.lastName}`,
+          customerEmail: customer.email,
+          customerAddress: customer.address
         };
 
-        // Create invoice with actual quote data
-        const dueDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-
-        const invoiceItems = quote.items.map((item: any) => {
-          const formattedDetails = formatItemDetails(item);
-          const description = formattedDetails
-            ? `${item.name} - ${formattedDetails}`
-            : item.name;
-
-          return {
-            id: crypto.randomUUID(),
-            description,
-            quantity: item.quantity || 1,
-            unitPrice: item.price,
-            total: item.price * (item.quantity || 1),
-            taxRate: 0,
-            taxAmount: 0,
-          };
+        // Generate invoice from quote
+        const invoiceId = await new Promise<string>((resolve, reject) => {
+          generateInvoiceFromQuote.mutate(
+            {
+              quoteId: quote.id,
+              customerData,
+              terms: 'Net 30',
+              dueDays: 30
+            },
+            {
+              onSuccess: (id) => resolve(id),
+              onError: (error) => reject(error)
+            }
+          );
         });
 
-        const subtotal = invoiceItems.reduce((sum, item) => sum + item.total, 0);
-        const taxRate = 8.5;
-        const taxAmount = subtotal * (taxRate / 100);
-        const total = subtotal + taxAmount;
-
-        const invoiceData = {
-          quoteId: quote.id,
-          customerId: customerData.customerId,
-          customerName: customerData.customerName,
-          customerEmail: customerData.customerEmail,
-          customerAddress: customerData.customerAddress,
-          issueDate: new Date().toISOString().split('T')[0],
-          dueDate: dueDate.toISOString().split('T')[0],
-          status: 'sent' as const,
-          items: invoiceItems,
-          subtotal,
-          taxRate,
-          taxAmount,
-          total,
-          payments: [],
-          terms: 'Net 30',
-        };
-
-        const invoiceId = invoiceStore.createInvoice(invoiceData);
-
         if (invoiceId) {
-          // Generate commission record
-          commissionStore.generateCommissionFromBooking({
-            agentId: 'agent-001',
-            agentName: 'Travel Agent',
-            bookingId: invoiceId,
-            quoteId: quote.id,
-            customerId: quote.contactId,
-            customerName: customerData.customerName,
-            bookingAmount: total,
-            bookingType: 'hotel'
-          });
-
           invoicesCreated++;
+
+          // Generate commission record
+          try {
+            await new Promise<void>((resolve, reject) => {
+              generateCommissionFromBooking.mutate(
+                {
+                  agentId: user?.id || 'default-agent',
+                  agentName: user?.email || 'Travel Agent',
+                  bookingId: invoiceId,
+                  quoteId: quote.id,
+                  invoiceId: invoiceId,
+                  customerId: customer.id,
+                  customerName: customerData.customerName,
+                  bookingAmount: quote.total,
+                  bookingType: 'hotel',
+                },
+                {
+                  onSuccess: () => resolve(),
+                  onError: (error) => reject(error)
+                }
+              );
+            });
+            commissionsCreated++;
+          } catch (commError) {
+            console.error('Failed to create commission for invoice:', invoiceId, commError);
+            errors.push(`Commission generation failed for invoice ${invoiceId}`);
+          }
         }
       } catch (error) {
         console.error('Failed to create invoice for quote:', quote.id, error);
+        errors.push(`Failed to create invoice for quote ${quote.id}`);
       }
     }
 
+    // Show results
     if (invoicesCreated > 0) {
-      alert(`Successfully created ${invoicesCreated} invoice(s) from accepted quotes!`);
-      window.location.reload(); // Refresh to show new data
+      const message = `Successfully created ${invoicesCreated} invoice(s) and ${commissionsCreated} commission record(s)!`;
+      alert(errors.length > 0 ? `${message}\n\nWarnings:\n${errors.join('\n')}` : message);
     } else {
-      alert('Failed to create invoices. Please try again.');
-    } */
+      alert(`Failed to create invoices.\n${errors.join('\n')}`);
+    }
   };
 
   const handlePayCommissions = () => {
