@@ -5,19 +5,7 @@ import type { Database } from '@/types/database';
 export function createClient() {
   return createBrowserClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      auth: {
-        // Enable automatic token refresh
-        autoRefreshToken: true,
-        // Persist session in localStorage
-        persistSession: true,
-        // Detect session from URL ONLY on callback route
-        detectSessionInUrl: false,
-        // Use PKCE flow for enhanced security
-        flowType: 'pkce',
-      },
-    }
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
 }
 
