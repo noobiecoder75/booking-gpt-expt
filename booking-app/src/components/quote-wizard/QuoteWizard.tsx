@@ -1,120 +1,100 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useContactByIdQuery } from '@/hooks/queries/useContactsQuery';
-import { useQuoteByIdQuery } from '@/hooks/queries/useQuotesQuery';
+import { useEffect } from 'react';
+import { useMachine } from '@xstate/react';
+import { quoteWizardMachine } from './machines/quote-wizard.machine';
+import { useQuoteWizardData } from './hooks/useQuoteWizardData';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
-import { Contact, TravelQuote } from '@/types';
+import { useRouter } from 'next/navigation';
 import { ModernButton } from '@/components/ui/modern-button';
 import { ModernCard } from '@/components/ui/modern-card';
 import { ContactSelection } from './ContactSelection';
 import { QuoteDetails } from './QuoteDetails';
 import { TravelItems } from './TravelItems';
 import { QuoteReview } from './QuoteReview';
-import { ChevronLeft, ChevronRight, Home, Save, X } from 'lucide-react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-
-type WizardStep = 'contact' | 'details' | 'items' | 'review';
+import { ChevronLeft, ChevronRight, Save, X, Loader2, AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface QuoteWizardProps {
   editQuoteId?: string | null;
 }
 
+const steps = [
+  { id: 'selectingContact', label: 'Select Contact', description: 'Choose or create a contact' },
+  { id: 'enteringDetails', label: 'Quote Details', description: 'Set travel dates and details' },
+  { id: 'editingDetails', label: 'Quote Details', description: 'Set travel dates and details' },
+  { id: 'addingItems', label: 'Add Items', description: 'Add flights, hotels, and activities' },
+  { id: 'reviewing', label: 'Review & Send', description: 'Review and finalize quote' },
+];
+
 export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   const router = useRouter();
-  const [currentStep, setCurrentStep] = useState<WizardStep>('contact');
-  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
-  const [currentQuote, setCurrentQuote] = useState<Partial<TravelQuote> | null>(null);
-  const [isEditMode, setIsEditMode] = useState(false);
 
+  // Initialize state machine with edit mode if editQuoteId provided
+  const [state, send] = useMachine(quoteWizardMachine, {
+    input: {
+      mode: editQuoteId ? 'edit' : 'create',
+      editQuoteId: editQuoteId || null,
+      selectedContact: null,
+      quote: null,
+      error: null,
+    },
+  });
+
+  // Load data for edit mode
+  const { quote, contact, isInitializing, error: loadError } = useQuoteWizardData({
+    editQuoteId,
+    enabled: state.context.mode === 'edit',
+  });
+
+  // Mutations
   const { addQuote, updateQuote } = useQuoteMutations();
-  const isSubmitting = addQuote.isPending || updateQuote.isPending;
 
-  // Load existing quote if editing OR after creation (to get live updates)
-  // This ensures we always have fresh data from the database after mutations
-  const quoteIdToFetch = editQuoteId || currentQuote?.id;
-  const { data: existingQuote } = useQuoteByIdQuery(quoteIdToFetch);
-  const { data: existingContact } = useContactByIdQuery(existingQuote?.contactId);
-
+  // Load existing quote data when available
   useEffect(() => {
-    // Only initialize when explicitly editing an existing quote (editQuoteId provided)
-    // Don't run during normal wizard flow when existingQuote updates from mutations
-    if (editQuoteId && existingQuote && existingContact && !isEditMode) {
-      setCurrentQuote(existingQuote);
-      setSelectedContact(existingContact);
-      setIsEditMode(true);
-      // Skip contact selection step in edit mode
-      setCurrentStep('details');
+    if (state.matches('loadingExisting') && quote && contact && !loadError) {
+      send({ type: 'QUOTE_LOADED', quote, contact });
     }
-  }, [editQuoteId, existingQuote, existingContact, isEditMode]);
+  }, [state, quote, contact, loadError, send]);
 
-  const steps = [
-    { id: 'contact', label: 'Select Contact', description: 'Choose or create a contact' },
-    { id: 'details', label: 'Quote Details', description: 'Set travel dates and details' },
-    { id: 'items', label: 'Add Items', description: 'Add flights, hotels, and activities' },
-    { id: 'review', label: 'Review & Send', description: 'Review and finalize quote' },
-  ];
-
-  const currentStepIndex = steps.findIndex(step => step.id === currentStep);
-
-  const handleNext = () => {
-    const nextIndex = Math.min(currentStepIndex + 1, steps.length - 1);
-    setCurrentStep(steps[nextIndex].id as WizardStep);
-  };
-
-  const handlePrevious = () => {
-    const prevIndex = Math.max(currentStepIndex - 1, 0);
-    setCurrentStep(steps[prevIndex].id as WizardStep);
-  };
-
-  const handleContactSelect = (contact: Contact) => {
-    setSelectedContact(contact);
-    handleNext();
-  };
-
-  const handleQuoteDetailsComplete = async (quoteData: Partial<TravelQuote>) => {
-    if (!selectedContact) {
-      alert('Please select a contact first. Returning to contact selection.');
-      setCurrentStep('contact');
-      return;
+  // Handle load errors
+  useEffect(() => {
+    if (state.matches('loadingExisting') && loadError) {
+      send({ type: 'LOAD_FAILED', error: loadError });
+      toast.error('Failed to load quote', { description: loadError });
     }
+  }, [state, loadError, send]);
+
+  // Handle save and exit
+  const handleSaveAndExit = () => {
+    if (state.context.quote?.id) {
+      toast.success('Quote saved as draft');
+    }
+    router.push('/dashboard/quotes');
+  };
+
+  // Handle cancel
+  const handleCancel = () => {
+    send('CANCEL');
+    router.push('/dashboard/quotes');
+  };
+
+  // Handle quote details submission
+  const handleQuoteDetailsSubmit = async (quoteData: any) => {
+    send({ type: 'DETAILS_SUBMITTED', quoteData });
 
     try {
-      if (isEditMode && currentQuote?.id) {
+      if (state.context.mode === 'edit' && state.context.quote?.id) {
         // Update existing quote
         await updateQuote.mutateAsync({
-          id: currentQuote.id,
-          updates: {
-            title: quoteData.title || currentQuote.title,
-            travelDates: quoteData.travelDates || currentQuote.travelDates,
-            ...quoteData,
-          },
+          id: state.context.quote.id,
+          updates: quoteData,
         });
-
-        // Update local state with new data
-        setCurrentQuote({
-          ...currentQuote,
-          ...quoteData,
-        });
+        send({ type: 'SAVE_SUCCESS', quote: { ...state.context.quote, ...quoteData } });
       } else {
         // Create new quote
         const newQuoteId = await addQuote.mutateAsync({
-          contactId: selectedContact.id,
-          title: quoteData.title || 'New Travel Quote',
-          items: [],
-          totalCost: 0,
-          status: 'draft',
-          travelDates: quoteData.travelDates || {
-            start: new Date(),
-            end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-          },
-        });
-
-        // Set the new quote in local state
-        setCurrentQuote({
-          id: newQuoteId,
-          contactId: selectedContact.id,
+          contactId: state.context.selectedContact!.id,
           title: quoteData.title || 'New Travel Quote',
           items: [],
           totalCost: 0,
@@ -124,99 +104,135 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
             end: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           },
         });
+
+        send({
+          type: 'SAVE_SUCCESS',
+          quote: {
+            id: newQuoteId,
+            contactId: state.context.selectedContact!.id,
+            ...quoteData,
+          },
+        });
+      }
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+      send({ type: 'SAVE_FAILED', error: errorMsg });
+      toast.error('Failed to save quote', { description: errorMsg });
+    }
+  };
+
+  // Get current step index for progress indicator
+  const getCurrentStepIndex = () => {
+    if (state.matches('selectingContact')) return 0;
+    if (state.matches('enteringDetails') || state.matches('editingDetails') || state.matches('savingQuote') || state.matches('updatingQuote')) return 1;
+    if (state.matches('addingItems')) return 2;
+    if (state.matches('reviewing')) return 3;
+    return 0;
+  };
+
+  const currentStepIndex = getCurrentStepIndex();
+
+  // Show loading state during initialization
+  if (isInitializing) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" />
+          <p className="text-gray-600">Loading quote...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (state.matches('error')) {
+    return (
+      <ModernCard variant="elevated" className="p-8">
+        <div className="text-center space-y-4">
+          <div className="flex justify-center">
+            <div className="p-3 bg-red-100 rounded-full">
+              <AlertTriangle className="w-8 h-8 text-red-600" />
+            </div>
+          </div>
+          <h3 className="text-lg font-semibold">Failed to load quote</h3>
+          <p className="text-gray-600">{state.context.error}</p>
+          <div className="flex gap-3 justify-center">
+            <ModernButton onClick={() => send('RETRY')}>
+              Try Again
+            </ModernButton>
+            <ModernButton variant="outline" onClick={handleCancel}>
+              Cancel
+            </ModernButton>
+          </div>
+        </div>
+      </ModernCard>
+    );
+  }
+
+  // Render step content
+  const renderStepContent = () => {
+    if (state.matches('selectingContact')) {
+      return (
+        <ContactSelection
+          onContactSelect={(contact) => send({ type: 'CONTACT_SELECTED', contact })}
+        />
+      );
+    }
+
+    if (state.matches('enteringDetails') || state.matches('editingDetails') || state.matches('savingQuote') || state.matches('updatingQuote')) {
+      const isSubmitting = state.matches('savingQuote') || state.matches('updatingQuote');
+      return (
+        <QuoteDetails
+          contact={state.context.selectedContact!}
+          quote={state.context.quote || undefined}
+          onComplete={handleQuoteDetailsSubmit}
+          isSubmitting={isSubmitting}
+        />
+      );
+    }
+
+    if (state.matches('addingItems')) {
+      if (!state.context.quote?.id) {
+        return (
+          <div className="text-center py-8">
+            <p className="text-gray-600">Please complete the quote details first.</p>
+          </div>
+        );
       }
 
-      handleNext();
-    } catch (error) {
-      console.error('[QuoteWizard] Error saving quote:', error);
-      alert(`Failed to save quote: ${error instanceof Error ? error.message : 'Unknown error'}. Please try again.`);
+      return (
+        <TravelItems
+          quote={state.context.quote as any}
+          onComplete={() => send('NEXT')}
+        />
+      );
     }
-  };
 
-  const handleItemsComplete = () => {
-    handleNext();
-  };
+    if (state.matches('reviewing')) {
+      if (!state.context.quote?.id) {
+        return (
+          <div className="text-center py-8">
+            <p className="text-gray-600">Please complete the previous steps first.</p>
+          </div>
+        );
+      }
 
-  const handleQuoteComplete = () => {
-    // Show success message or redirect
-    alert(isEditMode ? 'Quote updated successfully!' : 'Quote created successfully!');
-
-    // Redirect to quotes dashboard
-    router.push('/dashboard/quotes');
-  };
-
-  const handleSaveAndExit = () => {
-    if (currentQuote?.id) {
-      // Save current state if we have a quote
-      alert('Quote saved as draft');
+      return (
+        <QuoteReview
+          quote={state.context.quote as any}
+          contact={state.context.selectedContact!}
+          onComplete={() => {
+            send('NEXT');
+            toast.success(
+              state.context.mode === 'edit' ? 'Quote updated successfully!' : 'Quote created successfully!'
+            );
+            router.push('/dashboard/quotes');
+          }}
+        />
+      );
     }
-    router.push('/dashboard/quotes');
-  };
 
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 'contact':
-        // Skip contact selection in edit mode
-        if (isEditMode && selectedContact) {
-          setCurrentStep('details');
-          return null;
-        }
-        return <ContactSelection onContactSelect={handleContactSelect} />;
-      case 'details':
-        return (
-          <QuoteDetails
-            contact={selectedContact!}
-            quote={isEditMode ? currentQuote : undefined}
-            onComplete={handleQuoteDetailsComplete}
-            isSubmitting={isSubmitting}
-          />
-        );
-      case 'items':
-        // Use live quote data from database (auto-refetches after mutations)
-        // Fallback to local state for new quotes before first save
-        const liveQuote = existingQuote || currentQuote;
-
-        console.log('[QuoteWizard] Items step rendering');
-        console.log('[QuoteWizard] - existingQuote:', existingQuote);
-        console.log('[QuoteWizard] - currentQuote:', currentQuote);
-        console.log('[QuoteWizard] - liveQuote (used):', liveQuote);
-
-        if (!liveQuote?.id) {
-          return (
-            <div className="text-center py-8">
-              <p className="text-gray-600">Please complete the quote details first.</p>
-            </div>
-          );
-        }
-
-        return (
-          <TravelItems
-            quote={liveQuote as TravelQuote}
-            onComplete={handleItemsComplete}
-          />
-        );
-      case 'review':
-        // Use live quote data for review to show latest items
-        const reviewQuote = existingQuote || currentQuote;
-
-        if (!reviewQuote?.id) {
-          return (
-            <div className="text-center py-8">
-              <p className="text-gray-600">Please complete the previous steps first.</p>
-            </div>
-          );
-        }
-
-        return (
-          <QuoteReview
-            quote={reviewQuote as TravelQuote}
-            contact={selectedContact!}
-            onComplete={handleQuoteComplete}
-          />
-        );
-      default:
-        return null;
-    }
+    return null;
   };
 
   return (
@@ -224,7 +240,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       {/* Progress Steps */}
       <ModernCard variant="elevated" className="p-6 bg-white">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          {steps.map((step, index) => (
+          {steps.slice(0, 4).map((step, index) => (
             <div
               key={step.id}
               className={`flex items-center ${
@@ -242,17 +258,19 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
                   {index + 1}
                 </div>
                 <div className="mt-3 text-center">
-                  <div className={`text-sm font-medium ${
-                    index <= currentStepIndex ? 'text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400'
-                  }`}>
+                  <div
+                    className={`text-sm font-medium ${
+                      index <= currentStepIndex ? 'text-gray-900' : 'text-gray-600'
+                    }`}
+                  >
                     {step.label}
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-500 mt-1 hidden md:block">
+                  <div className="text-xs text-gray-500 mt-1 hidden md:block">
                     {step.description}
                   </div>
                 </div>
               </div>
-              {index < steps.length - 1 && (
+              {index < steps.length - 2 && (
                 <div
                   className={`hidden md:flex flex-1 h-0.5 mx-6 rounded-full transition-colors ${
                     index < currentStepIndex ? 'bg-blue-600' : 'bg-gray-200'
@@ -270,17 +288,18 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <ModernButton
               variant="outline"
-              onClick={handlePrevious}
-              disabled={currentStepIndex === 0}
+              onClick={() => send('PREVIOUS')}
+              disabled={
+                state.matches('selectingContact') ||
+                state.matches('loadingExisting') ||
+                state.hasTag('loading')
+              }
             >
               <ChevronLeft className="w-4 h-4 mr-2" />
               Previous
             </ModernButton>
 
-            <ModernButton
-              variant="ghost"
-              onClick={handleSaveAndExit}
-            >
+            <ModernButton variant="ghost" onClick={handleSaveAndExit}>
               <Save className="w-4 h-4 mr-2" />
               Save & Exit
             </ModernButton>
@@ -288,21 +307,18 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <ModernButton
-              onClick={handleNext}
+              onClick={() => send('NEXT')}
               disabled={
-                currentStepIndex === steps.length - 1 ||
-                (currentStep === 'contact' && !selectedContact) ||
-                (currentStep === 'details' && !currentQuote)
+                state.matches('reviewing') ||
+                !state.can({ type: 'NEXT' }) ||
+                state.hasTag('loading')
               }
             >
               Next
               <ChevronRight className="w-4 h-4 ml-2" />
             </ModernButton>
 
-            <ModernButton
-              variant="ghost"
-              onClick={() => router.push('/dashboard/quotes')}
-            >
+            <ModernButton variant="ghost" onClick={handleCancel}>
               <X className="w-4 h-4 mr-2" />
               Cancel
             </ModernButton>

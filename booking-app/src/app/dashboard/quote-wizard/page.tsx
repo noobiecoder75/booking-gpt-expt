@@ -3,6 +3,7 @@
 import { QuoteWizard } from '@/components/quote-wizard/QuoteWizard';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -34,8 +35,10 @@ function QuoteWizardContent() {
 
 export default function QuoteWizardPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <QuoteWizardContent />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<div>Loading...</div>}>
+        <QuoteWizardContent />
+      </Suspense>
+    </ErrorBoundary>
   );
 }
