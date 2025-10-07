@@ -19,9 +19,9 @@ export async function updateSession(request: NextRequest) {
           // Debug: Log cookies being set
           console.log('[Middleware] Setting cookies:', cookiesToSet.map(c => ({ name: c.name, hasValue: !!c.value })));
 
-          // Set cookies on both request and response without recreating the response
+          // IMPORTANT: Only set cookies on the response, not on the request
+          // Setting on both causes issues with cookie persistence
           cookiesToSet.forEach(({ name, value, options }) => {
-            request.cookies.set(name, value);
             supabaseResponse.cookies.set(name, value, options);
           });
         },
@@ -55,14 +55,20 @@ export async function updateSession(request: NextRequest) {
   if (isProtectedPath && !user) {
     const redirectUrl = new URL('/auth/login', request.url);
     redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-    return NextResponse.redirect(redirectUrl);
+    // Important: Use the existing response to preserve cookies
+    return NextResponse.redirect(redirectUrl, {
+      headers: supabaseResponse.headers,
+    });
   }
 
   // Redirect to dashboard if accessing auth routes while logged in
   if (isAuthPath && user) {
     // Check if there's a redirectTo parameter, otherwise default to /dashboard/quotes
     const redirectTo = request.nextUrl.searchParams.get('redirectTo') || '/dashboard/quotes';
-    return NextResponse.redirect(new URL(redirectTo, request.url));
+    // Important: Use the existing response to preserve cookies
+    return NextResponse.redirect(new URL(redirectTo, request.url), {
+      headers: supabaseResponse.headers,
+    });
   }
 
   return supabaseResponse;

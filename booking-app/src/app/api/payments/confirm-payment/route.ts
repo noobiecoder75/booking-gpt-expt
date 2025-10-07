@@ -77,11 +77,30 @@ export async function POST(request: NextRequest) {
     const stripeFee = calculateStripeFee(paymentAmount);
     const receiptUrl = typeof paymentIntent.latest_charge === 'object' ? paymentIntent.latest_charge?.receipt_url || undefined : undefined;
 
+    // Fetch user_id from quotes table (security: don't trust client-provided data)
+    console.log('🔍 [Confirm Payment] Fetching quote from database...');
+    const { data: quoteData, error: quoteError } = await supabase
+      .from('quotes')
+      .select('user_id')
+      .eq('id', quoteId)
+      .single();
+
+    if (quoteError || !quoteData) {
+      console.error('❌ [Confirm Payment] Quote not found:', quoteError);
+      return NextResponse.json(
+        { error: 'Quote not found in database' },
+        { status: 404 }
+      );
+    }
+
+    const userId = quoteData.user_id;
+    console.log('✅ [Confirm Payment] Quote found, user_id:', userId);
+
     // Insert payment record (requires migration 20250107_add_payment_fields.sql to be run first)
     const { data: payment, error: paymentError } = await supabase
       .from('payments')
       .insert({
-        user_id: quote.userId || quote.agentId,
+        user_id: userId,
         quote_id: quoteId,
         amount: paymentAmount,
         currency: paymentIntent.currency,
@@ -130,7 +149,7 @@ export async function POST(request: NextRequest) {
     const { data: expense, error: expenseError } = await supabase
       .from('expenses')
       .insert({
-        user_id: quote.userId || quote.agentId, // Get from quote
+        user_id: userId,
         category: 'technology',
         subcategory: 'payment_processing',
         description: `Stripe processing fee for payment ${paymentId}`,
@@ -172,19 +191,19 @@ export async function POST(request: NextRequest) {
     console.log('📝 [Confirm Payment] Expense transaction recording disabled during migration');
 
     // Generate invoice from quote
-    const invoiceId = await generateInvoiceForPayment(quote, quoteId, paymentId, paymentType, paymentTransactionId);
+    const invoiceId = await generateInvoiceForPayment(quote, quoteId, paymentId, paymentType, paymentTransactionId, userId);
 
     console.log('📄 [Confirm Payment] Invoice generated:', invoiceId);
 
     // Generate commission for agent (linked to invoice)
-    const commissionId = await generateCommissionForBooking(quote, quoteId, paymentId, invoiceId, paymentTransactionId);
+    const commissionId = await generateCommissionForBooking(quote, quoteId, paymentId, invoiceId, paymentTransactionId, userId);
 
     console.log('💼 [Confirm Payment] Commission generated:', commissionId);
 
     // Auto-create supplier expenses for items with supplier costs
     if (paymentType === 'full') {
       console.log('💸 [Confirm Payment] Creating supplier expenses for paid booking...');
-      await createSupplierExpenses(quote, quoteId, paymentId, paymentTransactionId);
+      await createSupplierExpenses(quote, quoteId, paymentId, paymentTransactionId, userId);
     }
 
     // Calculate payment status
@@ -342,7 +361,8 @@ async function generateInvoiceForPayment(
   quoteId: string,
   paymentId: string,
   paymentType: PaymentType,
-  paymentTransactionId: string
+  paymentTransactionId: string,
+  userId: string
 ): Promise<string | null> {
   try {
     const supabase = getSupabaseClient();
@@ -364,7 +384,7 @@ async function generateInvoiceForPayment(
       .from('invoices')
       .insert({
         quote_id: quoteId,
-        user_id: quote.userId || quote.agentId,
+        user_id: userId,
         amount: total,
         currency: 'USD',
         status: paymentType === 'full' ? 'paid' : 'sent',
@@ -401,7 +421,8 @@ async function generateCommissionForBooking(
   quoteId: string,
   paymentId: string,
   invoiceId: string | null,
-  paymentTransactionId: string
+  paymentTransactionId: string,
+  userId: string
 ): Promise<string | null> {
   try {
     const supabase = getSupabaseClient();
@@ -421,7 +442,7 @@ async function generateCommissionForBooking(
     const { data: commission, error: commissionError } = await supabase
       .from('commissions')
       .insert({
-        user_id: quote.userId || quote.agentId,
+        user_id: userId,
         booking_id: paymentId, // Use paymentId as booking reference
         quote_id: quoteId,
         amount: commissionAmount,
@@ -451,7 +472,8 @@ async function createSupplierExpenses(
   quote: TravelQuote,
   quoteId: string,
   paymentId: string,
-  paymentTransactionId: string
+  paymentTransactionId: string,
+  userId: string
 ) {
   try {
     const supabase = getSupabaseClient();
@@ -472,7 +494,7 @@ async function createSupplierExpenses(
         .from('contacts')
         .select('*')
         .eq('name', supplier)
-        .eq('user_id', quote.userId || quote.agentId)
+        .eq('user_id', userId)
         .single();
 
       let supplierId = existingSupplier?.id;
@@ -482,7 +504,7 @@ async function createSupplierExpenses(
         const { data: newSupplier } = await supabase
           .from('contacts')
           .insert({
-            user_id: quote.userId || quote.agentId,
+            user_id: userId,
             name: supplier,
             company: supplier,
             tags: ['supplier'],
@@ -497,7 +519,7 @@ async function createSupplierExpenses(
       const { data: expense, error: expenseError } = await supabase
         .from('expenses')
         .insert({
-          user_id: quote.userId || quote.agentId,
+          user_id: userId,
           category: 'supplier_payment',
           subcategory: item.type,
           description: `Supplier cost for ${item.type}: ${item.name}`,
