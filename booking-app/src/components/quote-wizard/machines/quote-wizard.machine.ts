@@ -40,7 +40,7 @@ export const quoteWizardMachine = setup({
     setQuoteData: assign({
       quote: ({ event, context }) => {
         if (event.type === 'DETAILS_SUBMITTED') {
-          return { ...context.quote, ...event.quoteData };
+          return { ...(context.quote || {}), ...event.quoteData };
         }
         if (event.type === 'SAVE_SUCCESS') {
           return event.quote;
@@ -66,13 +66,13 @@ export const quoteWizardMachine = setup({
 }).createMachine({
   id: 'quoteWizard',
   initial: 'checkingMode',
-  context: {
-    mode: 'create',
-    editQuoteId: null,
-    selectedContact: null,
-    quote: null,
-    error: null,
-  },
+  context: ({ input }) => ({
+    mode: input.mode || 'create',
+    editQuoteId: input.editQuoteId || null,
+    selectedContact: input.selectedContact || null,
+    quote: input.quote || null,
+    error: input.error || null,
+  }),
   states: {
     checkingMode: {
       always: [

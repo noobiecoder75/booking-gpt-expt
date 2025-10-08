@@ -110,6 +110,9 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
           quote: {
             id: newQuoteId,
             contactId: state.context.selectedContact!.id,
+            items: [],
+            totalCost: 0,
+            status: 'draft',
             ...quoteData,
           },
         });
@@ -240,7 +243,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       {/* Progress Steps */}
       <ModernCard variant="elevated" className="p-6 bg-white">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-          {steps.slice(0, 4).map((step, index) => (
+          {steps.map((step, index) => (
             <div
               key={step.id}
               className={`flex items-center ${
@@ -270,7 +273,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
                   </div>
                 </div>
               </div>
-              {index < steps.length - 2 && (
+              {index < steps.length - 1 && (
                 <div
                   className={`hidden md:flex flex-1 h-0.5 mx-6 rounded-full transition-colors ${
                     index < currentStepIndex ? 'bg-blue-600' : 'bg-gray-200'
