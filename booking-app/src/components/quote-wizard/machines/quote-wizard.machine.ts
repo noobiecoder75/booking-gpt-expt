@@ -85,7 +85,7 @@ export const quoteWizardMachine = setup({
       tags: ['loading'],
       on: {
         QUOTE_LOADED: {
-          target: 'editingDetails',
+          target: 'addingItems',
           actions: 'loadExisting',
         },
         LOAD_FAILED: {
