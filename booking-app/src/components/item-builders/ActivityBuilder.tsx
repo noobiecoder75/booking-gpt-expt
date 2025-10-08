@@ -117,6 +117,7 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
       endDate: formData.endDate ? new Date(formData.endDate).toISOString() : undefined,
       price: parseFloat(formData.price),
       quantity: parseInt(formData.quantity),
+      supplierSource: 'offline_platform',
       details: {
         location: formData.location,
         category: formData.category || undefined,

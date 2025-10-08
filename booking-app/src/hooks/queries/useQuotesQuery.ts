@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
-import { TravelQuote } from '@/types';
+import { TravelItem, TravelQuote } from '@/types';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { calculateQuoteTotal } from '@/lib/utils';
 
@@ -10,7 +10,49 @@ function dbRowToQuote(row: any): TravelQuote {
   console.log('[useQuotesQuery] Items from DB:', row.items);
   console.log('[useQuotesQuery] Items type:', typeof row.items, 'Is array:', Array.isArray(row.items));
 
-  const items = row.items || [];
+  let items: TravelItem[] = [];
+
+  if (Array.isArray(row.items)) {
+    items = row.items as TravelItem[];
+  } else if (typeof row.items === 'string') {
+    try {
+      const parsed = JSON.parse(row.items);
+      if (Array.isArray(parsed)) {
+        items = parsed as TravelItem[];
+      }
+    } catch (error) {
+      console.error('[useQuotesQuery] Failed to parse items JSON for quote', row.id, error);
+    }
+  } else if (row.items && typeof row.items === 'object') {
+    try {
+      // Some drivers may return JSON fields as objects without array prototype support
+      const maybeArray = Array.from(row.items as Iterable<TravelItem>);
+      if (Array.isArray(maybeArray)) {
+        items = maybeArray;
+      }
+    } catch {
+      // If Array.from fails because the object isn't iterable, fall back to object values
+      const values = Object.values(row.items as Record<string, TravelItem>);
+      if (Array.isArray(values)) {
+        items = values;
+      }
+    }
+  }
+
+  // Ensure we always have an array to work with
+  if (!Array.isArray(items)) {
+    items = [];
+  }
+
+  // Guarantee each item has essential defaults so downstream consumers don't break
+  items = items.map((item: TravelItem) => ({
+    quantity: 1,
+    details: {},
+    ...item,
+    quantity: typeof item?.quantity === 'number' && !Number.isNaN(item.quantity) ? item.quantity : 1,
+    details: item?.details && typeof item.details === 'object' ? item.details : {},
+  }));
+
   console.log('[useQuotesQuery] Final items array:', items, 'Length:', items.length);
 
   // Calculate total from items if total_amount is null/undefined, otherwise use database value

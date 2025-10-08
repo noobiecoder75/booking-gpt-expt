@@ -284,7 +284,7 @@ export function useTaskMutations() {
       if (!user?.id) throw new Error('User not authenticated');
 
       const tasks: any[] = [];
-      const isOfflineBooking = quoteItem.supplierSource.startsWith('offline_');
+      const isOfflineBooking = quoteItem.supplierSource?.startsWith('offline_') ?? false;
 
       if (isOfflineBooking) {
         // Create manual booking task

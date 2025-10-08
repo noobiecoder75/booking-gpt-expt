@@ -378,6 +378,7 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
       endDate: `${formData.checkOutDate}T${formData.checkOutTime}`,
       price: parseFloat(formData.price),
       quantity: parseInt(formData.quantity),
+      supplierSource: 'offline_platform',
       details: {
         hotelName: formData.hotelName,
         hotelCode: '',

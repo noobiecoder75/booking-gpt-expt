@@ -119,13 +119,14 @@ export function FlightBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }
 
     const flightData = {
       type: 'flight',
-      name: flightType === 'return' 
+      name: flightType === 'return'
         ? `${formData.origin} ⇄ ${formData.destination}`
         : `${formData.origin} → ${formData.destination}`,
       startDate: formData.departureDate,
       endDate: flightType === 'return' ? formData.returnDate : formData.departureDate,
       price: selectedFlight.totalPrice,
       quantity: 1,
+      supplierSource: 'offline_platform',
       details: {
         ...selectedFlight,
         origin: formData.origin,

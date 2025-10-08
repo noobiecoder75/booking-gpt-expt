@@ -52,7 +52,17 @@ export function getTravelItemColor(type: string): string {
 }
 
 export function calculateQuoteTotal(items: TravelItem[]): number {
-  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  return items.reduce((sum, item) => {
+    const quantity = typeof item.quantity === 'number' && !Number.isNaN(item.quantity)
+      ? item.quantity
+      : 1;
+
+    const price = typeof item.price === 'number' && !Number.isNaN(item.price)
+      ? item.price
+      : 0;
+
+    return sum + price * quantity;
+  }, 0);
 }
 
 export function calculateTripDuration(startDate: Date | string, endDate: Date | string): number {
