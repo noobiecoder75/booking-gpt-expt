@@ -168,7 +168,7 @@ export function useQuotesQuery() {
   });
 }
 
-export function useQuoteByIdQuery(quoteId: string | undefined) {
+export function useQuoteByIdQuery(quoteId: string | undefined, options?: any) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
@@ -200,6 +200,7 @@ export function useQuoteByIdQuery(quoteId: string | undefined) {
       return match ? { ...match } : undefined;
     },
     enabled: !!user && !!quoteId,
+    ...options,
   });
 }
 

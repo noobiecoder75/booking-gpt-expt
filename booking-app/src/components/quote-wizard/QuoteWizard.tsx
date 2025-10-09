@@ -41,10 +41,13 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     },
   });
 
-  // Load data for edit mode
+  // Determine which quote ID to fetch - either from props (edit mode) or from state context (newly created)
+  const quoteIdToFetch = editQuoteId || state.context.quote?.id;
+
+  // Load data for edit mode OR when we have a newly created quote
   const { quote, contact, isInitializing, error: loadError } = useQuoteWizardData({
-    editQuoteId,
-    enabled: state.context.mode === 'edit',
+    editQuoteId: quoteIdToFetch,
+    enabled: !!quoteIdToFetch,
   });
 
   // Mutations

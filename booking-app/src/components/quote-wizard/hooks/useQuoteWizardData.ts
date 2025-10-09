@@ -11,7 +11,7 @@ export function useQuoteWizardData({ editQuoteId, enabled = true }: UseQuoteWiza
   const isEditMode = !!editQuoteId;
 
   // Initial quote load - fetch once and cache during edit session
-  // This prevents infinite loops by NOT refetching on every state change
+  // Allow refetching when queries are invalidated (e.g., when items are added/updated)
   const {
     data: initialQuote,
     isLoading: isLoadingQuote,
@@ -19,7 +19,7 @@ export function useQuoteWizardData({ editQuoteId, enabled = true }: UseQuoteWiza
     refetch: refetchQuote,
   } = useQuoteByIdQuery(editQuoteId, {
     enabled: isEditMode && enabled,
-    staleTime: Infinity, // Never automatically refetch during edit
+    staleTime: 1000, // Allow refetching after 1 second - balances freshness with performance
     gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes
   });
 
