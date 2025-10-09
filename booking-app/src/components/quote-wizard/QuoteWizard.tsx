@@ -57,6 +57,19 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     }
   }, [state, quote, contact, loadError, send]);
 
+  // Keep wizard context synchronized with latest quote data from Supabase
+  useEffect(() => {
+    if (!quote || !quote.id) return;
+    if (!state.context.quote?.id) return;
+    if (quote.id !== state.context.quote.id) return;
+    if (state.matches('loadingExisting')) return;
+
+    // Only emit update when incoming data differs by reference
+    if (state.context.quote === quote) return;
+
+    send({ type: 'QUOTE_UPDATED', quote });
+  }, [quote, state, send]);
+
   // Handle load errors
   useEffect(() => {
     if (state.matches('loadingExisting') && loadError) {
@@ -64,18 +77,6 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       toast.error('Failed to load quote', { description: loadError });
     }
   }, [state, loadError, send]);
-
-  // Keep state machine in sync with live React Query quote data during edit mode
-  useEffect(() => {
-    if (
-      quote &&
-      state.context.mode === 'edit' &&
-      state.matches('addingItems') &&
-      state.context.quote?.id === quote.id
-    ) {
-      send({ type: 'QUOTE_UPDATED', quote });
-    }
-  }, [quote, state.context.mode, state.context.quote?.id, send, state]);
 
   // Handle save and exit
   const handleSaveAndExit = () => {

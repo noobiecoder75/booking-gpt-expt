@@ -55,6 +55,32 @@ function dbRowToQuote(row: any): TravelQuote {
 
   console.log('[useQuotesQuery] Final items array:', items, 'Length:', items.length);
 
+  const contactRecord =
+    row.contact ||
+    row.contacts ||
+    row.contact_details ||
+    null;
+
+  const contactId = row.contact_id || contactRecord?.id || null;
+  const customerId = contactId || row.customer_id || null;
+
+  const customerNameRaw = contactRecord
+    ? `${contactRecord.first_name ?? ''} ${contactRecord.last_name ?? ''}`.trim()
+    : (row.customer_name ?? row.contact_name ?? '');
+
+  const customerEmail = contactRecord?.email ?? row.customer_email ?? null;
+  const normalizedCustomerName =
+    (customerNameRaw && customerNameRaw.trim().length > 0
+      ? customerNameRaw.trim()
+      : customerEmail || 'Unnamed Contact');
+
+  if (!customerId) {
+    console.warn(
+      '[useQuotesQuery] Quote missing customer identifier. Falling back to placeholder.',
+      row.id
+    );
+  }
+
   // Calculate total from items if total_amount is null/undefined, otherwise use database value
   const totalCost = row.total_amount != null
     ? parseFloat(row.total_amount)
@@ -64,7 +90,9 @@ function dbRowToQuote(row: any): TravelQuote {
 
   const quote = {
     id: row.id,
-    contactId: row.contact_id,
+    contactId: contactId ?? customerId ?? 'unknown-contact',
+    customerId: customerId ?? contactId ?? 'unknown-contact',
+    customerName: normalizedCustomerName,
     title: row.title,
     status: row.status as TravelQuote['status'],
     totalCost: totalCost,
@@ -104,7 +132,15 @@ async function fetchQuotes(): Promise<TravelQuote[]> {
 
   const { data, error } = await supabase
     .from('quotes')
-    .select('*')
+    .select(`
+      *,
+      contact:contact_id (
+        id,
+        first_name,
+        last_name,
+        email
+      )
+    `)
     .eq('user_id', user.id)
     .order('created_at', { ascending: false });
 
@@ -139,23 +175,29 @@ export function useQuoteByIdQuery(quoteId: string | undefined) {
   return useQuery({
     queryKey: ['quotes', user?.id, quoteId],
     queryFn: async () => {
-      // Try to get from cache first
-      const quotes = queryClient.getQueryData<TravelQuote[]>(['quotes', user?.id]);
-      if (quotes) {
-        const quote = quotes.find(q => q.id === quoteId);
-        if (quote) return quote;
-      }
-
-      // Fetch from server if not in cache
       const supabase = getSupabaseBrowserClient();
       const { data, error } = await supabase
         .from('quotes')
-        .select('*')
+        .select(`
+          *,
+          contact:contact_id (
+            id,
+            first_name,
+            last_name,
+            email
+          )
+        `)
         .eq('id', quoteId)
         .single();
 
       if (error) throw error;
       return dbRowToQuote(data);
+    },
+    initialData: () => {
+      const quotes = queryClient.getQueryData<TravelQuote[]>(['quotes', user?.id]);
+      if (!quotes) return undefined;
+      const match = quotes.find(q => q.id === quoteId);
+      return match ? { ...match } : undefined;
     },
     enabled: !!user && !!quoteId,
   });
