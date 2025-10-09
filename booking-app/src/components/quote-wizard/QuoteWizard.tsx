@@ -78,6 +78,19 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     }
   }, [state, loadError, send]);
 
+  // Handle navigation on success - do this AFTER state transition completes
+  useEffect(() => {
+    if (state.matches('success')) {
+      toast.success(
+        state.context.mode === 'edit' ? 'Quote updated successfully!' : 'Quote created successfully!'
+      );
+      // Use setTimeout to defer navigation until after React finishes updating
+      setTimeout(() => {
+        router.push('/dashboard/quotes');
+      }, 0);
+    }
+  }, [state, router]);
+
   // Handle save and exit
   const handleSaveAndExit = () => {
     if (state.context.quote?.id) {
@@ -238,11 +251,8 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
           quote={state.context.quote as any}
           contact={state.context.selectedContact!}
           onComplete={() => {
+            // Only trigger state transition - navigation handled in useEffect
             send('NEXT');
-            toast.success(
-              state.context.mode === 'edit' ? 'Quote updated successfully!' : 'Quote created successfully!'
-            );
-            router.push('/dashboard/quotes');
           }}
         />
       );
