@@ -65,6 +65,18 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     }
   }, [state, loadError, send]);
 
+  // Keep state machine in sync with live React Query quote data during edit mode
+  useEffect(() => {
+    if (
+      quote &&
+      state.context.mode === 'edit' &&
+      state.matches('addingItems') &&
+      state.context.quote?.id === quote.id
+    ) {
+      send({ type: 'QUOTE_UPDATED', quote });
+    }
+  }, [quote, state.context.mode, state.context.quote?.id, send, state]);
+
   // Handle save and exit
   const handleSaveAndExit = () => {
     if (state.context.quote?.id) {

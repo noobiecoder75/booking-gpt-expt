@@ -13,6 +13,7 @@ export type QuoteWizardEvent =
   | { type: 'CONTACT_SELECTED'; contact: Contact }
   | { type: 'DETAILS_SUBMITTED'; quoteData: Partial<TravelQuote> }
   | { type: 'QUOTE_LOADED'; quote: TravelQuote; contact: Contact }
+  | { type: 'QUOTE_UPDATED'; quote: TravelQuote }
   | { type: 'LOAD_FAILED'; error: string }
   | { type: 'SAVE_SUCCESS'; quote: Partial<TravelQuote> }
   | { type: 'SAVE_FAILED'; error: string }
@@ -54,6 +55,10 @@ export const quoteWizardMachine = setup({
       selectedContact: ({ event }) =>
         event.type === 'QUOTE_LOADED' ? event.contact : null,
       mode: 'edit',
+    }),
+    updateQuote: assign({
+      quote: ({ event }) =>
+        event.type === 'QUOTE_UPDATED' ? event.quote : null,
     }),
     setError: assign({
       error: ({ event }) =>
@@ -160,6 +165,9 @@ export const quoteWizardMachine = setup({
 
     addingItems: {
       on: {
+        QUOTE_UPDATED: {
+          actions: 'updateQuote',
+        },
         NEXT: 'reviewing',
         PREVIOUS: [
           { target: 'enteringDetails', guard: 'isCreateMode' },

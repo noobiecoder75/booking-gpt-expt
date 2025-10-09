@@ -664,7 +664,7 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
 
       {/* Floating Summary Bar */}
       {quote.items.length > 0 && (
-        <div className="fixed bottom-4 left-4 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-40">
+        <div className="fixed bottom-4 left-4 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-[60]">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-1 rounded-full">
