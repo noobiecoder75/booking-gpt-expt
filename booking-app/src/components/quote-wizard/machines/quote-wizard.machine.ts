@@ -170,7 +170,10 @@ export const quoteWizardMachine = setup({
 
     addingItems: {
       on: {
-        NEXT: 'reviewing',
+        NEXT: {
+          target: 'reviewing',
+          guard: 'hasQuote',
+        },
         PREVIOUS: [
           { target: 'enteringDetails', guard: 'isCreateMode' },
           { target: 'editingDetails', guard: 'isEditMode' },

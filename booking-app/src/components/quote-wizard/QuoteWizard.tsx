@@ -241,7 +241,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     }
 
     if (state.matches('reviewing')) {
-      if (!state.context.quote?.id) {
+      if (!state.context.quote?.id || !state.context.quote?.contactId) {
         return (
           <div className="text-center py-8">
             <p className="text-gray-600">Please complete the previous steps first.</p>

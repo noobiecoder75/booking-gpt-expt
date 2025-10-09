@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { TravelQuote, Contact } from '@/types';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
@@ -24,8 +24,13 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
   // Calculate total from items as fallback/safety measure
   const displayTotal = calculateQuoteTotal(quote.items) || quote.totalCost;
 
-  // Generate client link
-  const clientLink = generateClientQuoteLink(quote);
+  // Generate client link only when quote has all required fields
+  const clientLink = useMemo(() => {
+    if (!quote.id || !quote.contactId) {
+      return '';
+    }
+    return generateClientQuoteLink(quote);
+  }, [quote]);
 
   const handleSendQuote = () => {
     // Check for destination mismatches before sending
