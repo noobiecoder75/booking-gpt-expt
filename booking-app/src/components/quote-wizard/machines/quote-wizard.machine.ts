@@ -74,8 +74,8 @@ export const quoteWizardMachine = setup({
       mode: 'edit',
     }),
     updateQuote: assign({
-      quote: ({ event }) =>
-        event.type === 'QUOTE_UPDATED' ? event.quote : null,
+      quote: ({ event, context }) =>
+        event.type === 'QUOTE_UPDATED' ? event.quote : context.quote,
     }),
     setError: assign({
       error: ({ event }) =>
