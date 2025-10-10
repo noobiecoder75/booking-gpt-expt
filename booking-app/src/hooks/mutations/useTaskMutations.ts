@@ -276,7 +276,7 @@ export function useTaskMutations() {
       quoteId: string;
       type: string;
       name: string;
-      supplierSource: string;
+      supplierSource?: string;
       details: any;
       customerId: string;
       customerName: string;
@@ -284,7 +284,9 @@ export function useTaskMutations() {
       if (!user?.id) throw new Error('User not authenticated');
 
       const tasks: any[] = [];
-      const supplierSource = quoteItem.supplierSource ?? 'offline_platform';
+      const supplierSource = typeof quoteItem.supplierSource === 'string'
+        ? quoteItem.supplierSource
+        : 'offline_platform';
       const isOfflineBooking = supplierSource.startsWith('offline_');
 
       if (isOfflineBooking) {
