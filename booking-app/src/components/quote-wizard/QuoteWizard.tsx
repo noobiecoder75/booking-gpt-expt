@@ -65,7 +65,14 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     if (!quote || !quote.id) return;
     if (!state.context.quote?.id) return;
     if (quote.id !== state.context.quote.id) return;
-    if (state.matches('loadingExisting')) return;
+
+    // Don't update during loading/saving states
+    if (state.matches('loadingExisting') ||
+        state.matches('savingQuote') ||
+        state.matches('updatingQuote')) return;
+
+    // Only update if in addingItems state (where listener exists)
+    if (!state.matches('addingItems')) return;
 
     // Only emit update when incoming data differs by reference
     if (state.context.quote === quote) return;

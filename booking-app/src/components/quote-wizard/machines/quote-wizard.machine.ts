@@ -95,11 +95,6 @@ export const quoteWizardMachine = setup({
     quote: input.quote || null,
     error: input.error || null,
   }),
-  on: {
-    QUOTE_UPDATED: {
-      actions: 'updateQuote',
-    },
-  },
   states: {
     checkingMode: {
       always: [
@@ -187,6 +182,9 @@ export const quoteWizardMachine = setup({
 
     addingItems: {
       on: {
+        QUOTE_UPDATED: {
+          actions: 'updateQuote',
+        },
         NEXT: {
           target: 'reviewing',
           guard: 'hasQuote',
