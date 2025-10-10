@@ -9,7 +9,7 @@ import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { formatCurrency, getTravelItemColor } from '@/lib/utils';
+import { formatCurrency, getTravelItemColor, calculateQuoteTotal } from '@/lib/utils';
 import { Plane, Hotel, MapPin, Car, Calendar as CalendarIcon } from 'lucide-react';
 import { FlightBuilder } from '@/components/item-builders/FlightBuilder';
 import { HotelBuilder } from '@/components/item-builders/HotelBuilder';
@@ -30,9 +30,10 @@ const DragAndDropCalendar = withDragAndDrop(Calendar);
 interface TravelItemsProps {
   quote: TravelQuote;
   onComplete: () => void;
+  onQuoteChange?: (quote: TravelQuote) => void;
 }
 
-export function TravelItems({ quote, onComplete }: TravelItemsProps) {
+export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsProps) {
   const { addItemToQuote, removeItemFromQuote, updateItemInQuote } = useQuoteMutations();
   const [view, setView] = useState<View>('month'); // Default to month view for better overview
   const [date, setDate] = useState(new Date(quote.travelDates.start));
@@ -241,14 +242,35 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
       
       const newEnd = originalEnd ? new Date(newStart.getTime() + timeDiff) : undefined;
       
-      updateItemInQuote.mutate({
-        quoteId: quote.id,
-        itemId: event.id,
-        updates: {
-          startDate: newStart.toISOString(),
-          endDate: newEnd ? newEnd.toISOString() : undefined,
+      updateItemInQuote.mutate(
+        {
+          quoteId: quote.id,
+          itemId: event.id,
+          updates: {
+            startDate: newStart.toISOString(),
+            endDate: newEnd ? newEnd.toISOString() : undefined,
+          },
         },
-      });
+        {
+          onSuccess: () => {
+            if (!onQuoteChange) return;
+            const updatedItems = quote.items.map(itemEntry =>
+              itemEntry.id === event.id
+                ? {
+                    ...itemEntry,
+                    startDate: newStart.toISOString(),
+                    endDate: newEnd ? newEnd.toISOString() : undefined,
+                  }
+                : itemEntry
+            );
+            onQuoteChange({
+              ...quote,
+              items: updatedItems,
+              totalCost: calculateQuoteTotal(updatedItems),
+            });
+          },
+        }
+      );
       
       // Show a brief confirmation
       const itemName = item.name;
@@ -259,26 +281,47 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
       // Batched update for better performance
       console.log(`${itemName} moved to ${newDate} at ${newTime}`);
     }
-  }, [quote.items, quote.id, updateItemInQuote]);
+  }, [quote.items, quote.id, updateItemInQuote, onQuoteChange]);
 
   // Handle event resize
   const handleEventResize = useCallback(({ event, start, end }: { event: CalendarEvent; start: Date; end: Date }) => {
     const item = quote.items.find(item => item.id === event.id);
     if (item) {
-      updateItemInQuote.mutate({
-        quoteId: quote.id,
-        itemId: event.id,
-        updates: {
-          startDate: start.toISOString(),
-          endDate: end.toISOString(),
+      updateItemInQuote.mutate(
+        {
+          quoteId: quote.id,
+          itemId: event.id,
+          updates: {
+            startDate: start.toISOString(),
+            endDate: end.toISOString(),
+          },
         },
-      });
+        {
+          onSuccess: () => {
+            if (!onQuoteChange) return;
+            const updatedItems = quote.items.map(itemEntry =>
+              itemEntry.id === event.id
+                ? {
+                    ...itemEntry,
+                    startDate: start.toISOString(),
+                    endDate: end.toISOString(),
+                  }
+                : itemEntry
+            );
+            onQuoteChange({
+              ...quote,
+              items: updatedItems,
+              totalCost: calculateQuoteTotal(updatedItems),
+            });
+          },
+        }
+      );
 
       // Show resize confirmation
       const duration = Math.round((end.getTime() - start.getTime()) / (1000 * 60)); // minutes
       console.log(`${item.name} duration changed to ${duration} minutes`);
     }
-  }, [quote.items, quote.id, updateItemInQuote]);
+  }, [quote.items, quote.id, updateItemInQuote, onQuoteChange]);
 
   // Enhanced event styling with smart positioning
   const eventStyleGetter = (event: CalendarEvent) => {
@@ -318,10 +361,24 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
     console.log('[TravelItems] - quote.id:', quote.id);
     console.log('[TravelItems] - item data:', itemData);
 
-    addItemToQuote.mutate({
-      quoteId: quote.id,
-      item: itemData,
-    });
+    addItemToQuote.mutate(
+      {
+        quoteId: quote.id,
+        item: itemData,
+      },
+      {
+        onSuccess: (newItemId) => {
+          if (!onQuoteChange) return;
+          const newItem: TravelItem = { ...itemData, id: newItemId };
+          const updatedItems = [...quote.items, newItem];
+          onQuoteChange({
+            ...quote,
+            items: updatedItems,
+            totalCost: calculateQuoteTotal(updatedItems),
+          });
+        },
+      }
+    );
 
     console.log('[TravelItems] - addItemToQuote.mutate called');
   };
@@ -329,11 +386,26 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
   // Handle quick edit save
   const handleQuickEditSave = (updates: Partial<TravelItem>) => {
     if (!quickEditItem) return;
-    updateItemInQuote.mutate({
-      quoteId: quote.id,
-      itemId: quickEditItem.id,
-      updates,
-    });
+    updateItemInQuote.mutate(
+      {
+        quoteId: quote.id,
+        itemId: quickEditItem.id,
+        updates,
+      },
+      {
+        onSuccess: () => {
+          if (!onQuoteChange) return;
+          const updatedItems = quote.items.map(item =>
+            item.id === quickEditItem.id ? { ...item, ...updates } : item
+          );
+          onQuoteChange({
+            ...quote,
+            items: updatedItems,
+            totalCost: calculateQuoteTotal(updatedItems),
+          });
+        },
+      }
+    );
     setQuickEditItem(null);
     setQuickEditPosition(null);
   };
@@ -341,21 +413,49 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
   // Handle full edit save
   const handleFullEditSave = (updates: Partial<TravelItem>) => {
     if (!editingItem) return;
-    updateItemInQuote.mutate({
-      quoteId: quote.id,
-      itemId: editingItem.id,
-      updates,
-    });
+    updateItemInQuote.mutate(
+      {
+        quoteId: quote.id,
+        itemId: editingItem.id,
+        updates,
+      },
+      {
+        onSuccess: () => {
+          if (!onQuoteChange) return;
+          const updatedItems = quote.items.map(item =>
+            item.id === editingItem.id ? { ...item, ...updates } : item
+          );
+          onQuoteChange({
+            ...quote,
+            items: updatedItems,
+            totalCost: calculateQuoteTotal(updatedItems),
+          });
+        },
+      }
+    );
     setEditingItem(null);
   };
 
   // Handle item deletion
   const handleDeleteItem = () => {
     if (!editingItem) return;
-    removeItemFromQuote.mutate({
-      quoteId: quote.id,
-      itemId: editingItem.id,
-    });
+    removeItemFromQuote.mutate(
+      {
+        quoteId: quote.id,
+        itemId: editingItem.id,
+      },
+      {
+        onSuccess: () => {
+          if (!onQuoteChange) return;
+          const updatedItems = quote.items.filter(item => item.id !== editingItem.id);
+          onQuoteChange({
+            ...quote,
+            items: updatedItems,
+            totalCost: calculateQuoteTotal(updatedItems),
+          });
+        },
+      }
+    );
     setEditingItem(null);
   };
 
@@ -650,10 +750,23 @@ export function TravelItems({ quote, onComplete }: TravelItemsProps) {
                 onEditItem={(item) => setEditingItem(item)}
                 onDeleteItem={(itemId) => {
                   if (confirm('Remove this item?')) {
-                    removeItemFromQuote.mutate({
-                      quoteId: quote.id,
-                      itemId,
-                    });
+                    removeItemFromQuote.mutate(
+                      {
+                        quoteId: quote.id,
+                        itemId,
+                      },
+                      {
+                        onSuccess: () => {
+                          if (!onQuoteChange) return;
+                          const updatedItems = quote.items.filter(item => item.id !== itemId);
+                          onQuoteChange({
+                            ...quote,
+                            items: updatedItems,
+                            totalCost: calculateQuoteTotal(updatedItems),
+                          });
+                        },
+                      }
+                    );
                   }
                 }}
               />

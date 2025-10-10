@@ -236,6 +236,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
         <TravelItems
           quote={state.context.quote as any}
           onComplete={() => send('NEXT')}
+          onQuoteChange={(updatedQuote) => send({ type: 'QUOTE_UPDATED', quote: updatedQuote })}
         />
       );
     }
