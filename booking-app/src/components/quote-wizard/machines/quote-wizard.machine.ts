@@ -31,7 +31,24 @@ export const quoteWizardMachine = setup({
     isEditMode: ({ context }) => context.mode === 'edit',
     isCreateMode: ({ context }) => context.mode === 'create',
     hasContact: ({ context }) => context.selectedContact !== null,
-    hasQuote: ({ context }) => context.quote !== null && context.quote.id !== undefined && context.quote.contactId !== undefined,
+    hasQuote: ({ context }) => {
+      // Defensive guard with logging to track evaluation
+      if (!context.quote || typeof context.quote !== 'object') {
+        console.log('[hasQuote guard] FAILED: quote is null or not an object', context.quote);
+        return false;
+      }
+      const hasId = context.quote.id !== undefined && context.quote.id !== null && typeof context.quote.id === 'string';
+      const hasContactId = context.quote.contactId !== undefined && context.quote.contactId !== null && typeof context.quote.contactId === 'string';
+      const result = hasId && hasContactId;
+      console.log('[hasQuote guard]', {
+        quoteId: context.quote.id,
+        contactId: context.quote.contactId,
+        hasId,
+        hasContactId,
+        result
+      });
+      return result;
+    },
   },
   actions: {
     setContact: assign({

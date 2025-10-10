@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { formatCurrency, getTravelItemColor, calculateQuoteTotal } from '@/lib/utils';
 import { Plane, Hotel, MapPin, Car, Calendar as CalendarIcon } from 'lucide-react';
+import { toast } from 'sonner';
 import { FlightBuilder } from '@/components/item-builders/FlightBuilder';
 import { HotelBuilder } from '@/components/item-builders/HotelBuilder';
 import { ActivityBuilder } from '@/components/item-builders/ActivityBuilder';
@@ -801,7 +802,25 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
                   {formatCurrency(quote.totalCost)}
                 </div>
               </div>
-              <Button onClick={onComplete} className="min-w-[140px]">
+              <Button
+                onClick={() => {
+                  // Pre-transition validation
+                  console.log('[TravelItems] Continue to Review clicked', {
+                    quoteId: quote?.id,
+                    contactId: quote?.contactId,
+                    quote
+                  });
+
+                  if (!quote?.id || !quote?.contactId) {
+                    console.error('[TravelItems] Cannot transition: quote missing required fields', quote);
+                    toast.error('Quote data is incomplete. Please refresh and try again.');
+                    return;
+                  }
+
+                  onComplete();
+                }}
+                className="min-w-[140px]"
+              >
                 Continue to Review
               </Button>
             </div>
