@@ -293,7 +293,7 @@ export function useTaskMutations() {
           user_id: user.id,
           type: 'manual_booking',
           title: `Book ${quoteItem.name}`,
-          description: `Manually book ${quoteItem.name} via ${quoteItem.supplierSource}`,
+          description: `Manually book ${quoteItem.name} via ${supplierSource}`,
           priority: 'high',
           status: 'pending',
           quote_id: quoteItem.quoteId,
