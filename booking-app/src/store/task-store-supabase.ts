@@ -62,7 +62,7 @@ interface TaskStore {
     quoteId: string;
     type: string;
     name: string;
-    supplierSource: string;
+    supplierSource?: string;
     details: any;
     customerId: string;
     customerName: string;
