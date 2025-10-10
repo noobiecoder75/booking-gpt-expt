@@ -88,11 +88,17 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
   };
 
   const handleSaveDraft = () => {
-    updateQuote.mutate({
-      id: quote.id,
-      updates: { status: 'draft' },
-    });
-    onComplete();
+    updateQuote.mutate(
+      {
+        id: quote.id,
+        updates: { status: 'draft' },
+      },
+      {
+        onSuccess: () => {
+          onComplete();
+        },
+      }
+    );
   };
 
   const getItemIcon = (type: string) => {

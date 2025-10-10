@@ -31,7 +31,7 @@ export const quoteWizardMachine = setup({
     isEditMode: ({ context }) => context.mode === 'edit',
     isCreateMode: ({ context }) => context.mode === 'create',
     hasContact: ({ context }) => context.selectedContact !== null,
-    hasQuote: ({ context }) => context.quote !== null && context.quote.id !== undefined,
+    hasQuote: ({ context }) => context.quote !== null && context.quote.id !== undefined && context.quote.contactId !== undefined,
   },
   actions: {
     setContact: assign({
