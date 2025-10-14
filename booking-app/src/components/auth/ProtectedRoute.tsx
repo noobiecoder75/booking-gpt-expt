@@ -22,25 +22,49 @@ export function ProtectedRoute({
   const pathname = usePathname();
   const { user, profile, loading } = useAuth();
   const hasRedirected = useRef(false);
+  const redirectTimer = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
+    // Clear any existing redirect timer
+    if (redirectTimer.current) {
+      clearTimeout(redirectTimer.current);
+    }
+
     // Prevent multiple redirects
     if (hasRedirected.current) return;
 
-    if (!loading && requireAuth && !user) {
-      hasRedirected.current = true;
-      const returnUrl = pathname;
-      router.replace(`/auth/login?redirectTo=${encodeURIComponent(returnUrl)}`);
+    // If still loading, don't redirect yet
+    if (loading) return;
+
+    // Check if user needs to be redirected to login
+    if (requireAuth && !user) {
+      // Add a small delay to prevent race conditions with middleware
+      redirectTimer.current = setTimeout(() => {
+        // Double-check user is still not authenticated
+        if (!user && !hasRedirected.current) {
+          hasRedirected.current = true;
+          const returnUrl = pathname;
+          console.log('🔐 ProtectedRoute: Redirecting to login from:', returnUrl);
+          router.replace(`/auth/login?redirectTo=${encodeURIComponent(returnUrl)}`);
+        }
+      }, 300); // 300ms delay to allow middleware to complete
       return;
     }
 
     // Check role-based access
-    if (!loading && user && allowedRoles && profile) {
+    if (user && allowedRoles && profile) {
       if (!allowedRoles.includes(profile.role as any)) {
         hasRedirected.current = true;
         router.replace('/unauthorized');
       }
     }
+
+    // Clean up timer on unmount or when deps change
+    return () => {
+      if (redirectTimer.current) {
+        clearTimeout(redirectTimer.current);
+      }
+    };
   }, [user, profile, loading, requireAuth, allowedRoles, pathname, router]);
 
   if (loading) {

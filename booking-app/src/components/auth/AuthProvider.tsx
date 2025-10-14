@@ -59,30 +59,73 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Initialize auth once on mount
+  // Initialize auth once on mount with retry logic
   useEffect(() => {
-    const initAuth = async () => {
-      console.log('🔷 AuthProvider: Initializing...');
+    const initAuth = async (retryCount = 0) => {
+      console.log('🔷 AuthProvider: Initializing...', retryCount > 0 ? `(Retry ${retryCount})` : '');
       try {
         // Get initial session
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error && retryCount < 2) {
+          console.log('⚠️ AuthProvider: Session retrieval failed, retrying in 500ms...');
+          setTimeout(() => initAuth(retryCount + 1), 500);
+          return;
+        }
+
         console.log('🔷 AuthProvider: Session retrieved:', session ? 'Found' : 'Not found');
 
-        setSession(session);
-        setUser(session?.user ?? null);
+        // Check if session needs refresh
+        if (session) {
+          const expiresAt = session.expires_at ? new Date(session.expires_at * 1000) : null;
+          const now = new Date();
 
-        if (session?.user) {
-          const profileData = await fetchProfile(session.user.id);
-          setProfile(profileData);
+          // If session is expired or expires within 5 minutes, refresh it
+          if (expiresAt && expiresAt < new Date(now.getTime() + 5 * 60 * 1000)) {
+            console.log('🔄 AuthProvider: Session expiring soon, refreshing...');
+            const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
+
+            if (refreshedSession) {
+              setSession(refreshedSession);
+              setUser(refreshedSession.user ?? null);
+
+              if (refreshedSession.user) {
+                const profileData = await fetchProfile(refreshedSession.user.id);
+                setProfile(profileData);
+              }
+            }
+          } else {
+            setSession(session);
+            setUser(session.user ?? null);
+
+            if (session.user) {
+              const profileData = await fetchProfile(session.user.id);
+              setProfile(profileData);
+            }
+          }
+        } else {
+          setSession(null);
+          setUser(null);
+          setProfile(null);
         }
       } catch (error) {
         console.error('❌ AuthProvider: Error initializing auth:', error);
+        if (retryCount < 2) {
+          setTimeout(() => initAuth(retryCount + 1), 1000);
+          return;
+        }
       } finally {
-        setLoading(false);
+        // Only set loading to false if we're not retrying
+        if (retryCount >= 2 || !loading) {
+          setLoading(false);
+        }
       }
     };
 
-    initAuth();
+    // Small delay to ensure cookies are properly set after redirect
+    const initTimer = setTimeout(() => initAuth(0), 100);
+
+    return () => clearTimeout(initTimer);
   }, []); // Empty deps - runs once on mount
 
   // Listen for auth state changes

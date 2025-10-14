@@ -10,6 +10,7 @@ import { useCommissionsQuery } from '@/hooks/queries/useCommissionsQuery';
 import { useCommissionMutations } from '@/hooks/mutations/useCommissionMutations';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { CommissionModal } from '@/components/commissions/CommissionModal';
 import {
   DollarSign,
   Search,
@@ -22,7 +23,8 @@ import {
   Calendar,
   Award,
   MoreHorizontal,
-  Download
+  Download,
+  Eye
 } from 'lucide-react';
 import { Commission, CommissionStatus } from '@/types/financial';
 
@@ -36,6 +38,8 @@ export default function CommissionsPage() {
   const [agentFilter, setAgentFilter] = useState('all');
   const [filteredCommissions, setFilteredCommissions] = useState<Commission[]>([]);
   const [selectedCommissions, setSelectedCommissions] = useState<string[]>([]);
+  const [selectedCommission, setSelectedCommission] = useState<Commission | null>(null);
+  const [isCommissionModalOpen, setIsCommissionModalOpen] = useState(false);
 
   useEffect(() => {
     let filtered = commissions;
@@ -120,6 +124,16 @@ export default function CommissionsPage() {
       paymentMethod: 'bank_transfer'
     });
     setSelectedCommissions([]);
+  };
+
+  const handleViewCommission = (commission: Commission) => {
+    setSelectedCommission(commission);
+    setIsCommissionModalOpen(true);
+  };
+
+  const handleCloseCommissionModal = () => {
+    setIsCommissionModalOpen(false);
+    setSelectedCommission(null);
   };
 
   // Get unique agents for filter
@@ -454,11 +468,20 @@ export default function CommissionsPage() {
                           </td>
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-2">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={() => handleViewCommission(commission)}
+                                title="View Commission"
+                              >
+                                <Eye className="w-4 h-4" />
+                              </Button>
                               {commission.status === 'pending' && (
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => approve.mutate(commission.id)}
+                                  title="Approve"
                                 >
                                   <CheckCircle className="w-4 h-4" />
                                 </Button>
@@ -470,11 +493,12 @@ export default function CommissionsPage() {
                                     id: commission.id,
                                     paymentMethod: 'bank_transfer'
                                   })}
+                                  title="Mark as Paid"
                                 >
                                   <DollarSign className="w-4 h-4" />
                                 </Button>
                               )}
-                              <Button size="sm" variant="ghost">
+                              <Button size="sm" variant="ghost" title="More Actions">
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
                             </div>
@@ -488,6 +512,13 @@ export default function CommissionsPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Commission Modal */}
+        <CommissionModal
+          commission={selectedCommission}
+          isOpen={isCommissionModalOpen}
+          onClose={handleCloseCommissionModal}
+        />
     </MainLayout>
   );
 }

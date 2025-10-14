@@ -199,10 +199,10 @@ export const useBookingStore = create<BookingStore>()(
 
         try {
           const { useInvoiceStore } = await import('./invoice-store');
-          const { useCommissionStore } = await import('./commission-store');
+          const { getSupabaseBrowserClient } = await import('@/lib/supabase/client');
 
           const invoiceStore = useInvoiceStore.getState();
-          const commissionStore = useCommissionStore.getState();
+          const supabase = getSupabaseBrowserClient();
 
           // Generate invoice from booking
           invoiceId = invoiceStore.generateInvoiceFromBooking(confirmation);
@@ -210,8 +210,39 @@ export const useBookingStore = create<BookingStore>()(
             throw new Error('Invoice generation failed - no invoice ID returned');
           }
 
-          // Generate commission record if invoice was created
-          commissionId = commissionStore.generateCommissionFromBookingConfirmation(confirmation, invoiceId);
+          // Generate commission record in Supabase if invoice was created
+          // Use default agent info - in production this would come from the quote
+          const defaultAgentId = 'agent-001';
+          const defaultAgentName = 'Travel Agent';
+          const commissionRate = 10; // Default 10% - in production from quote
+          const commissionAmount = (confirmation.totalAmount * commissionRate) / 100;
+
+          const { data: commissionData, error: commissionError } = await supabase
+            .from('commissions')
+            .insert({
+              user_id: defaultAgentId, // Would come from auth in production
+              agent_id: defaultAgentId,
+              agent_name: defaultAgentName,
+              booking_id: confirmation.bookingId,
+              quote_id: confirmation.bookingId,
+              invoice_id: invoiceId,
+              customer_id: confirmation.bookingId,
+              customer_name: confirmation.customerDetails.name,
+              booking_amount: confirmation.totalAmount,
+              commission_rate: commissionRate,
+              commission_amount: commissionAmount,
+              currency: 'USD',
+              status: 'pending',
+              booking_type: 'hotel',
+            })
+            .select('id')
+            .single();
+
+          if (commissionError) {
+            throw new Error(`Commission creation failed: ${commissionError.message}`);
+          }
+
+          commissionId = commissionData?.id || null;
           if (!commissionId) {
             throw new Error('Commission generation failed - no commission ID returned');
           }
