@@ -197,8 +197,13 @@ export default function FinancesPage() {
         if (invoiceId) {
           invoicesCreated++;
 
-          // Generate commission record
+          // Generate commission record - with validation
           try {
+            // Validate quote total before attempting commission creation
+            if (!quote.total || typeof quote.total !== 'number' || isNaN(quote.total) || quote.total <= 0) {
+              throw new Error(`Invalid quote total: ${quote.total}. Cannot calculate commission.`);
+            }
+
             await new Promise<void>((resolve, reject) => {
               generateCommissionFromBooking.mutate(
                 {
@@ -221,7 +226,8 @@ export default function FinancesPage() {
             commissionsCreated++;
           } catch (commError) {
             console.error('Failed to create commission for invoice:', invoiceId, commError);
-            errors.push(`Commission generation failed for invoice ${invoiceId}`);
+            const errorMessage = commError instanceof Error ? commError.message : 'Unknown error';
+            errors.push(`Commission generation failed for invoice ${invoiceId}: ${errorMessage}`);
           }
         }
       } catch (error) {

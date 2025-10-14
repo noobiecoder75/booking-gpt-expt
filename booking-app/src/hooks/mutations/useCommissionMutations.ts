@@ -214,6 +214,11 @@ export function useCommissionMutations() {
     }) => {
       if (!user?.id) throw new Error('User not authenticated');
 
+      // Validate booking amount
+      if (!bookingAmount || typeof bookingAmount !== 'number' || isNaN(bookingAmount) || bookingAmount <= 0) {
+        throw new Error(`Invalid booking amount: ${bookingAmount}. Must be a positive number.`);
+      }
+
       // Calculate commission rate based on booking type if not provided
       const defaultRates: Record<string, number> = {
         hotel: 10,
@@ -223,7 +228,18 @@ export function useCommissionMutations() {
       };
 
       const commissionRate = quoteCommissionRate || defaultRates[bookingType || 'hotel'] || 10;
+
+      // Validate commission rate
+      if (!commissionRate || isNaN(commissionRate) || commissionRate < 0 || commissionRate > 100) {
+        throw new Error(`Invalid commission rate: ${commissionRate}. Must be between 0 and 100.`);
+      }
+
       const commissionAmount = (bookingAmount * commissionRate) / 100;
+
+      // Final safety check - ensure commission amount is valid
+      if (isNaN(commissionAmount) || commissionAmount < 0) {
+        throw new Error(`Calculated commission amount is invalid: ${commissionAmount}`);
+      }
 
       const { data, error } = await supabase
         .from('commissions')
