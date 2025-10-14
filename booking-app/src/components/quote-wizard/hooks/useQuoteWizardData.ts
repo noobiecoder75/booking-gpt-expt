@@ -17,7 +17,7 @@ export function useQuoteWizardData({ editQuoteId, enabled = true }: UseQuoteWiza
     isLoading: isLoadingQuote,
     error: quoteError,
     refetch: refetchQuote,
-  } = useQuoteByIdQuery(editQuoteId, {
+  } = useQuoteByIdQuery(editQuoteId!, {
     enabled: isEditMode && enabled,
     staleTime: 1000, // Allow refetching after 1 second - balances freshness with performance
     gcTime: 1000 * 60 * 30, // Keep in cache for 30 minutes
@@ -28,7 +28,7 @@ export function useQuoteWizardData({ editQuoteId, enabled = true }: UseQuoteWiza
     data: contact,
     isLoading: isLoadingContact,
     error: contactError,
-  } = useContactByIdQuery(initialQuote?.contactId, {
+  } = useContactByIdQuery(initialQuote?.contactId!, {
     enabled: !!initialQuote?.contactId && enabled,
     staleTime: 1000 * 60 * 5, // 5 minutes - contacts rarely change
   });

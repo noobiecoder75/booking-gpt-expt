@@ -168,11 +168,18 @@ export function useQuotesQuery() {
   });
 }
 
-export function useQuoteByIdQuery(quoteId: string | undefined, options?: any) {
+export function useQuoteByIdQuery(
+  quoteId: string | undefined,
+  options?: {
+    enabled?: boolean;
+    staleTime?: number;
+    gcTime?: number;
+  }
+) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  return useQuery({
+  return useQuery<TravelQuote>({
     queryKey: ['quotes', user?.id, quoteId],
     queryFn: async () => {
       const supabase = getSupabaseBrowserClient();
@@ -199,8 +206,9 @@ export function useQuoteByIdQuery(quoteId: string | undefined, options?: any) {
       const match = quotes.find(q => q.id === quoteId);
       return match ? { ...match } : undefined;
     },
-    enabled: !!user && !!quoteId,
-    ...options,
+    enabled: options?.enabled !== undefined ? options.enabled : (!!user && !!quoteId),
+    staleTime: options?.staleTime,
+    gcTime: options?.gcTime,
   });
 }
 

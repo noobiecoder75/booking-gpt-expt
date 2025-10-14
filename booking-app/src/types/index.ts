@@ -5,6 +5,8 @@ export interface Contact {
   name: string; // Full name (computed from firstName + lastName)
   email: string;
   phone?: string;
+  company?: string; // Company name
+  tags?: string[]; // Tags for categorization and search
   type?: 'customer' | 'supplier'; // Contact type
   address?: Address;
   preferences?: TravelPreferences;

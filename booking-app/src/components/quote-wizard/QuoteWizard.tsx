@@ -14,6 +14,7 @@ import { TravelItems } from './TravelItems';
 import { QuoteReview } from './QuoteReview';
 import { ChevronLeft, ChevronRight, Save, X, Loader2, AlertTriangle } from 'lucide-react';
 import { toast } from 'sonner';
+import { TravelQuote } from '@/types';
 
 interface QuoteWizardProps {
   editQuoteId?: string | null;
@@ -31,13 +32,14 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   const router = useRouter();
 
   // Initialize state machine with edit mode if editQuoteId provided
+  // Use undefined for optional inputs - the machine will apply defaults
   const [state, send] = useMachine(quoteWizardMachine, {
     input: {
       mode: editQuoteId ? 'edit' : 'create',
-      editQuoteId: editQuoteId || null,
-      selectedContact: null,
-      quote: null,
-      error: null,
+      editQuoteId: editQuoteId || undefined,
+      selectedContact: undefined,
+      quote: undefined,
+      error: undefined,
     },
   });
 
@@ -111,7 +113,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
   // Handle cancel
   const handleCancel = () => {
-    send('CANCEL');
+    send({ type: 'CANCEL' });
     router.push('/dashboard/quotes');
   };
 
@@ -195,8 +197,8 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
           </div>
           <h3 className="text-lg font-semibold">Failed to load quote</h3>
           <p className="text-gray-600">{state.context.error}</p>
-          <div className="flex gap-3 justify-center">
-            <ModernButton onClick={() => send('RETRY')}>
+          <div className="flex-gap-3 justify-center">
+            <ModernButton onClick={() => send({ type: 'RETRY' })}>
               Try Again
             </ModernButton>
             <ModernButton variant="outline" onClick={handleCancel}>
@@ -220,9 +222,19 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
     if (state.matches('enteringDetails') || state.matches('editingDetails') || state.matches('savingQuote') || state.matches('updatingQuote')) {
       const isSubmitting = state.matches('savingQuote') || state.matches('updatingQuote');
+
+      // Guard: Ensure selectedContact has valid id
+      if (!state.context.selectedContact?.id || state.context.selectedContact.id === '') {
+        return (
+          <div className="text-center py-8">
+            <p className="text-gray-600">Error: Contact not selected. Please go back and select a contact.</p>
+          </div>
+        );
+      }
+
       return (
         <QuoteDetails
-          contact={state.context.selectedContact!}
+          contact={state.context.selectedContact}
           quote={state.context.quote || undefined}
           onComplete={handleQuoteDetailsSubmit}
           isSubmitting={isSubmitting}
@@ -231,7 +243,9 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     }
 
     if (state.matches('addingItems')) {
-      if (!state.context.quote?.id) {
+      // Guard: Ensure quote has valid non-empty id and contactId
+      if (!state.context.quote?.id || state.context.quote.id === '' ||
+          !state.context.quote?.contactId || state.context.quote.contactId === '') {
         return (
           <div className="text-center py-8">
             <p className="text-gray-600">Please complete the quote details first.</p>
@@ -241,15 +255,18 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
       return (
         <TravelItems
-          quote={state.context.quote as any}
-          onComplete={() => send('NEXT')}
+          quote={state.context.quote as TravelQuote}
+          onComplete={() => send({ type: 'NEXT' })}
           onQuoteChange={(updatedQuote) => send({ type: 'QUOTE_UPDATED', quote: updatedQuote })}
         />
       );
     }
 
     if (state.matches('reviewing')) {
-      if (!state.context.quote?.id || !state.context.quote?.contactId) {
+      // Guard: Ensure quote and contact have valid non-empty ids
+      if (!state.context.quote?.id || state.context.quote.id === '' ||
+          !state.context.quote?.contactId || state.context.quote.contactId === '' ||
+          !state.context.selectedContact?.id || state.context.selectedContact.id === '') {
         return (
           <div className="text-center py-8">
             <p className="text-gray-600">Please complete the previous steps first.</p>
@@ -259,11 +276,20 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
       return (
         <QuoteReview
-          quote={state.context.quote as any}
-          contact={state.context.selectedContact!}
+          quote={state.context.quote as TravelQuote}
+          contact={state.context.selectedContact}
           onComplete={() => {
+            // Validate before final transition
+            if (!state.context.quote?.id || !state.context.quote?.contactId) {
+              console.error('QuoteWizard: Invalid quote data before final transition', {
+                quoteId: state.context.quote?.id,
+                contactId: state.context.quote?.contactId
+              });
+              toast.error('Quote data is invalid. Please try again.');
+              return;
+            }
             // Only trigger state transition - navigation handled in useEffect
-            send('NEXT');
+            send({ type: 'NEXT' });
           }}
         />
       );
@@ -325,7 +351,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <ModernButton
               variant="outline"
-              onClick={() => send('PREVIOUS')}
+              onClick={() => send({ type: 'PREVIOUS' })}
               disabled={
                 state.matches('selectingContact') ||
                 state.matches('loadingExisting') ||
@@ -344,7 +370,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <ModernButton
-              onClick={() => send('NEXT')}
+              onClick={() => send({ type: 'NEXT' })}
               disabled={
                 state.matches('reviewing') ||
                 !state.can({ type: 'NEXT' }) ||

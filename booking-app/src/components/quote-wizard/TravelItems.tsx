@@ -273,14 +273,8 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
         }
       );
       
-      // Show a brief confirmation
-      const itemName = item.name;
-      const newDate = newStart.toLocaleDateString();
-      const newTime = newStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      
-      // You could add a toast notification here
+      // Movement completed - toast notification could be added here for user feedback
       // Batched update for better performance
-      console.log(`${itemName} moved to ${newDate} at ${newTime}`);
     }
   }, [quote.items, quote.id, updateItemInQuote, onQuoteChange]);
 
@@ -318,9 +312,7 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
         }
       );
 
-      // Show resize confirmation
-      const duration = Math.round((end.getTime() - start.getTime()) / (1000 * 60)); // minutes
-      console.log(`${item.name} duration changed to ${duration} minutes`);
+      // Resize completed - duration updated successfully
     }
   }, [quote.items, quote.id, updateItemInQuote, onQuoteChange]);
 
@@ -357,11 +349,6 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
 
   // Add new travel item
   const handleAddItem = (itemData: Omit<TravelItem, 'id'>) => {
-    console.log('[TravelItems] handleAddItem called');
-    console.log('[TravelItems] - quote object:', quote);
-    console.log('[TravelItems] - quote.id:', quote.id);
-    console.log('[TravelItems] - item data:', itemData);
-
     addItemToQuote.mutate(
       {
         quoteId: quote.id,
@@ -380,8 +367,6 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
         },
       }
     );
-
-    console.log('[TravelItems] - addItemToQuote.mutate called');
   };
 
   // Handle quick edit save
@@ -804,18 +789,31 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
               </div>
               <Button
                 onClick={() => {
-                  // Pre-transition validation
-                  console.log('[TravelItems] Continue to Review clicked', {
-                    quoteId: quote?.id,
-                    contactId: quote?.contactId,
-                    quote
-                  });
-
-                  if (!quote?.id || !quote?.contactId) {
-                    console.error('[TravelItems] Cannot transition: quote missing required fields', quote);
-                    toast.error('Quote data is incomplete. Please refresh and try again.');
+                  // Pre-transition validation with detailed checks
+                  if (!quote) {
+                    toast.error('Quote data is missing. Please refresh and try again.');
+                    console.error('TravelItems: quote object is null/undefined');
                     return;
                   }
+
+                  if (!quote.id || typeof quote.id !== 'string' || quote.id.trim() === '') {
+                    toast.error('Quote ID is invalid. Please refresh and try again.');
+                    console.error('TravelItems: Invalid quote.id', quote.id);
+                    return;
+                  }
+
+                  if (!quote.contactId || typeof quote.contactId !== 'string' || quote.contactId.trim() === '') {
+                    toast.error('Contact ID is invalid. Please refresh and try again.');
+                    console.error('TravelItems: Invalid quote.contactId', quote.contactId);
+                    return;
+                  }
+
+                  // All validations passed - safe to transition
+                  console.log('TravelItems: Transitioning to review with valid quote', {
+                    id: quote.id,
+                    contactId: quote.contactId,
+                    itemCount: quote.items?.length || 0
+                  });
 
                   onComplete();
                 }}

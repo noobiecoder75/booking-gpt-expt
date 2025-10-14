@@ -67,11 +67,18 @@ export function useContactsQuery() {
   });
 }
 
-export function useContactByIdQuery(contactId: string | undefined) {
+export function useContactByIdQuery(
+  contactId: string | undefined,
+  options?: {
+    enabled?: boolean;
+    staleTime?: number;
+    gcTime?: number;
+  }
+) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  return useQuery({
+  return useQuery<Contact>({
     queryKey: ['contacts', user?.id, contactId],
     queryFn: async () => {
       // Try to get from cache first
@@ -92,6 +99,8 @@ export function useContactByIdQuery(contactId: string | undefined) {
       if (error) throw error;
       return dbRowToContact(data);
     },
-    enabled: !!user && !!contactId,
+    enabled: options?.enabled !== undefined ? options.enabled : (!!user && !!contactId),
+    staleTime: options?.staleTime,
+    gcTime: options?.gcTime,
   });
 }
