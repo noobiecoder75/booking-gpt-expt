@@ -29,34 +29,12 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
-  // Get session from cookies (faster than getUser() which makes a network request)
+  // Validate user with server-side check (required for proper auth validation)
+  // This validates the JWT token with Supabase Auth server
   const {
-    data: { session },
+    data: { user },
     error,
-  } = await supabase.auth.getSession();
-
-  // Refresh session if it exists but is expired or about to expire
-  let user = session?.user || null;
-
-  if (session) {
-    const expiresAt = session.expires_at ? new Date(session.expires_at * 1000) : null;
-    const now = new Date();
-    const fiveMinutesFromNow = new Date(now.getTime() + 5 * 60 * 1000);
-
-    // Refresh if expired or expires within 5 minutes
-    if (expiresAt && expiresAt < fiveMinutesFromNow) {
-      console.log('[Middleware] Session expiring soon, refreshing...');
-      const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession();
-
-      if (!refreshError && refreshedSession) {
-        user = refreshedSession.user;
-        console.log('[Middleware] Session refreshed successfully');
-      } else {
-        console.log('[Middleware] Failed to refresh session:', refreshError);
-        user = null;
-      }
-    }
-  }
+  } = await supabase.auth.getUser();
 
   // Debug: Log auth status
   console.log('[Middleware] Auth check - User:', user ? 'authenticated' : 'not authenticated', 'Path:', request.nextUrl.pathname);
