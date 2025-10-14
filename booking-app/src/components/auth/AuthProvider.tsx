@@ -115,10 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
       } finally {
-        // Only set loading to false if we're not retrying
-        if (retryCount >= 2 || !loading) {
-          setLoading(false);
-        }
+        setLoading(false);
       }
     };
 
@@ -155,7 +152,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase]); // Only depends on supabase
+  }, []); // Empty deps - supabase client is stable
 
   const signOut = async () => {
     try {
