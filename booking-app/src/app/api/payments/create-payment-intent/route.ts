@@ -168,11 +168,10 @@ async function repriceQuote(quote: TravelQuote): Promise<{
 /**
  * Get current price from API provider
  * In production, this would call the actual API (HotelBeds, Amadeus, etc.)
- * For now, simulates with random variation for testing
+ * For now, returns current price without variation
  */
 async function getAPICurrentPrice(item: TravelItem): Promise<number> {
   // TODO: Implement actual API calls based on item.apiProvider
-  // For testing, simulate price variation (±10%)
-  const variation = (Math.random() - 0.5) * 0.2; // Random ±10%
-  return item.price * (1 + variation);
+  // For now, return current price (no variation for testing workflow)
+  return item.price;
 }
