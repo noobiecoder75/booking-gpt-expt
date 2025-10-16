@@ -234,3 +234,62 @@ export interface BookingConfirmation {
     phone: string;
   };
 }
+
+// =====================================================
+// Database-level Booking Types (for bookings table)
+// =====================================================
+
+/**
+ * BookingItem - Individual line item in a booking
+ * Maps to booking_items table with normalized structure
+ */
+export interface BookingItem {
+  id: string;
+  bookingId: string;
+  type: 'flight' | 'hotel' | 'activity' | 'transfer';
+  name: string;
+  startDate: string;
+  endDate: string | null;
+  price: number;
+  quantity: number;
+  details: Record<string, any>;
+  supplier: string | null;
+  supplierSource: string | null;
+  supplierCost: number | null;
+  clientPrice: number | null;
+  platformFee: number | null;
+  agentMarkup: number | null;
+  bookingStatus: 'not_booked' | 'pending' | 'confirmed' | 'failed' | 'cancelled';
+  confirmationNumber: string | null;
+  confirmedAt: string | null;
+  cancellationPolicy: Record<string, any> | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * Booking - Main booking record with joined data
+ * Maps to bookings table with contact and items joined
+ */
+export interface Booking {
+  id: string;
+  userId: string;
+  quoteId: string | null;
+  contactId: string;
+  bookingReference: string;
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  totalAmount: number;
+  currency: string;
+  paymentStatus: 'pending' | 'partial' | 'paid' | 'refunded';
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+  // Joined data
+  items: BookingItem[];
+  contact: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+  };
+}

@@ -14,6 +14,7 @@ import { useExpensesQuery } from '@/hooks/queries/useExpensesQuery';
 import { useQuotesQuery } from '@/hooks/queries/useQuotesQuery';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { useContactsQuery } from '@/hooks/queries/useContactsQuery';
+import { useBookingMutations } from '@/hooks/mutations/useBookingMutations';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { formatItemDetails } from '@/lib/travel-item-formatter';
@@ -39,6 +40,7 @@ export default function FinancesPage() {
   const { data: expenses = [] } = useExpensesQuery();
   const { data: quotes = [] } = useQuotesQuery();
   const { data: contacts = [] } = useContactsQuery();
+  const { createBookingFromQuote } = useBookingMutations();
 
   const [dateRange, setDateRange] = useState('30'); // days
   const [selectedPeriod, setSelectedPeriod] = useState({
@@ -157,6 +159,7 @@ export default function FinancesPage() {
       return;
     }
 
+    let bookingsCreated = 0;
     let invoicesCreated = 0;
     let commissionsCreated = 0;
     const errors: string[] = [];
@@ -178,70 +181,102 @@ export default function FinancesPage() {
           customerAddress: customer.address
         };
 
-        // Generate invoice from quote
-        const invoiceId = await new Promise<string>((resolve, reject) => {
-          generateInvoiceFromQuote.mutate(
+        // Validate quote total before proceeding
+        if (!quote.totalCost || typeof quote.totalCost !== 'number' || isNaN(quote.totalCost) || quote.totalCost <= 0) {
+          errors.push(`Invalid quote total for quote ${quote.id}: ${quote.totalCost}`);
+          continue;
+        }
+
+        // STEP 1: Create booking from quote (with itemized booking_items)
+        const bookingId = await new Promise<string>((resolve, reject) => {
+          createBookingFromQuote.mutate(
             {
               quoteId: quote.id,
-              customerData,
-              terms: 'Net 30',
-              dueDays: 30
+              contactId: quote.contactId,
+              items: quote.items,
+              totalAmount: quote.totalCost,
+              status: 'confirmed'
             },
             {
-              onSuccess: (id) => resolve(id),
+              onSuccess: (id) => {
+                console.log('[FinancesPage] Booking created:', id);
+                resolve(id);
+              },
               onError: (error) => reject(error)
             }
           );
         });
 
-        if (invoiceId) {
-          invoicesCreated++;
+        if (bookingId) {
+          bookingsCreated++;
 
-          // Generate commission record - with validation
-          try {
-            // Validate quote total before attempting commission creation
-            if (!quote.totalCost || typeof quote.totalCost !== 'number' || isNaN(quote.totalCost) || quote.totalCost <= 0) {
-              throw new Error(`Invalid quote total: ${quote.totalCost}. Cannot calculate commission.`);
-            }
-
-            await new Promise<void>((resolve, reject) => {
-              generateCommissionFromBooking.mutate(
-                {
-                  agentId: user?.id || 'default-agent',
-                  agentName: user?.email || 'Travel Agent',
-                  bookingId: invoiceId,
-                  quoteId: quote.id,
-                  invoiceId: invoiceId,
-                  customerId: customer.id,
-                  customerName: customerData.customerName,
-                  bookingAmount: quote.totalCost,
-                  bookingType: 'hotel',
+          // STEP 2: Generate invoice from quote
+          const invoiceId = await new Promise<string>((resolve, reject) => {
+            generateInvoiceFromQuote.mutate(
+              {
+                quoteId: quote.id,
+                customerData,
+                terms: 'Net 30',
+                dueDays: 30
+              },
+              {
+                onSuccess: (id) => {
+                  console.log('[FinancesPage] Invoice created:', id);
+                  resolve(id);
                 },
-                {
-                  onSuccess: () => resolve(),
-                  onError: (error) => reject(error)
-                }
-              );
-            });
-            commissionsCreated++;
-          } catch (commError) {
-            console.error('Failed to create commission for invoice:', invoiceId, commError);
-            const errorMessage = commError instanceof Error ? commError.message : 'Unknown error';
-            errors.push(`Commission generation failed for invoice ${invoiceId}: ${errorMessage}`);
+                onError: (error) => reject(error)
+              }
+            );
+          });
+
+          if (invoiceId) {
+            invoicesCreated++;
+
+            // STEP 3: Generate commission record with CORRECT booking ID
+            try {
+              await new Promise<void>((resolve, reject) => {
+                generateCommissionFromBooking.mutate(
+                  {
+                    agentId: user?.id || 'default-agent',
+                    agentName: user?.email || 'Travel Agent',
+                    bookingId: bookingId, // NOW CORRECT - using actual booking ID
+                    quoteId: quote.id,
+                    invoiceId: invoiceId,
+                    customerId: customer.id,
+                    customerName: customerData.customerName,
+                    bookingAmount: quote.totalCost,
+                    bookingType: 'hotel',
+                  },
+                  {
+                    onSuccess: () => {
+                      console.log('[FinancesPage] Commission created for booking:', bookingId);
+                      resolve();
+                    },
+                    onError: (error) => reject(error)
+                  }
+                );
+              });
+              commissionsCreated++;
+            } catch (commError) {
+              console.error('[FinancesPage] Failed to create commission:', commError);
+              const errorMessage = commError instanceof Error ? commError.message : 'Unknown error';
+              errors.push(`Commission generation failed for booking ${bookingId}: ${errorMessage}`);
+            }
           }
         }
       } catch (error) {
-        console.error('Failed to create invoice for quote:', quote.id, error);
-        errors.push(`Failed to create invoice for quote ${quote.id}`);
+        console.error('[FinancesPage] Failed to process quote:', quote.id, error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        errors.push(`Failed to process quote ${quote.id}: ${errorMessage}`);
       }
     }
 
     // Show results
-    if (invoicesCreated > 0) {
-      const message = `Successfully created ${invoicesCreated} invoice(s) and ${commissionsCreated} commission record(s)!`;
+    if (bookingsCreated > 0) {
+      const message = `Successfully created ${bookingsCreated} booking(s), ${invoicesCreated} invoice(s), and ${commissionsCreated} commission record(s)!`;
       alert(errors.length > 0 ? `${message}\n\nWarnings:\n${errors.join('\n')}` : message);
     } else {
-      alert(`Failed to create invoices.\n${errors.join('\n')}`);
+      alert(`Failed to create bookings.\n${errors.join('\n')}`);
     }
   };
 

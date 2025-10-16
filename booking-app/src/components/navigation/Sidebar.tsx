@@ -26,7 +26,8 @@ import {
   ChevronUp,
   Settings,
   ClipboardList,
-  Upload
+  Upload,
+  CalendarCheck
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -141,6 +142,12 @@ export function Sidebar() {
       label: 'Timeline',
       icon: Calendar,
       active: pathname === '/dashboard/timeline'
+    },
+    {
+      href: '/dashboard/bookings',
+      label: 'Bookings',
+      icon: CalendarCheck,
+      active: pathname?.startsWith('/dashboard/bookings')
     },
     {
       href: '/dashboard/finances',
