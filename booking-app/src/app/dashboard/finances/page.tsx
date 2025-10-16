@@ -200,8 +200,8 @@ export default function FinancesPage() {
           // Generate commission record - with validation
           try {
             // Validate quote total before attempting commission creation
-            if (!quote.total || typeof quote.total !== 'number' || isNaN(quote.total) || quote.total <= 0) {
-              throw new Error(`Invalid quote total: ${quote.total}. Cannot calculate commission.`);
+            if (!quote.totalCost || typeof quote.totalCost !== 'number' || isNaN(quote.totalCost) || quote.totalCost <= 0) {
+              throw new Error(`Invalid quote total: ${quote.totalCost}. Cannot calculate commission.`);
             }
 
             await new Promise<void>((resolve, reject) => {
@@ -214,7 +214,7 @@ export default function FinancesPage() {
                   invoiceId: invoiceId,
                   customerId: customer.id,
                   customerName: customerData.customerName,
-                  bookingAmount: quote.total,
+                  bookingAmount: quote.totalCost,
                   bookingType: 'hotel',
                 },
                 {
