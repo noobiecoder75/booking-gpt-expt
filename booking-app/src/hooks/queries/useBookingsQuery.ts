@@ -33,7 +33,8 @@ export function useBookingsQuery() {
           updated_at,
           contacts (
             id,
-            name,
+            first_name,
+            last_name,
             email,
             phone
           )
@@ -111,7 +112,9 @@ export function useBookingsQuery() {
         items: itemsByBooking[booking.id] || [],
         contact: {
           id: booking.contacts?.id || '',
-          name: booking.contacts?.name || 'Unknown',
+          name: booking.contacts 
+            ? `${booking.contacts.first_name} ${booking.contacts.last_name}`.trim() 
+            : 'Unknown',
           email: booking.contacts?.email || '',
           phone: booking.contacts?.phone || null,
         },
@@ -159,7 +162,8 @@ export function useBookingQuery(bookingId: string | null) {
           updated_at,
           contacts (
             id,
-            name,
+            first_name,
+            last_name,
             email,
             phone
           )
@@ -223,7 +227,9 @@ export function useBookingQuery(bookingId: string | null) {
         })),
         contact: {
           id: booking.contacts?.id || '',
-          name: booking.contacts?.name || 'Unknown',
+          name: booking.contacts 
+            ? `${booking.contacts.first_name} ${booking.contacts.last_name}`.trim() 
+            : 'Unknown',
           email: booking.contacts?.email || '',
           phone: booking.contacts?.phone || null,
         },

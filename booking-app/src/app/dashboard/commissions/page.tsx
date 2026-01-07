@@ -10,6 +10,7 @@ import { useCommissionsQuery } from '@/hooks/queries/useCommissionsQuery';
 import { useCommissionMutations } from '@/hooks/mutations/useCommissionMutations';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { cn } from '@/lib/utils';
 import { CommissionModal } from '@/components/commissions/CommissionModal';
 import {
   DollarSign,

@@ -10,6 +10,7 @@ import { useInvoicesQuery } from '@/hooks/queries/useInvoicesQuery';
 import { useInvoiceMutations } from '@/hooks/mutations/useInvoiceMutations';
 import { useAuthStore } from '@/store/auth-store';
 import { MainLayout } from '@/components/layout/MainLayout';
+import { cn } from '@/lib/utils';
 import { InvoiceModal } from '@/components/invoices/InvoiceModal';
 import { generateInvoicePDF } from '@/lib/pdf-generator';
 import {

@@ -5,6 +5,7 @@ import { useTasksQuery } from '@/hooks/queries/useTasksQuery';
 import { useTaskMutations } from '@/hooks/mutations/useTaskMutations';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/components/auth/AuthProvider';
+import { cn } from '@/lib/utils';
 import { TaskStatus, TaskPriority, TaskType, BookingTask } from '@/types/task';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { MainLayout } from '@/components/layout/MainLayout';

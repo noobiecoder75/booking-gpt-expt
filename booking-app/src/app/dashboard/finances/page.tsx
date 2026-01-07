@@ -18,6 +18,7 @@ import { useBookingMutations } from '@/hooks/mutations/useBookingMutations';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { formatItemDetails } from '@/lib/travel-item-formatter';
+import { cn } from '@/lib/utils';
 import {
   TrendingUp,
   TrendingDown,
