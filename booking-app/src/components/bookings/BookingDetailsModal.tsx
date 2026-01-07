@@ -62,14 +62,14 @@ export function BookingDetailsModal({
         <DialogHeader>
           <div className="flex items-start justify-between">
             <div>
-              <DialogTitle className="text-2xl">Booking Details</DialogTitle>
+              <DialogTitle className="text-2xl font-bold text-clio-gray-900 dark:text-white">Booking Details</DialogTitle>
               <div className="flex items-center gap-3 mt-2">
-                <div className="flex items-center gap-2 text-sm text-gray-600">
+                <div className="flex items-center gap-2 text-sm text-clio-gray-600 dark:text-clio-gray-400">
                   <Hash className="w-4 h-4" />
-                  <span className="font-mono font-semibold">{booking.bookingReference}</span>
+                  <span className="font-mono font-bold tracking-tight">{booking.bookingReference}</span>
                 </div>
                 <BookingStatusBadge status={booking.status} />
-                <Badge className={paymentStatus.className}>
+                <Badge className={cn("text-[10px] uppercase font-bold tracking-tight px-2 py-0.5", paymentStatus.className)}>
                   {paymentStatus.label}
                 </Badge>
               </div>
@@ -105,8 +105,8 @@ export function BookingDetailsModal({
 
         <div className="space-y-6 mt-6">
           {/* Workflow Status */}
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Booking Workflow</h3>
+          <div className="bg-clio-gray-50 dark:bg-clio-gray-900/50 border border-clio-gray-100 dark:border-clio-gray-800 p-8 rounded-2xl">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400 mb-6">Booking Workflow</h3>
             <WorkflowVisualizer
               hasQuote={!!booking.quoteId}
               hasBooking={true}
@@ -116,40 +116,48 @@ export function BookingDetailsModal({
             />
           </div>
 
-          <Separator />
+          <Separator className="bg-clio-gray-100 dark:bg-clio-gray-800" />
 
           {/* Customer Information */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Customer Information</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-3">
-                <User className="w-5 h-5 text-gray-400" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-clio-gray-900 dark:text-white mb-6">Customer Information</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-clio-gray-100 dark:bg-clio-gray-800 flex items-center justify-center">
+                  <User className="w-5 h-5 text-clio-gray-500" />
+                </div>
                 <div>
-                  <div className="text-sm text-gray-600">Customer</div>
-                  <div className="font-medium">{booking.contact.name}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-500">Customer</div>
+                  <div className="font-bold text-clio-gray-900 dark:text-white">{booking.contact.name}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gray-400" />
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-clio-gray-100 dark:bg-clio-gray-800 flex items-center justify-center">
+                  <Mail className="w-5 h-5 text-clio-gray-500" />
+                </div>
                 <div>
-                  <div className="text-sm text-gray-600">Email</div>
-                  <div className="font-medium">{booking.contact.email}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-500">Email</div>
+                  <div className="font-bold text-clio-gray-900 dark:text-white">{booking.contact.email}</div>
                 </div>
               </div>
               {booking.contact.phone && (
-                <div className="flex items-center gap-3">
-                  <Phone className="w-5 h-5 text-gray-400" />
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 rounded-xl bg-clio-gray-100 dark:bg-clio-gray-800 flex items-center justify-center">
+                    <Phone className="w-5 h-5 text-clio-gray-500" />
+                  </div>
                   <div>
-                    <div className="text-sm text-gray-600">Phone</div>
-                    <div className="font-medium">{booking.contact.phone}</div>
+                    <div className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-500">Phone</div>
+                    <div className="font-bold text-clio-gray-900 dark:text-white">{booking.contact.phone}</div>
                   </div>
                 </div>
               )}
-              <div className="flex items-center gap-3">
-                <Calendar className="w-5 h-5 text-gray-400" />
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-xl bg-clio-gray-100 dark:bg-clio-gray-800 flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-clio-gray-500" />
+                </div>
                 <div>
-                  <div className="text-sm text-gray-600">Booked On</div>
-                  <div className="font-medium">
+                  <div className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-500">Booked On</div>
+                  <div className="font-bold text-clio-gray-900 dark:text-white">
                     {format(new Date(booking.createdAt), 'PPP')}
                   </div>
                 </div>
@@ -157,38 +165,43 @@ export function BookingDetailsModal({
             </div>
           </div>
 
-          <Separator />
+          <Separator className="bg-clio-gray-100 dark:bg-clio-gray-800" />
 
           {/* Booking Items */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-clio-gray-900 dark:text-white mb-6">
               Booking Items ({booking.items.length})
             </h3>
             <BookingItemsList items={booking.items} showPricing={true} />
           </div>
 
-          <Separator />
+          <Separator className="bg-clio-gray-100 dark:bg-clio-gray-800" />
 
           {/* Financial Summary */}
-          <div className="bg-blue-50 p-6 rounded-lg">
-            <h3 className="text-lg font-semibold mb-4">Financial Summary</h3>
-            <div className="space-y-3">
+          <div className="bg-clio-navy dark:bg-clio-blue p-8 rounded-2xl text-white shadow-lg">
+            <h3 className="text-xs font-bold uppercase tracking-wider opacity-80 mb-6">Financial Summary</h3>
+            <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <span className="text-gray-700">Currency:</span>
-                <span className="font-semibold">{booking.currency}</span>
+                <span className="text-sm font-medium opacity-80">Currency:</span>
+                <span className="font-bold uppercase tracking-widest">{booking.currency}</span>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-gray-700">Payment Status:</span>
-                <Badge className={paymentStatus.className}>
+                <span className="text-sm font-medium opacity-80">Payment Status:</span>
+                <Badge className="bg-white/20 hover:bg-white/30 text-white border-transparent text-[10px] uppercase font-bold tracking-tight">
                   {paymentStatus.label}
                 </Badge>
               </div>
-              <Separator className="bg-blue-200" />
-              <div className="flex justify-between items-center text-lg">
-                <span className="font-semibold">Total Amount:</span>
-                <span className="text-2xl font-bold text-blue-700">
-                  {formatCurrency(booking.totalAmount)}
-                </span>
+              <Separator className="bg-white/10" />
+              <div className="flex justify-between items-end pt-2">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider opacity-80 block mb-1">Total Amount</span>
+                  <div className="text-4xl font-black tracking-tight leading-none">
+                    {formatCurrency(booking.totalAmount)}
+                  </div>
+                </div>
+                <div className="bg-white/10 rounded-xl p-3">
+                  <DollarSign className="w-8 h-8 opacity-50" />
+                </div>
               </div>
             </div>
           </div>
@@ -196,10 +209,10 @@ export function BookingDetailsModal({
           {/* Notes */}
           {booking.notes && (
             <>
-              <Separator />
+              <Separator className="bg-clio-gray-100 dark:bg-clio-gray-800" />
               <div>
-                <h3 className="text-lg font-semibold mb-2">Notes</h3>
-                <p className="text-gray-700 bg-gray-50 p-4 rounded-lg whitespace-pre-wrap">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-clio-gray-900 dark:text-white mb-4">Notes</h3>
+                <p className="text-clio-gray-700 dark:text-clio-gray-300 bg-clio-gray-50 dark:bg-clio-gray-900/50 border border-clio-gray-100 dark:border-clio-gray-800 p-6 rounded-2xl whitespace-pre-wrap font-medium">
                   {booking.notes}
                 </p>
               </div>

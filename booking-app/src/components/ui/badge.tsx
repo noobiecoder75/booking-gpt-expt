@@ -4,17 +4,17 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2",
+  "inline-flex items-center rounded-lg border px-2 py-0.5 text-[10px] font-bold uppercase tracking-tight transition-colors focus:outline-none focus:ring-2 focus:ring-clio-blue focus:ring-offset-2 shadow-none",
   {
     variants: {
       variant: {
         default:
-          "border-transparent bg-blue-600 text-white hover:bg-blue-700",
+          "border-transparent bg-clio-blue text-white hover:bg-clio-blue/90",
         secondary:
-          "border-transparent bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-600",
+          "border-transparent bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400 hover:bg-clio-gray-200 dark:hover:bg-clio-gray-700",
         destructive:
-          "border-transparent bg-red-600 text-white hover:bg-red-700",
-        outline: "text-gray-900 dark:text-gray-100 border-gray-200 dark:border-gray-700",
+          "border-transparent bg-red-600 dark:bg-red-900/30 text-white dark:text-red-400 hover:bg-red-700 dark:hover:bg-red-900/50",
+        outline: "text-clio-gray-900 dark:text-gray-100 border-clio-gray-200 dark:border-clio-gray-800 bg-transparent",
       },
     },
     defaultVariants: {

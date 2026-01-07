@@ -170,11 +170,11 @@ export function ClientPaymentModal({
   if (step === 'processing') {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-md">
-          <div className="text-center py-8">
-            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4" />
-            <h3 className="text-lg font-semibold mb-2">Processing Payment...</h3>
-            <p className="text-gray-600">Please wait while we process your payment securely.</p>
+        <DialogContent className="max-w-md p-12 bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
+          <div className="text-center">
+            <div className="w-16 h-16 border-4 border-clio-blue/20 border-t-clio-blue rounded-full animate-spin mx-auto mb-6" />
+            <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight mb-2">Processing Payment...</h3>
+            <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest">Please wait while we process your payment securely.</p>
           </div>
         </DialogContent>
       </Dialog>
@@ -184,19 +184,21 @@ export function ClientPaymentModal({
   if (step === 'success') {
     return (
       <Dialog open={isOpen} onOpenChange={handleClose}>
-        <DialogContent className="max-w-md">
-          <div className="text-center py-8">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Check className="w-8 h-8 text-green-600" />
+        <DialogContent className="max-w-md p-12 bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
+          <div className="text-center">
+            <div className="w-20 h-20 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+              <Check className="w-10 h-10 text-green-600 dark:text-green-400" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Payment Successful!</h3>
-            <p className="text-gray-600 mb-4">
-              Your {paymentData.paymentMethod === 'deposit' ? 'deposit' : 'payment'} of {formatCurrency(paymentAmount)} has been processed.
+            <h3 className="text-2xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight mb-3">Payment Successful!</h3>
+            <p className="text-sm font-medium text-clio-gray-600 dark:text-clio-gray-400 uppercase tracking-widest mb-6 leading-relaxed">
+              Your {paymentData.paymentMethod === 'deposit' ? 'deposit' : 'payment'} of <span className="text-clio-gray-900 dark:text-white font-bold">{formatCurrency(paymentAmount)}</span> has been processed.
             </p>
             {paymentData.paymentMethod === 'deposit' && (
-              <p className="text-sm text-gray-500">
-                Remaining balance: {formatCurrency(quote.totalCost - depositAmount)}
-              </p>
+              <div className="bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-xl p-4 border border-clio-gray-100 dark:border-clio-gray-800">
+                <p className="text-[10px] font-black text-clio-gray-400 uppercase tracking-widest">
+                  Remaining balance: {formatCurrency(quote.totalCost - depositAmount)}
+                </p>
+              </div>
             )}
           </div>
         </DialogContent>
@@ -206,37 +208,43 @@ export function ClientPaymentModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <CreditCard className="w-5 h-5" />
-            <span>Secure Payment</span>
-          </DialogTitle>
-          <DialogDescription>
-            Complete your travel booking payment securely
-          </DialogDescription>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden p-0 border-none shadow-strong bg-white dark:bg-clio-gray-900">
+        <DialogHeader className="p-8 bg-clio-gray-50 dark:bg-clio-gray-800/50 border-b border-clio-gray-100 dark:border-clio-gray-800">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white dark:bg-clio-gray-900 rounded-xl flex items-center justify-center shadow-sm">
+              <CreditCard className="w-6 h-6 text-clio-blue" />
+            </div>
+            <div>
+              <DialogTitle className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
+                Secure Payment
+              </DialogTitle>
+              <DialogDescription className="text-[10px] font-black text-clio-gray-400 uppercase tracking-widest">
+                Complete your travel booking payment securely
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="overflow-y-auto max-h-[calc(90vh-120px)] p-8 space-y-8">
           {/* Payment Summary */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h4 className="font-medium mb-3">Order Summary</h4>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span>Quote: {quote.title}</span>
-                <span>{formatCurrency(quote.totalCost)}</span>
+          <div className="bg-clio-gray-50 dark:bg-clio-gray-950/50 rounded-2xl border border-clio-gray-100 dark:border-clio-gray-800 p-6">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mb-4 ml-1">Order Summary</h4>
+            <div className="space-y-3">
+              <div className="flex justify-between items-center text-sm">
+                <span className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">{quote.title}</span>
+                <span className="font-medium text-clio-gray-600 dark:text-clio-gray-400">{formatCurrency(quote.totalCost)}</span>
               </div>
-              <div className="border-t pt-2">
-                <div className="flex justify-between font-medium">
-                  <span>
+              <div className="border-t border-clio-gray-100 dark:border-clio-gray-800 pt-4 mt-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500">
                     {paymentData.paymentMethod === 'deposit' ? `Deposit (25%)` : 'Full Payment'}
                   </span>
-                  <span>{formatCurrency(paymentAmount)}</span>
+                  <span className="text-xl font-black text-clio-blue">{formatCurrency(paymentAmount)}</span>
                 </div>
                 {paymentData.paymentMethod === 'deposit' && (
-                  <div className="flex justify-between text-gray-600 text-xs mt-1">
-                    <span>Remaining balance due later</span>
-                    <span>{formatCurrency(quote.totalCost - depositAmount)}</span>
+                  <div className="flex justify-between items-center mt-2 pt-2 border-t border-dashed border-clio-gray-100 dark:border-clio-gray-800">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Remaining balance due later</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500">{formatCurrency(quote.totalCost - depositAmount)}</span>
                   </div>
                 )}
               </div>
@@ -244,36 +252,36 @@ export function ClientPaymentModal({
           </div>
 
           {/* Payment Method Selection */}
-          <div className="space-y-3">
-            <Label>Payment Option</Label>
-            <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-4">
+            <Label className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Payment Option</Label>
+            <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
                 onClick={() => setPaymentData(prev => ({ ...prev, paymentMethod: 'full' }))}
-                className={`p-4 border rounded-lg text-left transition-colors ${
+                className={`p-5 rounded-2xl border text-left transition-all duration-200 group ${
                   paymentData.paymentMethod === 'full'
-                    ? 'border-blue-500 bg-blue-50 text-blue-900'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-clio-blue bg-clio-blue/5 text-clio-blue shadow-sm'
+                    : 'border-clio-gray-100 dark:border-clio-gray-800 hover:border-clio-gray-300 dark:hover:border-clio-gray-700'
                 }`}
               >
-                <DollarSign className="w-5 h-5 mb-2" />
-                <div className="font-medium">Pay in Full</div>
-                <div className="text-sm text-gray-600">
+                <DollarSign className={`w-6 h-6 mb-3 ${paymentData.paymentMethod === 'full' ? 'text-clio-blue' : 'text-clio-gray-400 group-hover:text-clio-gray-600'}`} />
+                <div className="font-bold uppercase tracking-tight text-sm mb-1">Pay in Full</div>
+                <div className="text-[10px] font-medium text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest">
                   {formatCurrency(quote.totalCost)}
                 </div>
               </button>
               <button
                 type="button"
                 onClick={() => setPaymentData(prev => ({ ...prev, paymentMethod: 'deposit' }))}
-                className={`p-4 border rounded-lg text-left transition-colors ${
+                className={`p-5 rounded-2xl border text-left transition-all duration-200 group ${
                   paymentData.paymentMethod === 'deposit'
-                    ? 'border-blue-500 bg-blue-50 text-blue-900'
-                    : 'border-gray-200 hover:border-gray-300'
+                    ? 'border-clio-blue bg-clio-blue/5 text-clio-blue shadow-sm'
+                    : 'border-clio-gray-100 dark:border-clio-gray-800 hover:border-clio-gray-300 dark:hover:border-clio-gray-700'
                 }`}
               >
-                <Calendar className="w-5 h-5 mb-2" />
-                <div className="font-medium">Pay Deposit</div>
-                <div className="text-sm text-gray-600">
+                <Calendar className={`w-6 h-6 mb-3 ${paymentData.paymentMethod === 'deposit' ? 'text-clio-blue' : 'text-clio-gray-400 group-hover:text-clio-gray-600'}`} />
+                <div className="font-bold uppercase tracking-tight text-sm mb-1">Pay Deposit</div>
+                <div className="text-[10px] font-medium text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest">
                   {formatCurrency(depositAmount)} now
                 </div>
               </button>
@@ -281,16 +289,18 @@ export function ClientPaymentModal({
           </div>
 
           {/* Card Information */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Lock className="w-4 h-4 text-green-600" />
-              <span className="font-medium">Card Information</span>
-              <Shield className="w-4 h-4 text-green-600" />
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 ml-1">
+              <div className="w-8 h-8 bg-green-50 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                <Lock className="w-4 h-4 text-green-600 dark:text-green-400" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-900 dark:text-white">Card Information</span>
+              <Shield className="w-4 h-4 text-green-600 dark:text-green-400 ml-auto" />
             </div>
 
             {/* Card Number */}
-            <div>
-              <Label htmlFor="cardNumber">Card Number</Label>
+            <div className="space-y-2">
+              <Label htmlFor="cardNumber" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Card Number</Label>
               <Input
                 id="cardNumber"
                 type="text"
@@ -298,22 +308,22 @@ export function ClientPaymentModal({
                 onChange={handleCardNumberChange}
                 placeholder="1234 5678 9012 3456"
                 maxLength={19}
-                className={errors.cardNumber ? 'border-red-500' : ''}
+                className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 font-bold tracking-widest ${errors.cardNumber ? 'border-red-500 focus-visible:ring-red-500/20' : ''}`}
               />
               {errors.cardNumber && (
-                <p className="text-red-500 text-sm mt-1">{errors.cardNumber}</p>
+                <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-1 ml-1">{errors.cardNumber}</p>
               )}
             </div>
 
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-6">
               {/* Expiry Month */}
-              <div>
-                <Label>Month</Label>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Month</Label>
                 <Select
                   value={paymentData.expiryMonth}
                   onValueChange={(value) => setPaymentData(prev => ({ ...prev, expiryMonth: value }))}
                 >
-                  <SelectTrigger className={errors.expiry ? 'border-red-500' : ''}>
+                  <SelectTrigger className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 font-bold ${errors.expiry ? 'border-red-500 focus:ring-red-500/20' : ''}`}>
                     <SelectValue placeholder="MM" />
                   </SelectTrigger>
                   <SelectContent>
@@ -327,13 +337,13 @@ export function ClientPaymentModal({
               </div>
 
               {/* Expiry Year */}
-              <div>
-                <Label>Year</Label>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Year</Label>
                 <Select
                   value={paymentData.expiryYear}
                   onValueChange={(value) => setPaymentData(prev => ({ ...prev, expiryYear: value }))}
                 >
-                  <SelectTrigger className={errors.expiry ? 'border-red-500' : ''}>
+                  <SelectTrigger className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 font-bold ${errors.expiry ? 'border-red-500 focus:ring-red-500/20' : ''}`}>
                     <SelectValue placeholder="YYYY" />
                   </SelectTrigger>
                   <SelectContent>
@@ -347,8 +357,8 @@ export function ClientPaymentModal({
               </div>
 
               {/* CVV */}
-              <div>
-                <Label htmlFor="cvv">CVV</Label>
+              <div className="space-y-2">
+                <Label htmlFor="cvv" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">CVV</Label>
                 <Input
                   id="cvv"
                   type="text"
@@ -356,87 +366,89 @@ export function ClientPaymentModal({
                   onChange={(e) => setPaymentData(prev => ({ ...prev, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) }))}
                   placeholder="123"
                   maxLength={4}
-                  className={errors.cvv ? 'border-red-500' : ''}
+                  className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 font-bold tracking-widest ${errors.cvv ? 'border-red-500 focus-visible:ring-red-500/20' : ''}`}
                 />
-                {errors.cvv && (
-                  <p className="text-red-500 text-sm mt-1">{errors.cvv}</p>
-                )}
               </div>
             </div>
 
             {errors.expiry && (
-              <p className="text-red-500 text-sm">{errors.expiry}</p>
+              <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest ml-1">{errors.expiry}</p>
+            )}
+            {errors.cvv && !errors.expiry && (
+              <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest ml-1">{errors.cvv}</p>
             )}
           </div>
 
           {/* Billing Information */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <User className="w-4 h-4 text-gray-600" />
-              <span className="font-medium">Billing Information</span>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 ml-1">
+              <div className="w-8 h-8 bg-clio-gray-100 dark:bg-clio-gray-800 rounded-lg flex items-center justify-center">
+                <User className="w-4 h-4 text-clio-gray-600 dark:text-clio-gray-400" />
+              </div>
+              <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-900 dark:text-white">Billing Information</span>
             </div>
 
-            <div>
-              <Label htmlFor="cardholderName">Cardholder Name</Label>
-              <Input
-                id="cardholderName"
-                type="text"
-                value={paymentData.cardholderName}
-                onChange={(e) => setPaymentData(prev => ({ ...prev, cardholderName: e.target.value }))}
-                placeholder="John Doe"
-                className={errors.cardholderName ? 'border-red-500' : ''}
-              />
-              {errors.cardholderName && (
-                <p className="text-red-500 text-sm mt-1">{errors.cardholderName}</p>
-              )}
-            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <Label htmlFor="cardholderName" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Cardholder Name</Label>
+                <Input
+                  id="cardholderName"
+                  type="text"
+                  value={paymentData.cardholderName}
+                  onChange={(e) => setPaymentData(prev => ({ ...prev, cardholderName: e.target.value }))}
+                  placeholder="John Doe"
+                  className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 font-bold ${errors.cardholderName ? 'border-red-500 focus-visible:ring-red-500/20' : ''}`}
+                />
+                {errors.cardholderName && (
+                  <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-1 ml-1">{errors.cardholderName}</p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                type="email"
-                value={paymentData.email}
-                onChange={(e) => setPaymentData(prev => ({ ...prev, email: e.target.value }))}
-                placeholder="john@example.com"
-                className={errors.email ? 'border-red-500' : ''}
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-            </div>
-          </div>
-
-          {/* Security Notice */}
-          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <div className="flex items-start space-x-3">
-              <Shield className="w-5 h-5 text-green-600 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-green-800 mb-1">Secure Payment</p>
-                <p className="text-green-700">
-                  Your payment information is encrypted and secure. We never store your card details.
-                </p>
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={paymentData.email}
+                  onChange={(e) => setPaymentData(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="john@example.com"
+                  className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 font-bold ${errors.email ? 'border-red-500 focus-visible:ring-red-500/20' : ''}`}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-1 ml-1">{errors.email}</p>
+                )}
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 pt-4">
-            <Button 
+          <div className="flex items-center justify-between pt-8 border-t border-clio-gray-100 dark:border-clio-gray-800">
+            <button 
               type="button" 
-              variant="outline" 
               onClick={handleClose}
+              className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white transition-colors"
             >
-              <X className="w-4 h-4 mr-1" />
-              Cancel
-            </Button>
+              Cancel Payment
+            </button>
             <Button 
               type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white min-w-[140px]"
+              className="bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest h-14 px-10 rounded-xl shadow-lg shadow-green-600/20 min-w-[200px]"
             >
-              <CreditCard className="w-4 h-4 mr-2" />
+              <CreditCard className="w-5 h-5 mr-3" />
               Pay {formatCurrency(paymentAmount)}
             </Button>
+          </div>
+
+          {/* Security Notice */}
+          <div className="bg-green-50/50 dark:bg-green-950/20 rounded-2xl p-5 border border-green-100 dark:border-green-900/30">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-white dark:bg-clio-gray-900 rounded-xl flex items-center justify-center shadow-sm shrink-0">
+                <Shield className="w-5 h-5 text-green-600" />
+              </div>
+              <div className="text-xs font-medium text-clio-gray-600 dark:text-clio-gray-400 leading-relaxed">
+                <strong className="text-green-600 font-bold uppercase tracking-tight">Encrypted Checkout:</strong> Your payment information is processed securely using industry-standard encryption. We never store your full card details on our servers.
+              </div>
+            </div>
           </div>
         </form>
       </DialogContent>

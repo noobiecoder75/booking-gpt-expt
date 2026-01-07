@@ -53,13 +53,13 @@ export function RecentActivityFeed({ transactions, limit = 10 }: RecentActivityF
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400';
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400';
     }
   };
 
@@ -67,10 +67,10 @@ export function RecentActivityFeed({ transactions, limit = 10 }: RecentActivityF
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Recent Activity</CardTitle>
-          <CardDescription>Latest financial transactions</CardDescription>
+          <CardTitle className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Recent Activity</CardTitle>
+          <CardDescription className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">Latest financial transactions</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px] text-muted-foreground">
+        <CardContent className="flex items-center justify-center h-[300px] text-clio-gray-400">
           No recent activity
         </CardContent>
       </Card>
@@ -80,33 +80,33 @@ export function RecentActivityFeed({ transactions, limit = 10 }: RecentActivityF
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
-        <CardDescription>Latest {recentTransactions.length} transactions</CardDescription>
+        <CardTitle className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Recent Activity</CardTitle>
+        <CardDescription className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">Latest {recentTransactions.length} transactions</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
           {recentTransactions.map((transaction) => (
             <div
               key={transaction.id}
-              className="flex items-start gap-3 pb-3 border-b last:border-0 last:pb-0"
+              className="flex items-start gap-3 pb-3 border-b border-clio-gray-100 dark:border-clio-gray-800 last:border-0 last:pb-0"
             >
-              <div className="p-2 rounded-lg bg-muted">
+              <div className="p-2 rounded-lg bg-clio-gray-50 dark:bg-clio-gray-800">
                 {getIcon(transaction.type)}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-sm truncate">
+                  <span className="font-bold text-sm text-clio-gray-900 dark:text-white truncate">
                     {getTypeLabel(transaction.type)}
                   </span>
-                  <Badge className={`text-xs ${getStatusColor(transaction.status)}`}>
+                  <Badge className={`text-[10px] font-bold uppercase tracking-tight border-none shadow-none ${getStatusColor(transaction.status)}`}>
                     {transaction.status}
                   </Badge>
                 </div>
-                <p className="text-sm text-muted-foreground truncate">
+                <p className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400 truncate">
                   {transaction.description}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-[10px] font-bold text-clio-gray-400 uppercase">
                     {new Date(transaction.timestamp).toLocaleDateString('en-US', {
                       month: 'short',
                       day: 'numeric',
@@ -117,10 +117,10 @@ export function RecentActivityFeed({ transactions, limit = 10 }: RecentActivityF
                 </div>
               </div>
               <div className="text-right">
-                <div className={`font-semibold text-sm ${
-                  transaction.type === 'payment_received' ? 'text-green-600' :
-                  transaction.type.includes('expense') || transaction.type.includes('payment') ? 'text-red-600' :
-                  'text-gray-900'
+                <div className={`font-bold text-sm ${
+                  transaction.type === 'payment_received' ? 'text-green-600 dark:text-green-400' :
+                  transaction.type.includes('expense') || transaction.type.includes('payment') ? 'text-red-600 dark:text-red-400' :
+                  'text-clio-gray-900 dark:text-white'
                 }`}>
                   {transaction.type === 'payment_received' ? '+' :
                    transaction.type.includes('expense') || transaction.type === 'supplier_payment' ? '-' : ''}

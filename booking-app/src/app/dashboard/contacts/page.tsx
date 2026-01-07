@@ -158,49 +158,49 @@ export default function ContactsPage() {
     return (
       <div className="space-y-6">
         {/* Customer Header */}
-        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm">
-          <div className="flex items-start justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-clio-blue rounded-full flex items-center justify-center text-white text-2xl font-bold">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 p-8 shadow-sm">
+          <div className="flex flex-col md:flex-row items-start justify-between gap-6">
+            <div className="flex items-center space-x-6">
+              <div className="w-20 h-20 bg-clio-blue rounded-2xl flex items-center justify-center text-white text-3xl font-black shadow-lg">
                 {contact.firstName[0]}{contact.lastName[0]}
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-clio-gray-900 dark:text-white">
+                <h2 className="text-3xl font-black text-clio-gray-900 dark:text-white tracking-tight">
                   {contact.firstName} {contact.lastName}
                 </h2>
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center text-clio-gray-600 dark:text-clio-gray-400">
-                    <Mail className="w-4 h-4 mr-1 text-clio-blue" />
+                <div className="flex flex-wrap items-center gap-6 mt-3">
+                  <div className="flex items-center text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+                    <Mail className="w-4 h-4 mr-2 text-clio-blue" />
                     {contact.email}
                   </div>
                   {contact.phone && (
-                    <div className="flex items-center text-clio-gray-600 dark:text-clio-gray-400">
-                      <Phone className="w-4 h-4 mr-1 text-clio-blue" />
+                    <div className="flex items-center text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+                      <Phone className="w-4 h-4 mr-2 text-clio-blue" />
                       {contact.phone}
                     </div>
                   )}
                 </div>
-                <div className="flex items-center gap-2 mt-3">
-                  <Badge className={`${tierInfo.color} bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 flex items-center gap-1 shadow-sm`}>
-                    <tierInfo.icon className="w-3 h-3" />
+                <div className="flex items-center gap-3 mt-4">
+                  <Badge className={`${tierInfo.color} bg-clio-gray-50 dark:bg-clio-gray-800 border border-clio-gray-100 dark:border-clio-gray-700 flex items-center gap-1.5 shadow-none text-[10px] uppercase font-bold tracking-widest px-3 py-1`}>
+                    <tierInfo.icon className="w-3.5 h-3.5" />
                     {tierInfo.tier} Customer
                   </Badge>
-                  <Badge variant="secondary" className="bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-700 dark:text-clio-gray-300">
+                  <Badge variant="secondary" className="bg-clio-blue/10 text-clio-blue border-transparent text-[10px] uppercase font-bold tracking-widest px-3 py-1">
                     {totalBookings} Bookings
                   </Badge>
                 </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline">
+            <div className="flex gap-2 w-full md:w-auto">
+              <Button variant="outline" className="flex-1 md:flex-none border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-11">
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Message
               </Button>
-              <Button variant="outline" onClick={() => handleEditContact(contact)}>
+              <Button variant="outline" className="flex-1 md:flex-none border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-11" onClick={() => handleEditContact(contact)}>
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
               </Button>
-              <Button>
+              <Button className="flex-1 md:flex-none bg-clio-blue hover:bg-clio-blue-hover text-white font-bold uppercase tracking-tight text-xs h-11">
                 <Plus className="w-4 h-4 mr-2" />
                 New Quote
               </Button>
@@ -210,69 +210,71 @@ export default function ContactsPage() {
 
         {/* Customer Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Lifetime Value</CardTitle>
-              <DollarSign className="h-4 w-4 text-gray-500" />
+          <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+              <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Lifetime Value</CardTitle>
+              <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-600">
+            <CardContent className="pt-4">
+              <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                 {formatCurrency(totalValue)}
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 mt-1">
                 From paid invoices
               </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-              <Receipt className="h-4 w-4 text-gray-500" />
+          <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+              <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Outstanding</CardTitle>
+              <div className="p-1.5 rounded-lg bg-red-50 dark:bg-red-900/20">
+                <Receipt className="h-3.5 w-3.5 text-red-600" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${outstandingAmount > 0 ? 'text-orange-600' : 'text-gray-600'}`}>
+            <CardContent className="pt-4">
+              <div className={`text-2xl font-black ${outstandingAmount > 0 ? 'text-red-600 dark:text-red-400' : 'text-clio-gray-400'}`}>
                 {formatCurrency(outstandingAmount)}
               </div>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 mt-1">
                 Unpaid invoices
               </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
-              <Calendar className="h-4 w-4 text-gray-500" />
+          <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+              <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Total Bookings</CardTitle>
+              <div className="p-1.5 rounded-lg bg-clio-blue/10">
+                <Calendar className="h-3.5 w-3.5 text-clio-blue" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
+            <CardContent className="pt-4">
+              <div className="text-2xl font-black text-clio-gray-900 dark:text-white">
                 {totalBookings}
               </div>
+              <p className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 mt-1">
+                Accepted quotes
+              </p>
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-              <Receipt className="h-4 w-4 text-gray-500" />
-            </CardHeader>
-            <CardContent>
-              <div className={`text-2xl font-bold ${outstandingAmount > 0 ? 'text-orange-600' : 'text-gray-900'}`}>
-                {formatCurrency(outstandingAmount)}
+          <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+              <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Last Booking</CardTitle>
+              <div className="p-1.5 rounded-lg bg-clio-navy/10">
+                <TrendingUp className="h-3.5 w-3.5 text-clio-navy dark:text-clio-gray-300" />
               </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Last Booking</CardTitle>
-              <Calendar className="h-4 w-4 text-gray-500" />
             </CardHeader>
-            <CardContent>
-              <div className="text-lg font-medium">
-                {lastBooking ? new Date(lastBooking).toLocaleDateString() : 'N/A'}
+            <CardContent className="pt-4">
+              <div className="text-xl font-bold text-clio-gray-900 dark:text-white">
+                {lastBooking ? new Date(lastBooking).toLocaleDateString() : 'Never'}
               </div>
+              <p className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 mt-1">
+                Last activity date
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -415,10 +417,10 @@ export default function ContactsPage() {
           {viewMode === 'detail' && selectedContact ? (
             <>
               <div className="flex items-center mb-6">
-                <Button variant="ghost" onClick={handleBackToList} className="mr-4">
+                <Button variant="ghost" onClick={handleBackToList} className="mr-4 text-clio-gray-500 hover:text-clio-blue">
                   ← Back to Contacts
                 </Button>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Customer Profile</h1>
+                <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white">Customer Profile</h1>
               </div>
               <Customer360View contact={selectedContact} />
             </>
@@ -427,14 +429,14 @@ export default function ContactsPage() {
               {/* Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Customer Relationship Management</h1>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">
+                  <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white">Customer Relationship Management</h1>
+                  <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2 font-medium">
                     Manage your travel clients and build lasting relationships
                   </p>
                 </div>
 
                 <Button
-                  className="mt-4 md:mt-0"
+                  className="mt-4 md:mt-0 bg-clio-blue hover:bg-clio-blue-hover text-white shadow-sm"
                   onClick={handleAddContact}
                   disabled={isLoading}
                 >
@@ -445,47 +447,55 @@ export default function ContactsPage() {
 
               {/* Summary Stats */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                <Card>
+                <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Contacts</CardTitle>
-                    <Users className="h-4 w-4 text-gray-500" />
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Total Contacts</CardTitle>
+                    <div className="p-2 rounded-xl bg-clio-blue/10">
+                      <Users className="h-4 w-4 text-clio-blue" />
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{contacts.length}</div>
+                    <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">{contacts.length}</div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Customers</CardTitle>
-                    <TrendingUp className="h-4 w-4 text-gray-500" />
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Active Customers</CardTitle>
+                    <div className="p-2 rounded-xl bg-clio-navy/10">
+                      <TrendingUp className="h-4 w-4 text-clio-navy dark:text-clio-gray-300" />
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">
+                    <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">
                       {contacts.filter(c => getCustomerBookings(c.id) > 0).length}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                    <DollarSign className="h-4 w-4 text-gray-500" />
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Total Revenue</CardTitle>
+                    <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
+                      <DollarSign className="h-4 w-4 text-emerald-600" />
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold text-green-600">
+                    <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
                       {formatCurrency(contacts.reduce((sum, c) => sum + getCustomerValue(c.id), 0))}
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Avg Customer Value</CardTitle>
-                    <Award className="h-4 w-4 text-gray-500" />
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Avg Customer Value</CardTitle>
+                    <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-900/20">
+                      <Award className="h-4 w-4 text-amber-600" />
+                    </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">
+                    <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">
                       {formatCurrency(
                         contacts.length > 0
                           ? contacts.reduce((sum, c) => sum + getCustomerValue(c.id), 0) / contacts.length
@@ -520,7 +530,7 @@ export default function ContactsPage() {
               {/* Search and Filters */}
               <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-4 h-4" />
                   <Input
                     placeholder="Search contacts by name, email..."
                     value={searchQuery}
@@ -532,95 +542,96 @@ export default function ContactsPage() {
               </div>
 
               {/* Contacts List */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Contacts ({filteredContacts.length})</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {!isLoading && filteredContacts.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Users className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No contacts found</h3>
-                      <p className="text-gray-600 dark:text-gray-400">
-                        {searchQuery ? 'Try adjusting your search criteria.' : 'Add your first contact to get started.'}
-                      </p>
-                    </div>
-                  ) : isLoading ? (
-                    <div className="text-center py-8">
-                      <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-4" />
-                      <p className="text-gray-600 dark:text-gray-400">Loading your contacts...</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredContacts.map((contact) => {
-                        const totalValue = getCustomerValue(contact.id);
-                        const totalBookings = getCustomerBookings(contact.id);
-                        const tierInfo = getCustomerTier(totalValue);
-                        const lastBooking = getLastBookingDate(contact.id);
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-clio-gray-900 dark:text-white">Contacts ({filteredContacts.length})</h2>
+                </div>
+                
+                {!isLoading && filteredContacts.length === 0 ? (
+                  <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-16 text-center shadow-sm">
+                    <Users className="w-16 h-16 text-clio-gray-200 dark:text-clio-gray-800 mx-auto mb-4" />
+                    <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white mb-2">No contacts found</h3>
+                    <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+                      {searchQuery ? 'Try adjusting your search criteria.' : 'Add your first contact to get started.'}
+                    </p>
+                  </div>
+                ) : isLoading ? (
+                  <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-16 text-center shadow-sm">
+                    <Loader2 className="w-12 h-12 animate-spin text-clio-blue mx-auto mb-4" />
+                    <p className="text-clio-gray-600 dark:text-clio-gray-400 font-bold uppercase tracking-widest text-xs">Loading your contacts...</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredContacts.map((contact) => {
+                      const totalValue = getCustomerValue(contact.id);
+                      const totalBookings = getCustomerBookings(contact.id);
+                      const tierInfo = getCustomerTier(totalValue);
+                      const lastBooking = getLastBookingDate(contact.id);
 
-                        return (
-                          <Card key={contact.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                            <CardContent className="p-6" onClick={() => handleContactSelect(contact)}>
-                              <div className="flex items-start justify-between mb-4">
-                                <div className="flex items-center space-x-3">
-                                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
+                      return (
+                        <Card key={contact.id} className="hover:shadow-md transition-shadow cursor-pointer overflow-hidden border-clio-gray-100 dark:border-clio-gray-800" onClick={() => handleContactSelect(contact)}>
+                          <CardContent className="p-0">
+                            <div className="p-6 bg-clio-gray-50/50 dark:bg-clio-gray-800/20 border-b border-clio-gray-100 dark:border-clio-gray-800">
+                              <div className="flex items-start justify-between">
+                                <div className="flex items-center space-x-4">
+                                  <div className="w-12 h-12 bg-clio-blue rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-sm">
                                     {contact.firstName[0]}{contact.lastName[0]}
                                   </div>
                                   <div>
-                                    <div className="font-semibold text-gray-900 dark:text-gray-100">
+                                    <div className="font-bold text-clio-gray-900 dark:text-white text-lg">
                                       {contact.firstName} {contact.lastName}
                                     </div>
-                                    <div className="text-sm text-gray-600 dark:text-gray-400">{contact.email}</div>
+                                    <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">{contact.email}</div>
                                   </div>
                                 </div>
-                                <Button size="sm" variant="ghost" onClick={(e) => {
+                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-blue" onClick={(e) => {
                                   e.stopPropagation();
                                   handleContactSelect(contact);
                                 }}>
                                   <Eye className="w-4 h-4" />
                                 </Button>
                               </div>
+                            </div>
 
-                              <div className="space-y-2">
-                                <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">Customer Value</span>
-                                  <span className="font-semibold text-green-600 dark:text-green-400">{formatCurrency(totalValue)}</span>
+                            <div className="p-6 space-y-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Value</span>
+                                  <div className="font-bold text-emerald-600 dark:text-emerald-400 text-lg leading-none">{formatCurrency(totalValue)}</div>
                                 </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">Bookings</span>
-                                  <span className="font-semibold dark:text-gray-100">{totalBookings}</span>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                  <span className="text-sm text-gray-600 dark:text-gray-400">Last Booking</span>
-                                  <span className="text-sm dark:text-gray-300">{lastBooking ? new Date(lastBooking).toLocaleDateString() : 'Never'}</span>
+                                <div className="space-y-1">
+                                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Bookings</span>
+                                  <div className="font-bold text-clio-gray-900 dark:text-white text-lg leading-none">{totalBookings}</div>
                                 </div>
                               </div>
-
-                              <div className="flex items-center justify-between mt-4 pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
-                                <Badge className={`${tierInfo.color} bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 flex items-center gap-1 shadow-sm text-[10px] uppercase font-bold tracking-tight`}>
-                                  <tierInfo.icon className="w-3 h-3" />
-                                  {tierInfo.tier}
-                                </Badge>
-                                <div className="flex gap-1">
-                                  <Button size="sm" variant="ghost">
-                                    <Mail className="w-4 h-4" />
-                                  </Button>
-                                  <Button size="sm" variant="ghost">
-                                    <Phone className="w-4 h-4" />
-                                  </Button>
-                                  <Button size="sm" variant="ghost">
-                                    <MoreHorizontal className="w-4 h-4" />
-                                  </Button>
-                                </div>
+                              
+                              <div className="pt-3 border-t border-clio-gray-50 dark:border-clio-gray-800/50 flex justify-between items-center">
+                                <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Last Booking</span>
+                                <span className="text-xs font-bold text-clio-gray-700 dark:text-clio-gray-300">{lastBooking ? new Date(lastBooking).toLocaleDateString() : 'Never'}</span>
                               </div>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+                            </div>
+
+                            <div className="px-6 py-4 bg-white dark:bg-clio-gray-900 flex items-center justify-between border-t border-clio-gray-100 dark:border-clio-gray-800">
+                              <Badge className={`${tierInfo.color} bg-clio-gray-50 dark:bg-clio-gray-800/50 border border-clio-gray-100 dark:border-clio-gray-800 flex items-center gap-1 shadow-none text-[10px] uppercase font-bold tracking-tight px-2 py-0.5`}>
+                                <tierInfo.icon className="w-3 h-3" />
+                                {tierInfo.tier}
+                              </Badge>
+                              <div className="flex gap-1">
+                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-blue">
+                                  <Mail className="w-4 h-4" />
+                                </Button>
+                                <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-blue">
+                                  <Phone className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </>
           )}
 

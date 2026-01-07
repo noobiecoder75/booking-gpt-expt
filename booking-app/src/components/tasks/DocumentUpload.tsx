@@ -130,13 +130,13 @@ export function DocumentUpload({ taskId, onUploadComplete }: DocumentUploadProps
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Upload Area */}
       <div
-        className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+        className={`relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-200 ${
           dragActive
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 hover:border-gray-400'
+            ? 'border-clio-blue bg-clio-blue/5'
+            : 'border-clio-gray-200 dark:border-clio-gray-800 hover:border-clio-gray-300 dark:hover:border-clio-gray-700 bg-clio-gray-50 dark:bg-clio-gray-900/50'
         }`}
         onDragEnter={handleDrag}
         onDragLeave={handleDrag}
@@ -152,56 +152,65 @@ export function DocumentUpload({ taskId, onUploadComplete }: DocumentUploadProps
           accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
         />
 
-        <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+        <div className="w-16 h-16 bg-white dark:bg-clio-gray-900 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-6">
+          <Upload className={`w-8 h-8 ${dragActive ? 'text-clio-blue' : 'text-clio-gray-400'}`} />
+        </div>
 
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
-          Upload Booking Confirmation
+        <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight mb-2">
+          Upload Confirmation
         </h3>
 
-        <p className="text-sm text-gray-600 mb-4">
-          Drag and drop files here, or click to select
+        <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest mb-8">
+          Drag and drop assets here, or browse local files
         </p>
 
         <button
           onClick={() => fileInputRef.current?.click()}
           disabled={uploading}
-          className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-8 py-3 bg-clio-blue hover:bg-clio-blue/90 text-white font-black uppercase tracking-widest text-[10px] rounded-xl shadow-lg shadow-clio-blue/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {uploading ? 'Uploading...' : 'Select Files'}
+          {uploading ? (
+            <div className="flex items-center">
+              <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+              Uploading...
+            </div>
+          ) : 'Index Files'}
         </button>
 
-        <p className="text-xs text-gray-500 mt-2">
-          Supported: PDF, JPG, PNG, DOC (Max 10MB per file)
+        <p className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mt-6">
+          Supported: PDF, JPG, PNG, DOC • Max 10MB per file
         </p>
       </div>
 
       {/* Uploaded Files List */}
       {attachments.length > 0 && (
-        <div className="space-y-3">
-          <h4 className="font-semibold text-gray-900">Uploaded Documents</h4>
+        <div className="space-y-4">
+          <h4 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Vaulted Documents</h4>
 
           {attachments.map((attachment) => (
             <div
               key={attachment.id}
-              className="flex items-center gap-4 p-4 bg-white border border-gray-200 rounded-lg"
+              className="flex items-center gap-6 p-6 bg-white dark:bg-clio-gray-900 border border-clio-gray-100 dark:border-clio-gray-800 rounded-2xl shadow-sm group"
             >
               {/* File Icon */}
-              <div className="flex-shrink-0">{getFileIcon(attachment.fileType)}</div>
+              <div className="w-12 h-12 bg-clio-gray-50 dark:bg-clio-gray-800 rounded-xl flex items-center justify-center border border-clio-gray-100 dark:border-clio-gray-700">
+                {getFileIcon(attachment.fileType)}
+              </div>
 
               {/* File Info */}
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-gray-900 truncate">
+                <p className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight truncate">
                   {attachment.fileName}
                 </p>
-                <div className="flex items-center gap-3 text-sm text-gray-600 mt-1">
+                <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mt-1">
                   <span>{formatFileSize(attachment.fileSize)}</span>
-                  <span>•</span>
-                  <span className="capitalize">
+                  <span className="w-1 h-1 bg-clio-gray-200 dark:bg-clio-gray-700 rounded-full" />
+                  <span className="text-clio-blue">
                     {attachment.documentType?.replace('_', ' ')}
                   </span>
-                  <span>•</span>
+                  <span className="w-1 h-1 bg-clio-gray-200 dark:bg-clio-gray-700 rounded-full" />
                   <span>
-                    {new Date(attachment.uploadedAt).toLocaleDateString()}
+                    Indexed {new Date(attachment.uploadedAt).toLocaleDateString()}
                   </span>
                 </div>
               </div>
@@ -211,7 +220,7 @@ export function DocumentUpload({ taskId, onUploadComplete }: DocumentUploadProps
                 <a
                   href={attachment.fileData}
                   download={attachment.fileName}
-                  className="px-3 py-1 text-sm text-blue-600 hover:text-blue-800 border border-blue-300 rounded hover:bg-blue-50"
+                  className="h-10 px-4 bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-300 border border-clio-gray-100 dark:border-clio-gray-700 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-clio-gray-100 dark:hover:bg-clio-gray-700 transition-colors flex items-center"
                 >
                   Download
                 </a>
@@ -222,10 +231,10 @@ export function DocumentUpload({ taskId, onUploadComplete }: DocumentUploadProps
           {/* Complete Task Button */}
           <button
             onClick={handleCompleteTask}
-            className="w-full mt-4 px-4 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 flex items-center justify-center gap-2 font-semibold"
+            className="w-full mt-6 h-14 bg-green-600 hover:bg-green-700 text-white rounded-2xl flex items-center justify-center gap-3 font-black uppercase tracking-widest text-sm shadow-lg shadow-green-600/20 transition-all"
           >
             <CheckCircle className="w-5 h-5" />
-            Complete Task with {attachments.length} Document(s)
+            Finalize Task • {attachments.length} Assets
           </button>
         </div>
       )}

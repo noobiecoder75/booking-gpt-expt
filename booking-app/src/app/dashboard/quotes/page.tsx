@@ -20,10 +20,10 @@ export default function QuotesPage() {
       <MainLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+            <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white mb-3">
               Quotes Dashboard
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-clio-gray-600 dark:text-clio-gray-400">
               View and manage all travel quotes with powerful filtering and insights
             </p>
           </div>

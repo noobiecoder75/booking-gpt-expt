@@ -13,11 +13,11 @@ const ModernButton = React.forwardRef<HTMLButtonElement, ModernButtonProps>(
     const Comp = asChild ? Slot : "button"
 
     const variants = {
-      primary: "bg-clio-blue text-white hover:bg-clio-blue-hover shadow-sm",
-      secondary: "bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 hover:bg-clio-gray-200 dark:hover:bg-clio-gray-700 border border-clio-gray-200 dark:border-clio-gray-700",
-      outline: "border border-clio-gray-300 dark:border-clio-gray-600 text-clio-gray-700 dark:text-clio-gray-300 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 bg-transparent",
-      ghost: "text-clio-gray-700 dark:text-clio-gray-300 hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 bg-transparent",
-      destructive: "bg-red-600 text-white hover:bg-red-700 shadow-sm"
+      primary: "bg-clio-blue text-white hover:bg-clio-blue/90 shadow-md shadow-clio-blue/20 border border-transparent",
+      secondary: "bg-clio-navy dark:bg-clio-blue text-white hover:opacity-90 shadow-sm border border-transparent",
+      outline: "border-2 border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-900 dark:text-white hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 bg-transparent",
+      ghost: "text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 bg-transparent",
+      destructive: "bg-red-600 text-white hover:bg-red-700 shadow-md shadow-red-600/20 border border-transparent"
     }
 
     const sizes = {
@@ -29,7 +29,7 @@ const ModernButton = React.forwardRef<HTMLButtonElement, ModernButtonProps>(
     return (
       <Comp
         className={cn(
-          "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed",
+          "inline-flex items-center justify-center rounded-xl font-black uppercase tracking-widest transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-clio-blue/20 focus:ring-offset-2 dark:focus:ring-offset-clio-gray-950 disabled:opacity-50 disabled:cursor-not-allowed",
           variants[variant],
           sizes[size],
           className

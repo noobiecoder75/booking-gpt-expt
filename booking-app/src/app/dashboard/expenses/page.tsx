@@ -154,8 +154,8 @@ export default function ExpensesPage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Expenses</h1>
-              <p className="text-gray-600 mt-2">
+              <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white">Expenses</h1>
+              <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2">
                 Track and manage business expenses
               </p>
             </div>
@@ -176,14 +176,14 @@ export default function ExpensesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-                <TrendingDown className="h-4 w-4 text-gray-500" />
+                <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Total Expenses</CardTitle>
+                <TrendingDown className="h-4 w-4 text-clio-gray-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-red-600">
+                <div className="text-2xl font-bold text-red-600 dark:text-red-400">
                   {formatCurrency(totalExpenses)}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-clio-gray-400">
                   Last {dateRange} days
                 </p>
               </CardContent>
@@ -191,14 +191,14 @@ export default function ExpensesPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Transactions</CardTitle>
-                <FileText className="h-4 w-4 text-gray-500" />
+                <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Transactions</CardTitle>
+                <FileText className="h-4 w-4 text-clio-gray-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">
                   {filteredExpenses.length}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-clio-gray-400">
                   {unapprovedExpenses} pending approval
                 </p>
               </CardContent>
@@ -206,14 +206,14 @@ export default function ExpensesPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Vendors</CardTitle>
-                <Building className="h-4 w-4 text-gray-500" />
+                <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Vendors</CardTitle>
+                <Building className="h-4 w-4 text-clio-gray-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">
                   {totalVendors}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-clio-gray-400">
                   Active suppliers
                 </p>
               </CardContent>
@@ -221,14 +221,14 @@ export default function ExpensesPage() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg per Day</CardTitle>
-                <Calendar className="h-4 w-4 text-gray-500" />
+                <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Avg per Day</CardTitle>
+                <Calendar className="h-4 w-4 text-clio-gray-400" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">
                   {formatCurrency(totalExpenses / parseInt(dateRange))}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-clio-gray-400">
                   Daily average
                 </p>
               </CardContent>
@@ -238,7 +238,7 @@ export default function ExpensesPage() {
           {/* Category Breakdown */}
           <Card className="mb-8">
             <CardHeader>
-              <CardTitle>Expense Breakdown by Category</CardTitle>
+              <CardTitle className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Expense Breakdown by Category</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -249,15 +249,17 @@ export default function ExpensesPage() {
                   if (amount === 0) return null;
 
                   return (
-                    <div key={value} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={value} className="flex items-center justify-between p-4 border border-clio-gray-100 dark:border-clio-gray-800 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
                       <div className="flex items-center gap-3">
-                        {getCategoryIcon(value)}
+                        <div className="p-2 rounded-lg bg-white dark:bg-clio-gray-800 text-clio-blue">
+                          {getCategoryIcon(value)}
+                        </div>
                         <div>
-                          <div className="font-medium text-sm">{label}</div>
-                          <div className="text-xs text-gray-600">{percentage}%</div>
+                          <div className="font-bold text-sm text-clio-gray-900 dark:text-white">{label}</div>
+                          <div className="text-xs text-clio-gray-500 dark:text-clio-gray-400">{percentage}%</div>
                         </div>
                       </div>
-                      <div className="font-semibold text-red-600">
+                      <div className="font-bold text-red-600 dark:text-red-400">
                         {formatCurrency(amount)}
                       </div>
                     </div>
@@ -270,7 +272,7 @@ export default function ExpensesPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search expenses by description, vendor..."
                 value={searchQuery}
@@ -281,8 +283,10 @@ export default function ExpensesPage() {
 
             <Select value={categoryFilter} onValueChange={(value) => setCategoryFilter(value as ExpenseCategory | 'all')}>
               <SelectTrigger className="w-[200px]">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter by category" />
+                <div className="flex items-center">
+                  <Filter className="w-4 h-4 mr-2 text-clio-blue" />
+                  <SelectValue placeholder="Filter by category" />
+                </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
@@ -296,8 +300,10 @@ export default function ExpensesPage() {
 
             <Select value={dateRange} onValueChange={setDateRange}>
               <SelectTrigger className="w-[150px]">
-                <Calendar className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Date range" />
+                <div className="flex items-center">
+                  <Calendar className="w-4 h-4 mr-2 text-clio-blue" />
+                  <SelectValue placeholder="Date range" />
+                </div>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="7">Last 7 days</SelectItem>
@@ -311,14 +317,16 @@ export default function ExpensesPage() {
           {/* Expenses Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Expenses ({filteredExpenses.length})</CardTitle>
+              <CardTitle className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Expenses ({filteredExpenses.length})</CardTitle>
             </CardHeader>
             <CardContent>
               {filteredExpenses.length === 0 ? (
-                <div className="text-center py-8">
-                  <CreditCard className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No expenses found</h3>
-                  <p className="text-gray-600">
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 bg-clio-gray-50 dark:bg-clio-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CreditCard className="w-8 h-8 text-clio-gray-400" />
+                  </div>
+                  <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white mb-2">No expenses found</h3>
+                  <p className="text-clio-gray-500 dark:text-clio-gray-400">
                     {searchQuery ? 'Try adjusting your search criteria.' : 'Start tracking expenses to see them here.'}
                   </p>
                 </div>
@@ -326,77 +334,78 @@ export default function ExpensesPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-medium">Date</th>
-                        <th className="text-left py-3 px-4 font-medium">Description</th>
-                        <th className="text-left py-3 px-4 font-medium">Category</th>
-                        <th className="text-left py-3 px-4 font-medium">Vendor</th>
-                        <th className="text-left py-3 px-4 font-medium">Amount</th>
-                        <th className="text-left py-3 px-4 font-medium">Status</th>
-                        <th className="text-left py-3 px-4 font-medium">Actions</th>
+                      <tr className="border-b border-clio-gray-100 dark:border-clio-gray-800">
+                        <th className="text-left py-4 px-4 font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight text-[10px]">Date</th>
+                        <th className="text-left py-4 px-4 font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight text-[10px]">Description</th>
+                        <th className="text-left py-4 px-4 font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight text-[10px]">Category</th>
+                        <th className="text-left py-4 px-4 font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight text-[10px]">Vendor</th>
+                        <th className="text-left py-4 px-4 font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight text-[10px]">Amount</th>
+                        <th className="text-left py-4 px-4 font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight text-[10px]">Status</th>
+                        <th className="text-left py-4 px-4 font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight text-[10px]">Actions</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-clio-gray-100 dark:divide-clio-gray-800">
                       {filteredExpenses.map((expense) => (
-                        <tr key={expense.id} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4 text-sm">
+                        <tr key={expense.id} className="hover:bg-clio-gray-50 dark:hover:bg-clio-gray-900/50 transition-colors">
+                          <td className="py-4 px-4 text-sm font-medium text-clio-gray-600 dark:text-clio-gray-400">
                             {formatDate(expense.date)}
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium">{expense.description}</div>
+                          <td className="py-4 px-4">
+                            <div className="font-bold text-clio-gray-900 dark:text-white">{expense.description}</div>
                             {expense.subcategory && (
-                              <div className="text-sm text-gray-600">{expense.subcategory}</div>
+                              <div className="text-xs text-clio-gray-500 dark:text-clio-gray-400">{expense.subcategory}</div>
                             )}
                           </td>
-                          <td className="py-3 px-4">
-                            <Badge className={`${getCategoryColor(expense.category)} flex items-center gap-1 w-fit`}>
+                          <td className="py-4 px-4">
+                            <Badge className={`${getCategoryColor(expense.category)} flex items-center gap-1 w-fit border-none shadow-none`}>
                               {getCategoryIcon(expense.category)}
                               {expense.category.replace('_', ' ').charAt(0).toUpperCase() + expense.category.replace('_', ' ').slice(1)}
                             </Badge>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="text-sm">
+                          <td className="py-4 px-4">
+                            <div className="text-sm font-medium text-clio-gray-600 dark:text-clio-gray-400">
                               {expense.vendor || 'N/A'}
                             </div>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium text-red-600">
+                          <td className="py-4 px-4">
+                            <div className="font-bold text-red-600 dark:text-red-400">
                               {formatCurrency(expense.amount)}
                             </div>
-                            <div className="text-xs text-gray-600">
+                            <div className="text-[10px] font-bold text-clio-gray-400 uppercase">
                               {expense.currency}
                             </div>
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-4 px-4">
                             {expense.approvedBy ? (
-                              <Badge className="bg-green-100 text-green-800 flex items-center gap-1 w-fit">
+                              <Badge className="bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400 flex items-center gap-1 w-fit border-none shadow-none">
                                 <CheckCircle className="w-3 h-3" />
                                 Approved
                               </Badge>
                             ) : (
-                              <Badge className="bg-yellow-100 text-yellow-800 flex items-center gap-1 w-fit">
+                              <Badge className="bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 flex items-center gap-1 w-fit border-none shadow-none">
                                 <Clock className="w-3 h-3" />
                                 Pending
                               </Badge>
                             )}
                           </td>
-                          <td className="py-3 px-4">
+                          <td className="py-4 px-4">
                             <div className="flex items-center gap-2">
                               {!expense.approvedBy && (
                                 <Button
-                                  size="sm"
-                                  variant="outline"
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-8 w-8 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20"
                                   onClick={() => approveExpense.mutate({ id: expense.id, approvedBy: user?.id || '' })}
                                 >
                                   <CheckCircle className="w-4 h-4" />
                                 </Button>
                               )}
                               {expense.receiptUrl && (
-                                <Button size="sm" variant="ghost">
+                                <Button size="icon" variant="ghost" className="h-8 w-8 text-clio-blue hover:bg-clio-blue/10">
                                   <Receipt className="w-4 h-4" />
                                 </Button>
                               )}
-                              <Button size="sm" variant="ghost">
+                              <Button size="icon" variant="ghost" className="h-8 w-8 text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200">
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
                             </div>

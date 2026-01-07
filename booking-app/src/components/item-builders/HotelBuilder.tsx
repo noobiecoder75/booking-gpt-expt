@@ -474,47 +474,52 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl shadow-xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-clio-navy/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-clio-gray-950 rounded-2xl w-full max-w-4xl shadow-strong max-h-[90vh] overflow-hidden flex flex-col border border-clio-gray-200 dark:border-clio-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <Hotel className="w-6 h-6 text-blue-600" />
-            <h3 className="text-xl font-semibold text-gray-900">Add Hotel</h3>
+        <div className="flex items-center justify-between p-8 border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white dark:bg-clio-gray-900 rounded-xl flex items-center justify-center shadow-sm">
+              <Hotel className="w-6 h-6 text-clio-blue" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Add Hotel</h3>
+              <p className="text-[10px] font-black text-clio-gray-400 uppercase tracking-widest">Configure accommodation details</p>
+            </div>
           </div>
-          <button onClick={onCancel} className="text-gray-400 hover:text-gray-600">
+          <button onClick={onCancel} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 transition-colors text-clio-gray-400">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 px-6">
+        <div className="flex border-b border-clio-gray-100 dark:border-clio-gray-800 px-8 bg-white dark:bg-clio-gray-950">
           <button
             onClick={() => setActiveTab('offline')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${
               activeTab === 'offline'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-clio-blue text-clio-blue'
+                : 'border-transparent text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200'
             }`}
           >
             Offline Rates ({hotelRatesInDateRange.length})
           </button>
           <button
             onClick={() => setActiveTab('manual')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${
               activeTab === 'manual'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-clio-blue text-clio-blue'
+                : 'border-transparent text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200'
             }`}
           >
             Manual Entry
           </button>
           <button
             onClick={() => setActiveTab('api')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${
               activeTab === 'api'
-                ? 'border-blue-600 text-blue-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-clio-blue text-clio-blue'
+                : 'border-transparent text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200'
             }`}
           >
             API Search
@@ -522,44 +527,44 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
         </div>
 
         {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-8 bg-white dark:bg-clio-gray-950">
           {/* Tab 1: Offline Rates */}
           {activeTab === 'offline' && (
-            <div className="space-y-4">
+            <div className="space-y-8">
               {/* Date Selection */}
-              <div className="grid grid-cols-2 gap-4 p-4 bg-green-50 rounded-lg border border-green-200">
-                <div>
-                  <Label htmlFor="offlineCheckIn" className="text-sm font-medium text-gray-700">Check-in Date</Label>
+              <div className="grid grid-cols-2 gap-6 p-6 bg-clio-gray-50 dark:bg-clio-gray-900/50 rounded-2xl border border-clio-gray-100 dark:border-clio-gray-800">
+                <div className="space-y-2">
+                  <Label htmlFor="offlineCheckIn" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-in Date</Label>
                   <Input
                     id="offlineCheckIn"
                     type="date"
                     value={offlineSearchDates.checkIn}
                     onChange={(e) => setOfflineSearchDates({ ...offlineSearchDates, checkIn: e.target.value })}
-                    className="mt-1"
+                    className="h-12 rounded-xl bg-white dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="offlineCheckOut" className="text-sm font-medium text-gray-700">Check-out Date</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="offlineCheckOut" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-out Date</Label>
                   <Input
                     id="offlineCheckOut"
                     type="date"
                     value={offlineSearchDates.checkOut}
                     onChange={(e) => setOfflineSearchDates({ ...offlineSearchDates, checkOut: e.target.value })}
                     min={offlineSearchDates.checkIn}
-                    className="mt-1"
+                    className="h-12 rounded-xl bg-white dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
                 {offlineSearchDates.checkIn && offlineSearchDates.checkOut && (
-                  <div className="col-span-2 text-sm font-medium text-green-700 bg-green-100 px-3 py-2 rounded-lg text-center">
+                  <div className="col-span-2 text-[10px] font-black uppercase tracking-widest text-clio-blue bg-clio-blue/5 dark:bg-clio-blue/10 px-4 py-3 rounded-xl border border-clio-blue/10 text-center">
                     {calculateNightsBetween(offlineSearchDates.checkIn, offlineSearchDates.checkOut)} nights • {offlineSearchDates.checkIn} to {offlineSearchDates.checkOut}
                   </div>
                 )}
               </div>
 
               {/* Guest Selection */}
-              <div className="grid grid-cols-3 gap-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <div>
-                  <Label htmlFor="offlineAdults" className="text-sm font-medium text-gray-700">Adults</Label>
+              <div className="grid grid-cols-3 gap-6 p-6 bg-clio-gray-50 dark:bg-clio-gray-900/50 rounded-2xl border border-clio-gray-100 dark:border-clio-gray-800">
+                <div className="space-y-2">
+                  <Label htmlFor="offlineAdults" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Adults</Label>
                   <Input
                     id="offlineAdults"
                     type="number"
@@ -567,11 +572,11 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
                     max="10"
                     value={formData.adults}
                     onChange={(e) => setFormData({ ...formData, adults: parseInt(e.target.value) || 1 })}
-                    className="mt-1"
+                    className="h-12 rounded-xl bg-white dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="offlineChildren" className="text-sm font-medium text-gray-700">Children</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="offlineChildren" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Children</Label>
                   <Input
                     id="offlineChildren"
                     type="number"
@@ -586,11 +591,11 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
                         childrenAges: Array(count).fill(0)
                       });
                     }}
-                    className="mt-1"
+                    className="h-12 rounded-xl bg-white dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
                 <div className="flex items-end">
-                  <div className="text-sm font-medium text-blue-700 bg-blue-100 px-3 py-2 rounded-lg w-full text-center">
+                  <div className="text-[10px] font-black uppercase tracking-widest text-clio-blue bg-clio-blue/5 dark:bg-clio-blue/10 px-4 py-3 h-12 flex items-center justify-center rounded-xl border border-clio-blue/10 w-full text-center">
                     Total: {formData.adults + formData.children} guests
                   </div>
                 </div>
@@ -598,77 +603,81 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
 
               {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-clio-gray-400" />
                 <input
                   type="text"
                   placeholder="Search by hotel name, location, or room type..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-3.5 bg-clio-gray-50 dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-[10px]"
                 />
               </div>
 
               {/* Results */}
               {filteredRates.length === 0 ? (
-                <div className="text-center py-12">
-                  <Hotel className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">
-                    {searchQuery ? 'No hotels found' : 'No offline hotel rates uploaded'}
-                  </p>
-                  <p className="text-sm text-gray-400 mt-1">
+                <div className="text-center py-16 bg-clio-gray-50 dark:bg-clio-gray-900/50 rounded-2xl border-2 border-dashed border-clio-gray-200 dark:border-clio-gray-800">
+                  <div className="w-16 h-16 bg-white dark:bg-clio-gray-800 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-6">
+                    <Hotel className="w-8 h-8 text-clio-gray-300 dark:text-clio-gray-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight mb-2">No hotels found</h3>
+                  <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest max-w-xs mx-auto">
                     Try adjusting your search or switch to Manual Entry
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto pr-2">
                   {ratesToDisplay.map((rate) => (
                     <button
                       key={rate.id}
                       onClick={() => handleSelectRate(rate)}
-                      className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                      className="text-left p-6 bg-white dark:bg-clio-gray-900 border border-clio-gray-100 dark:border-clio-gray-800 rounded-2xl hover:border-clio-blue hover:shadow-lg transition-all group"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="font-semibold text-gray-900">{rate.propertyName}</div>
-                          <div className="text-sm text-gray-600 mt-1">
+                          <div className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight text-lg group-hover:text-clio-blue transition-colors">{rate.propertyName}</div>
+                          <div className="text-[10px] font-black uppercase tracking-widest text-clio-blue mt-1">
                             {rate.roomType}
                           </div>
                           {rate.mealPlan && (
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mt-2 bg-clio-gray-50 dark:bg-clio-gray-800 inline-block px-2 py-1 rounded">
                               Meal Plan: {rate.mealPlan}
                             </div>
                           )}
-                          <div className="text-xs text-gray-500 mt-1">
-                            Check-in: {rate.checkIn} • Check-out: {rate.checkOut}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            Supplier: {rate.supplier}
+                          <div className="flex items-center gap-4 mt-4">
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">
+                              <Calendar className="w-3 h-3" />
+                              {rate.checkIn} - {rate.checkOut}
+                            </div>
+                            <div className="flex items-center gap-2 text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">
+                              <MapPin className="w-3 h-3" />
+                              {rate.supplier}
+                            </div>
                           </div>
                         </div>
-                        <div className="text-right min-w-[180px]">
+                        <div className="text-right min-w-[200px] flex flex-col items-end">
                           {(() => {
                             const calculated = calculatedRates.get(rate.id);
                             if (!calculated) return null;
 
                             return (
                               <>
-                                <div className="text-xs text-gray-600 font-medium">
+                                <div className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mb-2">
                                   {rate.currency} {calculated.perNightRate.toFixed(2)}/night (nett)
                                 </div>
-                                <div className="text-xs text-blue-600 mt-1">
-                                  {calculated.totalNights} nights × {rate.currency} {calculated.perNightRate.toFixed(2)}
+                                <div className="space-y-1">
+                                  <div className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">
+                                    {calculated.totalNights} nights × {rate.currency} {calculated.perNightRate.toFixed(2)}
+                                  </div>
+                                  <div className="text-[10px] font-bold text-green-600 uppercase tracking-tight">
+                                    {rate.commissionPercent}% commission
+                                  </div>
+                                  <div className="text-[10px] font-bold text-clio-blue uppercase tracking-tight">
+                                    +{calculated.markupPercentage}% markup
+                                  </div>
                                 </div>
-                                <div className="text-xs text-gray-600 mt-1">
-                                  = {rate.currency} {calculated.baseRate.toFixed(2)}
-                                </div>
-                                <div className="text-xs text-green-600 mt-1">
-                                  {rate.commissionPercent}% commission
-                                </div>
-                                <div className="text-xs text-purple-600">
-                                  +{calculated.markupPercentage}% markup
-                                </div>
-                                <div className="text-sm font-bold text-blue-700 mt-2 bg-blue-50 px-2 py-1.5 rounded border border-blue-200">
-                                  Total: {rate.currency} {calculated.clientPrice.toFixed(2)}
+                                <div className="mt-4 bg-clio-blue/5 dark:bg-clio-blue/10 px-4 py-2.5 rounded-xl border border-clio-blue/10 group-hover:bg-clio-blue group-hover:text-white transition-all">
+                                  <div className="text-[10px] font-black uppercase tracking-widest opacity-70">Total Quote</div>
+                                  <div className="text-xl font-black">{rate.currency} {calculated.clientPrice.toFixed(2)}</div>
                                 </div>
                               </>
                             );
@@ -684,47 +693,50 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
 
           {/* Tab 2: Manual Entry */}
           {activeTab === 'manual' && (
-            <form onSubmit={handleManualSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="hotelName">Hotel Name *</Label>
+            <form onSubmit={handleManualSubmit} className="space-y-8">
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="hotelName" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Hotel Name *</Label>
                   <Input
                     id="hotelName"
                     required
                     value={formData.hotelName}
                     onChange={(e) => setFormData({ ...formData, hotelName: e.target.value })}
                     placeholder="e.g., Hilton Garden Inn"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="location">Location *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="location" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Location *</Label>
                   <Input
                     id="location"
                     required
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="e.g., Miami, FL"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="roomType">Room Type</Label>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="roomType" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Room Type</Label>
                   <Input
                     id="roomType"
                     value={formData.roomType}
                     onChange={(e) => setFormData({ ...formData, roomType: e.target.value })}
                     placeholder="e.g., Standard King"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="mealPlanManual">Meal Plan</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="mealPlanManual" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Meal Plan</Label>
                   <Select
                     value={formData.mealPlan}
                     onValueChange={(value) => setFormData({ ...formData, mealPlan: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -738,31 +750,33 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="checkInDate">Check-in Date *</Label>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="checkInDate" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-in Date *</Label>
                   <Input
                     id="checkInDate"
                     type="date"
                     required
                     value={formData.checkInDate}
                     onChange={(e) => setFormData({ ...formData, checkInDate: e.target.value })}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="checkInTime">Check-in Time</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="checkInTime" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-in Time</Label>
                   <Input
                     id="checkInTime"
                     type="time"
                     value={formData.checkInTime}
                     onChange={(e) => setFormData({ ...formData, checkInTime: e.target.value })}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="checkOutDate">Check-out Date *</Label>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="checkOutDate" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-out Date *</Label>
                   <Input
                     id="checkOutDate"
                     type="date"
@@ -770,28 +784,30 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
                     value={formData.checkOutDate}
                     onChange={(e) => setFormData({ ...formData, checkOutDate: e.target.value })}
                     min={formData.checkInDate}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="checkOutTime">Check-out Time</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="checkOutTime" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-out Time</Label>
                   <Input
                     id="checkOutTime"
                     type="time"
                     value={formData.checkOutTime}
                     onChange={(e) => setFormData({ ...formData, checkOutTime: e.target.value })}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
               {nights > 0 && (
-                <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
+                <div className="p-4 bg-clio-blue/5 dark:bg-clio-blue/10 rounded-xl border border-clio-blue/10 text-[10px] font-black uppercase tracking-widest text-clio-blue text-center">
                   {nights} night{nights > 1 ? 's' : ''} stay
                 </div>
               )}
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="price">Total Price *</Label>
+              <div className="grid grid-cols-3 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="price" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Total Price *</Label>
                   <Input
                     id="price"
                     type="number"
@@ -800,10 +816,11 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     placeholder="0.00"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="quantity">Rooms *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="quantity" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Rooms *</Label>
                   <Input
                     id="quantity"
                     type="number"
@@ -811,10 +828,11 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
                     required
                     value={formData.quantity}
                     onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="commission">Commission %</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="commission" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Commission %</Label>
                   <Input
                     id="commission"
                     type="number"
@@ -822,25 +840,34 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
                     value={formData.commissionPercent}
                     onChange={(e) => setFormData({ ...formData, commissionPercent: e.target.value })}
                     placeholder="10"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="supplier">Supplier</Label>
+              <div className="space-y-2">
+                <Label htmlFor="supplier" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Supplier</Label>
                 <Input
                   id="supplier"
                   value={formData.supplier}
                   onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
                   placeholder="Hotel chain or supplier name"
+                  className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={onCancel}>
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+              <div className="flex items-center justify-between pt-8 border-t border-clio-gray-100 dark:border-clio-gray-800">
+                <button 
+                  type="button" 
+                  onClick={onCancel}
+                  className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white transition-colors"
+                >
+                  Cancel Entry
+                </button>
+                <Button 
+                  type="submit" 
+                  className="bg-clio-blue hover:bg-clio-blue/90 text-white font-black uppercase tracking-widest h-12 px-8 rounded-xl shadow-lg shadow-clio-blue/20"
+                >
                   Add Hotel
                 </Button>
               </div>
@@ -849,316 +876,332 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
 
           {/* Tab 3: API Search */}
           {activeTab === 'api' && (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Destination */}
-              <div>
-            <Label htmlFor="destination">Destination</Label>
-            <div className="relative">
-              <Input
-                id="destination"
-                value={formData.destination}
-                onChange={(e) => setFormData(prev => ({ ...prev, destination: e.target.value }))}
-                placeholder="City or Hotel Name"
-                className="pl-8"
-              />
-              <MapPin className="w-4 h-4 absolute left-2 top-3 text-gray-400" />
-            </div>
-          </div>
-
-          {/* Check-in/out Dates */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="checkInDate">Check-in Date</Label>
-              <div className="relative">
-                <Input
-                  id="checkInDate"
-                  type="date"
-                  value={formData.checkInDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, checkInDate: e.target.value }))}
-                  className="pl-8"
-                />
-                <Calendar className="w-4 h-4 absolute left-2 top-3 text-gray-400" />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="checkOutDate">Check-out Date</Label>
-              <div className="relative">
-                <Input
-                  id="checkOutDate"
-                  type="date"
-                  value={formData.checkOutDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, checkOutDate: e.target.value }))}
-                  min={formData.checkInDate}
-                  className="pl-8"
-                />
-                <Calendar className="w-4 h-4 absolute left-2 top-3 text-gray-400" />
-              </div>
-            </div>
-          </div>
-
-          {/* Check-in/out Times */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="checkInTime">Check-in Time</Label>
-              <div className="relative">
-                <Input
-                  id="checkInTime"
-                  type="time"
-                  value={formData.checkInTime}
-                  onChange={(e) => setFormData(prev => ({ ...prev, checkInTime: e.target.value }))}
-                  className="pl-8"
-                />
-                <Clock className="w-4 h-4 absolute left-2 top-3 text-gray-400" />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="checkOutTime">Check-out Time</Label>
-              <div className="relative">
-                <Input
-                  id="checkOutTime"
-                  type="time"
-                  value={formData.checkOutTime}
-                  onChange={(e) => setFormData(prev => ({ ...prev, checkOutTime: e.target.value }))}
-                  className="pl-8"
-                />
-                <Clock className="w-4 h-4 absolute left-2 top-3 text-gray-400" />
-              </div>
-            </div>
-          </div>
-
-          {nights > 0 && (
-            <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-700">
-              {nights} night{nights > 1 ? 's' : ''} stay
-            </div>
-          )}
-
-          {/* Guests */}
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="adults">Adults</Label>
-              <Input
-                id="adults"
-                type="number"
-                min="1"
-                max="10"
-                value={formData.adults}
-                onChange={(e) => setFormData(prev => ({ ...prev, adults: parseInt(e.target.value) }))}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="children">Children</Label>
-              <Input
-                id="children"
-                type="number"
-                min="0"
-                max="10"
-                value={formData.children}
-                onChange={(e) => {
-                  const count = parseInt(e.target.value);
-                  setFormData(prev => ({ 
-                    ...prev, 
-                    children: count,
-                    childrenAges: Array(count).fill(0)
-                  }));
-                }}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="mealPlan">Meal Plan</Label>
-              <Select
-                value={formData.mealPlan}
-                onValueChange={(value) => 
-                  setFormData(prev => ({ ...prev, mealPlan: value }))
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {mealPlans.map((plan) => (
-                    <SelectItem key={plan.value} value={plan.value}>
-                      {plan.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          {/* Hotel Preferences */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="rating">Minimum Rating</Label>
-              <div className="flex items-center space-x-2">
-                <Input
-                  id="rating"
-                  type="range"
-                  min="1"
-                  max="5"
-                  value={formData.hotelRating}
-                  onChange={(e) => setFormData(prev => ({ ...prev, hotelRating: parseInt(e.target.value) }))}
-                  className="flex-1"
-                />
-                <div className="flex items-center space-x-1">
-                  {renderStars(formData.hotelRating)}
+              <div className="space-y-2">
+                <Label htmlFor="destination" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Destination</Label>
+                <div className="relative">
+                  <Input
+                    id="destination"
+                    value={formData.destination}
+                    onChange={(e) => setFormData(prev => ({ ...prev, destination: e.target.value }))}
+                    placeholder="City or Hotel Name"
+                    className="pl-12 h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                  />
+                  <MapPin className="w-5 h-5 absolute left-4 top-3.5 text-clio-gray-400" />
                 </div>
               </div>
-            </div>
 
-            <div>
-              <Label>Price Range</Label>
-              <div className="flex items-center space-x-2">
-                <Input
-                  type="number"
-                  min="0"
-                  value={formData.priceRange.min}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setFormData(prev => ({ 
-                      ...prev, 
-                      priceRange: { ...prev.priceRange, min: isNaN(value) ? 0 : value }
-                    }));
-                  }}
-                  placeholder="Min"
-                  className="w-24"
-                />
-                <span>-</span>
-                <Input
-                  type="number"
-                  min="0"
-                  value={formData.priceRange.max}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setFormData(prev => ({ 
-                      ...prev, 
-                      priceRange: { ...prev.priceRange, max: isNaN(value) ? 1000 : value }
-                    }));
-                  }}
-                  placeholder="Max"
-                  className="w-24"
-                />
-                <span className="text-sm text-gray-500">per night</span>
+              {/* Check-in/out Dates */}
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="checkInDate" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-in Date</Label>
+                  <div className="relative">
+                    <Input
+                      id="checkInDate"
+                      type="date"
+                      value={formData.checkInDate}
+                      onChange={(e) => setFormData(prev => ({ ...prev, checkInDate: e.target.value }))}
+                      className="pl-12 h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                    />
+                    <Calendar className="w-5 h-5 absolute left-4 top-3.5 text-clio-gray-400" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="checkOutDate" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-out Date</Label>
+                  <div className="relative">
+                    <Input
+                      id="checkOutDate"
+                      type="date"
+                      value={formData.checkOutDate}
+                      onChange={(e) => setFormData(prev => ({ ...prev, checkOutDate: e.target.value }))}
+                      min={formData.checkInDate}
+                      className="pl-12 h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                    />
+                    <Calendar className="w-5 h-5 absolute left-4 top-3.5 text-clio-gray-400" />
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Search Button */}
-          <Button 
-            onClick={handleSearch} 
-            className="w-full" 
-            disabled={isSearching || !formData.destination || !formData.checkInDate || !formData.checkOutDate}
-          >
-            {isSearching ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Searching Hotels...
-              </>
-            ) : (
-              <>
-                <Search className="w-4 h-4 mr-2" />
-                Search Hotels
-              </>
-            )}
-          </Button>
+              {/* Check-in/out Times */}
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="checkInTime" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-in Time</Label>
+                  <div className="relative">
+                    <Input
+                      id="checkInTime"
+                      type="time"
+                      value={formData.checkInTime}
+                      onChange={(e) => setFormData(prev => ({ ...prev, checkInTime: e.target.value }))}
+                      className="pl-12 h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                    />
+                    <Clock className="w-5 h-5 absolute left-4 top-3.5 text-clio-gray-400" />
+                  </div>
+                </div>
 
-          {/* Search Results */}
-          {showResults && searchResults.length > 0 && (
-            <div className="space-y-4">
-              <h4 className="font-semibold text-lg">Available Hotels</h4>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {searchResults.map((hotel, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleSelectHotel(hotel)}
-                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                      selectedHotel === hotel
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 hover:border-gray-300'
-                    }`}
+                <div className="space-y-2">
+                  <Label htmlFor="checkOutTime" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Check-out Time</Label>
+                  <div className="relative">
+                    <Input
+                      id="checkOutTime"
+                      type="time"
+                      value={formData.checkOutTime}
+                      onChange={(e) => setFormData(prev => ({ ...prev, checkOutTime: e.target.value }))}
+                      className="pl-12 h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                    />
+                    <Clock className="w-5 h-5 absolute left-4 top-3.5 text-clio-gray-400" />
+                  </div>
+                </div>
+              </div>
+
+              {nights > 0 && (
+                <div className="p-4 bg-clio-blue/5 dark:bg-clio-blue/10 rounded-xl border border-clio-blue/10 text-[10px] font-black uppercase tracking-widest text-clio-blue text-center">
+                  {nights} night{nights > 1 ? 's' : ''} stay
+                </div>
+              )}
+
+              {/* Guests */}
+              <div className="grid grid-cols-3 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="adults" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Adults</Label>
+                  <Input
+                    id="adults"
+                    type="number"
+                    min="1"
+                    max="10"
+                    value={formData.adults}
+                    onChange={(e) => setFormData(prev => ({ ...prev, adults: parseInt(e.target.value) }))}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="children" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Children</Label>
+                  <Input
+                    id="children"
+                    type="number"
+                    min="0"
+                    max="10"
+                    value={formData.children}
+                    onChange={(e) => {
+                      const count = parseInt(e.target.value);
+                      setFormData(prev => ({ 
+                        ...prev, 
+                        children: count,
+                        childrenAges: Array(count).fill(0)
+                      }));
+                    }}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="mealPlan" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Meal Plan</Label>
+                  <Select
+                    value={formData.mealPlan}
+                    onValueChange={(value) => 
+                      setFormData(prev => ({ ...prev, mealPlan: value }))
+                    }
                   >
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-2 mb-1">
-                          <h5 className="font-semibold">{hotel.hotelName}</h5>
-                          <div className="flex">{renderStars(hotel.hotelRating)}</div>
-                        </div>
-                        
-                        <p className="text-sm text-gray-600 mb-2">
-                          <MapPin className="w-3 h-3 inline mr-1" />
-                          {hotel.location.city}, {hotel.location.country}
-                        </p>
-                        
-                        <p className="text-sm font-medium mb-1">{hotel.roomType}</p>
-                        
-                        {hotel.amenities && (
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            {hotel.amenities.slice(0, 4).map((amenity, i) => (
-                              <span key={i} className="text-xs bg-gray-100 px-2 py-1 rounded flex items-center space-x-1">
-                                {getAmenityIcon(amenity)}
-                                <span>{amenity}</span>
-                              </span>
-                            ))}
-                            {hotel.amenities.length > 4 && (
-                              <span className="text-xs text-gray-500">
-                                +{hotel.amenities.length - 4} more
-                              </span>
-                            )}
-                          </div>
-                        )}
-                        
-                        <p className="text-xs text-gray-500">{hotel.cancellationPolicy}</p>
-                      </div>
-                      
-                      <div className="text-right ml-4">
-                        <p className="text-lg font-bold text-blue-600">
-                          {formatCurrency(hotel.totalPrice)}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {nights} night{nights > 1 ? 's' : ''}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          {formatCurrency(hotel.totalPrice / nights)}/night
-                        </p>
-                      </div>
+                    <SelectTrigger className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {mealPlans.map((plan) => (
+                        <SelectItem key={plan.value} value={plan.value}>
+                          {plan.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Hotel Preferences */}
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <Label htmlFor="rating" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Minimum Rating</Label>
+                  <div className="flex items-center space-x-4">
+                    <Input
+                      id="rating"
+                      type="range"
+                      min="1"
+                      max="5"
+                      value={formData.hotelRating}
+                      onChange={(e) => setFormData(prev => ({ ...prev, hotelRating: parseInt(e.target.value) }))}
+                      className="flex-1"
+                    />
+                    <div className="flex items-center space-x-1 bg-clio-gray-50 dark:bg-clio-gray-900 px-3 py-2 rounded-lg border border-clio-gray-100 dark:border-clio-gray-800">
+                      {renderStars(formData.hotelRating)}
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
+                </div>
 
-          {/* Selected Hotel Summary */}
-          {selectedHotel && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-              <h4 className="font-semibold text-green-800 mb-2">Selected Hotel</h4>
-              <div className="space-y-1 text-sm">
-                <p className="font-medium">{selectedHotel.hotelName}</p>
-                <p>{selectedHotel.roomType} • {nights} night{nights > 1 ? 's' : ''}</p>
-                <p className="font-semibold text-green-700">
-                  Total: {formatCurrency(selectedHotel.totalPrice)}
-                </p>
+                <div className="space-y-4">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Price Range</Label>
+                  <div className="flex items-center space-x-3">
+                    <Input
+                      type="number"
+                      min="0"
+                      value={formData.priceRange.min}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          priceRange: { ...prev.priceRange, min: isNaN(value) ? 0 : value }
+                        }));
+                      }}
+                      placeholder="Min"
+                      className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                    />
+                    <span className="text-clio-gray-400 font-bold">—</span>
+                    <Input
+                      type="number"
+                      min="0"
+                      value={formData.priceRange.max}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value);
+                        setFormData(prev => ({ 
+                          ...prev, 
+                          priceRange: { ...prev.priceRange, max: isNaN(value) ? 1000 : value }
+                        }));
+                      }}
+                      placeholder="Max"
+                      className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                    />
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+
+              {/* Search Button */}
+              <Button 
+                onClick={handleSearch} 
+                className="w-full bg-clio-blue hover:bg-clio-blue/90 text-white font-black uppercase tracking-widest h-14 rounded-2xl shadow-lg shadow-clio-blue/20" 
+                disabled={isSearching || !formData.destination || !formData.checkInDate || !formData.checkOutDate}
+              >
+                {isSearching ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-3 animate-spin" />
+                    Searching Hotels...
+                  </>
+                ) : (
+                  <>
+                    <Search className="w-5 h-5 mr-3" />
+                    Search Hotels
+                  </>
+                )}
+              </Button>
+
+              {/* Search Results */}
+              {showResults && searchResults.length > 0 && (
+                <div className="space-y-6">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Available Hotels</h4>
+                  <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2">
+                    {searchResults.map((hotel, index) => (
+                      <div
+                        key={index}
+                        onClick={() => handleSelectHotel(hotel)}
+                        className={`p-6 border rounded-2xl cursor-pointer transition-all group ${
+                          selectedHotel === hotel
+                            ? 'border-clio-blue bg-clio-blue/5 dark:bg-clio-blue/10 shadow-md'
+                            : 'border-clio-gray-100 dark:border-clio-gray-800 bg-white dark:bg-clio-gray-900 hover:border-clio-gray-300 dark:hover:border-clio-gray-700'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-3 mb-2">
+                              <h5 className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight text-lg group-hover:text-clio-blue transition-colors">{hotel.hotelName}</h5>
+                              <div className="flex bg-clio-gray-50 dark:bg-clio-gray-800 px-2 py-1 rounded-md border border-clio-gray-100 dark:border-clio-gray-700">{renderStars(hotel.hotelRating)}</div>
+                            </div>
+                            
+                            <p className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight flex items-center mb-4">
+                              <MapPin className="w-3.5 h-3.5 mr-2 text-clio-blue" />
+                              {hotel.location.city}, {hotel.location.country}
+                            </p>
+                            
+                            <div className="text-[10px] font-black uppercase tracking-widest text-clio-blue mb-4 inline-block bg-clio-blue/5 dark:bg-clio-blue/20 px-3 py-1.5 rounded-lg border border-clio-blue/10">
+                              {hotel.roomType}
+                            </div>
+                            
+                            {hotel.amenities && (
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                {hotel.amenities.slice(0, 4).map((amenity, i) => (
+                                  <span key={i} className="text-[10px] font-bold uppercase tracking-tight bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400 px-2.5 py-1.5 rounded-lg border border-clio-gray-100 dark:border-clio-gray-700 flex items-center gap-2">
+                                    {getAmenityIcon(amenity)}
+                                    <span>{amenity}</span>
+                                  </span>
+                                ))}
+                                {hotel.amenities.length > 4 && (
+                                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 py-1.5 px-2">
+                                    +{hotel.amenities.length - 4} more
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                            
+                            <p className="text-[10px] font-medium text-clio-gray-400 uppercase tracking-widest italic">{hotel.cancellationPolicy}</p>
+                          </div>
+                          
+                          <div className="text-right ml-8 flex flex-col items-end">
+                            <div className="bg-clio-blue/5 dark:bg-clio-blue/10 px-4 py-2.5 rounded-xl border border-clio-blue/10 group-hover:bg-clio-blue group-hover:text-white transition-all">
+                              <div className="text-[10px] font-black uppercase tracking-widest opacity-70">Total Quote</div>
+                              <div className="text-2xl font-black">{formatCurrency(hotel.totalPrice)}</div>
+                            </div>
+                            <div className="mt-2 text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">
+                              {nights} night{nights > 1 ? 's' : ''} • {formatCurrency(hotel.totalPrice / nights)}/night
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Selected Hotel Summary */}
+              {selectedHotel && (
+                <div className="p-6 bg-green-50/50 dark:bg-green-950/20 border border-green-100 dark:border-green-900/30 rounded-2xl flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-white dark:bg-clio-gray-900 rounded-xl flex items-center justify-center shadow-sm">
+                      <Check className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase tracking-widest text-green-600 mb-1">Hotel Selected</h4>
+                      <p className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">{selectedHotel.hotelName}</p>
+                      <p className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">{selectedHotel.roomType} • {nights} night{nights > 1 ? 's' : ''}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mb-1">Total Quote</div>
+                    <div className="text-xl font-black text-green-700">{formatCurrency(selectedHotel.totalPrice)}</div>
+                  </div>
+                </div>
+              )}
 
               {/* Action Buttons */}
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button type="button" variant="outline" onClick={onCancel}>
-                  Cancel
-                </Button>
+              <div className="flex items-center justify-between pt-8 border-t border-clio-gray-100 dark:border-clio-gray-800">
+                <button 
+                  type="button" 
+                  onClick={onCancel}
+                  className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white transition-colors"
+                >
+                  Cancel Search
+                </button>
                 <Button
                   onClick={handleConfirmBooking}
                   disabled={!selectedHotel}
+                  className="bg-green-600 hover:bg-green-700 text-white font-black uppercase tracking-widest h-12 px-8 rounded-xl shadow-lg shadow-green-600/20"
                 >
                   Add Hotel to Quote
                 </Button>
               </div>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
         </div>
       </div>
     </div>

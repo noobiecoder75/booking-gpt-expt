@@ -214,89 +214,97 @@ export default function CommissionsPage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Commissions</h1>
-              <p className="text-gray-600 mt-2">
-                Track and manage agent commissions
+              <h1 className="text-3xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">Commissions</h1>
+              <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2 font-medium">
+                Track and manage agent revenue and performance metrics
               </p>
             </div>
 
-            <div className="flex gap-2 mt-4 md:mt-0">
+            <div className="flex flex-wrap gap-3 mt-4 md:mt-0">
               {selectedCommissions.length > 0 && (
                 <>
-                  <Button variant="outline" onClick={handleBulkApprove}>
-                    <CheckCircle className="w-4 h-4 mr-2" />
+                  <Button variant="outline" className="border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-11" onClick={handleBulkApprove}>
+                    <CheckCircle className="w-4 h-4 mr-2 text-emerald-500" />
                     Approve ({selectedCommissions.length})
                   </Button>
-                  <Button onClick={handleBulkPay}>
+                  <Button className="bg-clio-blue hover:bg-clio-blue-hover text-white font-bold uppercase tracking-tight text-xs h-11 shadow-lg shadow-clio-blue/20" onClick={handleBulkPay}>
                     <DollarSign className="w-4 h-4 mr-2" />
                     Pay ({selectedCommissions.length})
                   </Button>
                 </>
               )}
-              <Button variant="outline">
-                <Download className="w-4 h-4 mr-2" />
-                Export
+              <Button variant="outline" className="border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-11 px-6">
+                <Download className="w-4 h-4 mr-2 text-clio-blue" />
+                Export Data
               </Button>
             </div>
           </div>
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Earned</CardTitle>
-                <TrendingUp className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Total Earned</CardTitle>
+                <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                  <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                   {formatCurrency(totalEarned)}
                 </div>
-                <p className="text-xs text-gray-500">
-                  All time commissions
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
+                  Lifetime revenue
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
-                <DollarSign className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Total Paid</CardTitle>
+                <div className="p-1.5 rounded-lg bg-clio-blue/10">
+                  <DollarSign className="h-3.5 w-3.5 text-clio-blue" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-600">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-clio-blue">
                   {formatCurrency(totalPaid)}
                 </div>
-                <p className="text-xs text-gray-500">
-                  Paid to agents
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
+                  Settled with agents
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Payment</CardTitle>
-                <Clock className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Pending</CardTitle>
+                <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/20">
+                  <Clock className="h-3.5 w-3.5 text-amber-600" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-orange-600">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-amber-600 dark:text-amber-400">
                   {formatCurrency(totalPending)}
                 </div>
-                <p className="text-xs text-gray-500">
-                  {pendingCommissions + approvedCommissions} commissions
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
+                  {pendingCommissions + approvedCommissions} items awaiting payout
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Agents</CardTitle>
-                <User className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Active Agents</CardTitle>
+                <div className="p-1.5 rounded-lg bg-clio-navy/10">
+                  <User className="h-3.5 w-3.5 text-clio-navy dark:text-clio-gray-300" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-clio-gray-900 dark:text-white">
                   {agents.length}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
                   Earning commissions
                 </p>
               </CardContent>
@@ -305,36 +313,47 @@ export default function CommissionsPage() {
 
           {/* Agent Performance Cards */}
           {commissionAnalytics.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Agent Performance</h2>
+            <div className="mb-12">
+              <h2 className="text-xs font-black uppercase tracking-widest text-clio-gray-500 mb-6 flex items-center">
+                <Award className="w-4 h-4 mr-2 text-amber-500" />
+                Top Performing Agents
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {commissionAnalytics.slice(0, 6).map((analytics) => (
-                  <Card key={analytics.agentId}>
-                    <CardHeader className="pb-3">
-                      <CardTitle className="text-sm font-medium flex items-center">
-                        <User className="w-4 h-4 mr-2" />
+                  <Card key={analytics.agentId} className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm hover:shadow-md transition-shadow group">
+                    <CardHeader className="pb-4 bg-clio-gray-50/30 dark:bg-clio-gray-800/10 border-b border-clio-gray-50 dark:border-clio-gray-800/50">
+                      <CardTitle className="text-sm font-black flex items-center text-clio-gray-900 dark:text-white group-hover:text-clio-blue transition-colors uppercase tracking-tight">
+                        <div className="w-8 h-8 rounded-lg bg-white dark:bg-clio-gray-900 flex items-center justify-center mr-3 border border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
+                          <User className="w-4 h-4 text-clio-gray-400" />
+                        </div>
                         {analytics.agentName}
                       </CardTitle>
                     </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-600">Total Earned</span>
-                          <span className="font-semibold">{formatCurrency(analytics.totalCommissions)}</span>
+                    <CardContent className="pt-6">
+                      <div className="space-y-4">
+                        <div className="flex justify-between items-end">
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Total Earned</span>
+                            <div className="text-lg font-black text-emerald-600 dark:text-emerald-400 leading-none">{formatCurrency(analytics.totalCommissions)}</div>
+                          </div>
+                          <div className="space-y-1 text-right">
+                            <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Rate</span>
+                            <div>
+                              <Badge className="bg-clio-blue/10 text-clio-blue text-[10px] font-black border-none shadow-none px-2 py-0.5">
+                                {analytics.commissionRate.toFixed(1)}%
+                              </Badge>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-600">Bookings</span>
-                          <span className="font-semibold">{analytics.totalBookings}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-600">Avg Commission</span>
-                          <span className="font-semibold">{formatCurrency(analytics.averageCommission)}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs text-gray-600">Rate</span>
-                          <Badge variant="secondary">
-                            {analytics.commissionRate.toFixed(1)}%
-                          </Badge>
+                        <div className="pt-4 border-t border-clio-gray-50 dark:border-clio-gray-800/50 grid grid-cols-2 gap-4">
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Bookings</span>
+                            <div className="text-sm font-bold text-clio-gray-700 dark:text-clio-gray-300">{analytics.totalBookings}</div>
+                          </div>
+                          <div className="space-y-1">
+                            <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Average</span>
+                            <div className="text-sm font-bold text-clio-gray-700 dark:text-clio-gray-300">{formatCurrency(analytics.averageCommission)}</div>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
@@ -347,7 +366,7 @@ export default function CommissionsPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search by agent, customer, or booking ID..."
                 value={searchQuery}
@@ -357,11 +376,13 @@ export default function CommissionsPage() {
             </div>
 
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as CommissionStatus | 'all')}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter by status" />
+              <SelectTrigger className="w-[180px] bg-white dark:bg-clio-gray-900 font-bold border-clio-gray-200 dark:border-clio-gray-800">
+                <div className="flex items-center">
+                  <Filter className="w-4 h-4 mr-2 text-clio-gray-400" />
+                  <SelectValue placeholder="Status Filter" />
+                </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="approved">Approved</SelectItem>
@@ -371,11 +392,13 @@ export default function CommissionsPage() {
             </Select>
 
             <Select value={agentFilter} onValueChange={setAgentFilter}>
-              <SelectTrigger className="w-[180px]">
-                <User className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter by agent" />
+              <SelectTrigger className="w-[180px] bg-white dark:bg-clio-gray-900 font-bold border-clio-gray-200 dark:border-clio-gray-800">
+                <div className="flex items-center">
+                  <User className="w-4 h-4 mr-2 text-clio-gray-400" />
+                  <SelectValue placeholder="Agent Filter" />
+                </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
                 <SelectItem value="all">All Agents</SelectItem>
                 {agents.map((agent) => (
                   <SelectItem key={agent.id} value={agent.id}>
@@ -387,27 +410,28 @@ export default function CommissionsPage() {
           </div>
 
           {/* Commissions Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Commissions ({filteredCommissions.length})</CardTitle>
+          <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-xl overflow-hidden">
+            <CardHeader className="bg-clio-gray-50/50 dark:bg-clio-gray-800/20 border-b border-clio-gray-100 dark:border-clio-gray-800 px-8 py-6">
+              <CardTitle className="text-sm font-black uppercase tracking-widest text-clio-gray-500">Commission Ledger ({filteredCommissions.length})</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               {filteredCommissions.length === 0 ? (
-                <div className="text-center py-8">
-                  <DollarSign className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No commissions found</h3>
-                  <p className="text-gray-600">
-                    {searchQuery ? 'Try adjusting your search criteria.' : 'Commissions will appear here as bookings are made.'}
+                <div className="text-center py-24 bg-white dark:bg-clio-gray-950">
+                  <DollarSign className="w-16 h-16 text-clio-gray-200 dark:text-clio-gray-800 mx-auto mb-4" />
+                  <h3 className="text-xl font-black text-clio-gray-900 dark:text-white mb-2 uppercase tracking-tight">No commissions found</h3>
+                  <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium max-w-sm mx-auto">
+                    {searchQuery ? 'Try adjusting your search criteria or clearing filters.' : 'Commissions will appear here automatically as bookings are confirmed.'}
                   </p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4">
+                      <tr className="border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/30 dark:bg-clio-gray-900/50">
+                        <th className="py-4 px-8 text-left w-10">
                           <input
                             type="checkbox"
+                            className="w-4 h-4 rounded border-clio-gray-300 text-clio-blue focus:ring-clio-blue"
                             onChange={(e) => {
                               if (e.target.checked) {
                                 setSelectedCommissions(filteredCommissions.map(c => c.id));
@@ -418,70 +442,68 @@ export default function CommissionsPage() {
                             checked={selectedCommissions.length === filteredCommissions.length && filteredCommissions.length > 0}
                           />
                         </th>
-                        <th className="text-left py-3 px-4 font-medium">Agent</th>
-                        <th className="text-left py-3 px-4 font-medium">Customer</th>
-                        <th className="text-left py-3 px-4 font-medium">Booking Amount</th>
-                        <th className="text-left py-3 px-4 font-medium">Commission</th>
-                        <th className="text-left py-3 px-4 font-medium">Rate</th>
-                        <th className="text-left py-3 px-4 font-medium">Earned Date</th>
-                        <th className="text-left py-3 px-4 font-medium">Status</th>
-                        <th className="text-left py-3 px-4 font-medium">Actions</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Agent</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Customer</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400 text-right">Booking</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400 text-right">Commission</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Status</th>
+                        <th className="text-right py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Actions</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-clio-gray-50 dark:divide-clio-gray-800/50">
                       {filteredCommissions.map((commission) => (
-                        <tr key={commission.id} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4">
+                        <tr key={commission.id} className="hover:bg-clio-gray-50/50 dark:hover:bg-clio-gray-900/50 transition-colors group">
+                          <td className="py-5 px-8">
                             <input
                               type="checkbox"
+                              className="w-4 h-4 rounded border-clio-gray-300 text-clio-blue focus:ring-clio-blue"
                               checked={selectedCommissions.includes(commission.id)}
                               onChange={(e) => handleCommissionSelect(commission.id, e.target.checked)}
                             />
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium">{commission.agentName}</div>
+                          <td className="py-5 px-8">
+                            <div className="font-bold text-clio-gray-900 dark:text-white">{commission.agentName}</div>
+                            <div className="text-[10px] font-black text-clio-gray-400 uppercase tracking-widest mt-0.5">{formatDate(commission.earnedDate)}</div>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium">{commission.customerName}</div>
+                          <td className="py-5 px-8">
+                            <div className="font-bold text-clio-gray-900 dark:text-white">{commission.customerName}</div>
+                            <div className="text-[10px] font-medium text-clio-gray-500 dark:text-clio-gray-400">#{commission.bookingId.slice(0, 8)}...</div>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium">{formatCurrency(commission.bookingAmount)}</div>
+                          <td className="py-5 px-8 text-right">
+                            <div className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(commission.bookingAmount)}</div>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium text-green-600">
-                              {formatCurrency(commission.commissionAmount)}
-                            </div>
+                          <td className="py-5 px-8 text-right">
+                            <div className="font-black text-emerald-600 dark:text-emerald-400">{formatCurrency(commission.commissionAmount)}</div>
+                            <div className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight">{commission.commissionRate.toFixed(1)}%</div>
                           </td>
-                          <td className="py-3 px-4">
-                            <Badge variant="outline">
-                              {commission.commissionRate.toFixed(1)}%
-                            </Badge>
-                          </td>
-                          <td className="py-3 px-4 text-sm">
-                            {formatDate(commission.earnedDate)}
-                          </td>
-                          <td className="py-3 px-4">
-                            <Badge className={`${getStatusColor(commission.status)} flex items-center gap-1 w-fit`}>
+                          <td className="py-5 px-8">
+                            <Badge className={cn(
+                              "shadow-none text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border-none flex items-center gap-1.5 w-fit",
+                              commission.status === 'pending' && "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400",
+                              commission.status === 'approved' && "bg-clio-blue/10 text-clio-blue",
+                              commission.status === 'paid' && "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400",
+                              commission.status === 'disputed' && "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"
+                            )}>
                               {getStatusIcon(commission.status)}
-                              {commission.status.charAt(0).toUpperCase() + commission.status.slice(1)}
+                              {commission.status}
                             </Badge>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-2">
+                          <td className="py-5 px-8 text-right">
+                            <div className="flex items-center justify-end gap-1">
                               <Button
                                 size="sm"
                                 variant="ghost"
+                                className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-blue hover:bg-clio-blue/5"
                                 onClick={() => handleViewCommission(commission)}
-                                title="View Commission"
                               >
                                 <Eye className="w-4 h-4" />
                               </Button>
                               {commission.status === 'pending' && (
                                 <Button
                                   size="sm"
-                                  variant="outline"
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0 text-clio-gray-400 hover:text-emerald-600 hover:bg-emerald-50"
                                   onClick={() => approve.mutate(commission.id)}
-                                  title="Approve"
                                 >
                                   <CheckCircle className="w-4 h-4" />
                                 </Button>
@@ -489,16 +511,17 @@ export default function CommissionsPage() {
                               {commission.status === 'approved' && (
                                 <Button
                                   size="sm"
+                                  variant="ghost"
+                                  className="h-8 w-8 p-0 text-clio-gray-400 hover:text-emerald-600 hover:bg-emerald-50"
                                   onClick={() => markAsPaid.mutate({
                                     id: commission.id,
                                     paymentMethod: 'bank_transfer'
                                   })}
-                                  title="Mark as Paid"
                                 >
                                   <DollarSign className="w-4 h-4" />
                                 </Button>
                               )}
-                              <Button size="sm" variant="ghost" title="More Actions">
+                              <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white">
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>
                             </div>

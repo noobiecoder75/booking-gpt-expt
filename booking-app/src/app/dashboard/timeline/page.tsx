@@ -44,9 +44,9 @@ export default function TimelinePage() {
       <MainLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">Travel Timeline</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              View all travel bookings and itineraries in calendar format
+            <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white mb-3 tracking-tight">Travel Timeline</h1>
+            <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+              View all travel bookings and itineraries in a centralized calendar format
             </p>
           </div>
 
@@ -61,14 +61,14 @@ export default function TimelinePage() {
           />
 
           {/* Calendar */}
-          <ModernCard variant="elevated" className="p-6">
+          <div className="bg-white dark:bg-clio-gray-950 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-xl overflow-hidden p-6">
             <TimelineCalendar
               contactId={selectedContactId}
               statusFilters={selectedStatuses}
               height={700}
               onEventCountChange={setEventCount}
             />
-          </ModernCard>
+          </div>
         </div>
       </MainLayout>
     </ProtectedRoute>

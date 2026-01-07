@@ -86,9 +86,9 @@ export function WorkflowVisualizer({
                 disabled={!isClickable}
                 className={cn(
                   'rounded-full p-1.5',
-                  step.status === 'complete' && 'bg-green-100 text-green-700',
-                  step.status === 'current' && 'bg-blue-100 text-blue-700',
-                  step.status === 'pending' && 'bg-gray-100 text-gray-400',
+                  step.status === 'complete' && 'bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400',
+                  step.status === 'current' && 'bg-clio-blue/10 dark:bg-clio-blue/20 text-clio-blue dark:text-blue-400',
+                  step.status === 'pending' && 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-400',
                   isClickable && 'cursor-pointer hover:opacity-80 transition-opacity'
                 )}
                 title={step.label}
@@ -96,7 +96,7 @@ export function WorkflowVisualizer({
                 <Icon className="w-3 h-3" />
               </button>
               {index < steps.length - 1 && (
-                <ChevronRight className="w-3 h-3 text-gray-300 mx-0.5" />
+                <ChevronRight className="w-3 h-3 text-clio-gray-300 dark:text-clio-gray-700 mx-0.5" />
               )}
             </div>
           );
@@ -108,11 +108,11 @@ export function WorkflowVisualizer({
   return (
     <div className="relative">
       {/* Progress Line */}
-      <div className="absolute top-8 left-0 right-0 h-0.5 bg-gray-200">
+      <div className="absolute top-8 left-0 right-0 h-0.5 bg-clio-gray-100 dark:bg-clio-gray-800">
         <div
-          className="h-full bg-green-500 transition-all duration-500"
+          className="h-full bg-emerald-500 transition-all duration-500"
           style={{
-            width: `${(steps.filter(s => s.status === 'complete').length / steps.length) * 100}%`
+            width: `${(steps.filter(s => s.status === 'complete').length / (steps.length - 1)) * 100}%`
           }}
         />
       </div>
@@ -130,9 +130,9 @@ export function WorkflowVisualizer({
                 disabled={!isClickable}
                 className={cn(
                   'w-16 h-16 rounded-full flex items-center justify-center border-4 transition-all',
-                  step.status === 'complete' && 'bg-green-500 border-green-100 text-white',
-                  step.status === 'current' && 'bg-blue-500 border-blue-100 text-white animate-pulse',
-                  step.status === 'pending' && 'bg-white border-gray-200 text-gray-400',
+                  step.status === 'complete' && 'bg-emerald-500 border-emerald-100 dark:border-emerald-900/30 text-white',
+                  step.status === 'current' && 'bg-clio-blue border-clio-blue/10 text-white animate-pulse',
+                  step.status === 'pending' && 'bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-400',
                   isClickable && 'cursor-pointer hover:scale-110'
                 )}
               >
@@ -144,10 +144,10 @@ export function WorkflowVisualizer({
               </button>
               <div className="mt-3 text-center">
                 <div className={cn(
-                  'text-sm font-medium',
-                  step.status === 'complete' && 'text-green-700',
-                  step.status === 'current' && 'text-blue-700',
-                  step.status === 'pending' && 'text-gray-500'
+                  'text-xs font-bold uppercase tracking-tight',
+                  step.status === 'complete' && 'text-emerald-700 dark:text-emerald-400',
+                  step.status === 'current' && 'text-clio-blue dark:text-blue-400',
+                  step.status === 'pending' && 'text-clio-gray-500 dark:text-clio-gray-400'
                 )}>
                   {step.label}
                 </div>

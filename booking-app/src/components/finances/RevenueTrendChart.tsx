@@ -59,36 +59,56 @@ export function RevenueTrendChart({ invoices, expenses }: RevenueTrendChartProps
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Revenue vs Expenses Trend</CardTitle>
-        <CardDescription>Last 6 months performance</CardDescription>
+        <CardTitle className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Revenue vs Expenses Trend</CardTitle>
+        <CardDescription className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">Last 6 months performance</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgb(var(--clio-gray-200))" strokeOpacity={0.2} />
             <XAxis
               dataKey="month"
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10, fill: 'rgb(var(--clio-gray-400))', fontWeight: 'bold' }}
               tickLine={false}
+              axisLine={false}
             />
             <YAxis
-              tick={{ fontSize: 12 }}
+              tick={{ fontSize: 10, fill: 'rgb(var(--clio-gray-400))', fontWeight: 'bold' }}
               tickLine={false}
+              axisLine={false}
               tickFormatter={(value) => `$${value.toLocaleString()}`}
             />
             <Tooltip
               formatter={(value: number) => [`$${value.toFixed(2)}`, '']}
-              contentStyle={{ backgroundColor: 'var(--tooltip-bg, #fff)', borderColor: 'var(--tooltip-border, #e5e7eb)' }}
-              itemStyle={{ color: 'var(--tooltip-text, #000)' }}
+              contentStyle={{ 
+                backgroundColor: 'rgb(var(--clio-gray-950))', 
+                borderColor: 'rgb(var(--clio-gray-800))',
+                borderRadius: '8px',
+                borderWidth: '1px',
+                color: '#fff'
+              }}
+              itemStyle={{ color: '#fff' }}
+              labelStyle={{ color: '#fff', fontWeight: 'bold' }}
             />
-            <Legend />
+            <Legend 
+              verticalAlign="top" 
+              align="right" 
+              height={36}
+              iconType="circle"
+              formatter={(value) => (
+                <span className="text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight ml-1">
+                  {value}
+                </span>
+              )}
+            />
             <Area
               type="monotone"
               dataKey="revenue"
               stackId="1"
               stroke="#10b981"
               fill="#10b981"
-              fillOpacity={0.6}
+              fillOpacity={0.2}
+              strokeWidth={2}
               name="Revenue"
             />
             <Area
@@ -97,16 +117,9 @@ export function RevenueTrendChart({ invoices, expenses }: RevenueTrendChartProps
               stackId="2"
               stroke="#ef4444"
               fill="#ef4444"
-              fillOpacity={0.6}
-              name="Expenses"
-            />
-            <Line
-              type="monotone"
-              dataKey="profit"
-              stroke="#3b82f6"
+              fillOpacity={0.2}
               strokeWidth={2}
-              dot={{ fill: '#3b82f6', r: 4 }}
-              name="Profit"
+              name="Expenses"
             />
           </AreaChart>
         </ResponsiveContainer>

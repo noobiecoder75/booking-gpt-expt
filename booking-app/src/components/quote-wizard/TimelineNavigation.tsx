@@ -17,16 +17,16 @@ export function TimelineNavigation({
   onCalendarViewChange
 }: TimelineNavigationProps) {
   return (
-    <div className="flex items-center justify-center p-4 bg-white border-b border-gray-200 rounded-t-lg">
+    <div className="flex items-center justify-center p-4 bg-clio-gray-50 dark:bg-clio-gray-900 border-b border-clio-gray-100 dark:border-clio-gray-800 rounded-t-2xl">
       {/* View Mode Toggle */}
-      <div className="flex items-center space-x-4">
-        <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+      <div className="flex items-center space-x-6">
+        <div className="flex items-center space-x-1 bg-clio-gray-200 dark:bg-clio-gray-800 rounded-xl p-1 shadow-inner">
           <button
             onClick={() => onViewModeChange('calendar')}
-            className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-tight transition-all ${
               viewMode === 'calendar'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ? 'bg-white dark:bg-clio-gray-700 text-clio-blue shadow-sm'
+                : 'text-clio-gray-500 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white'
             }`}
           >
             <Calendar className="w-4 h-4" />
@@ -34,10 +34,10 @@ export function TimelineNavigation({
           </button>
           <button
             onClick={() => onViewModeChange('list')}
-            className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-tight transition-all ${
               viewMode === 'list'
-                ? 'bg-white text-gray-900 shadow-sm'
-                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                ? 'bg-white dark:bg-clio-gray-700 text-clio-blue shadow-sm'
+                : 'text-clio-gray-500 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white'
             }`}
           >
             <List className="w-4 h-4" />
@@ -47,15 +47,15 @@ export function TimelineNavigation({
 
         {/* Calendar View Controls (only show when in calendar mode) */}
         {viewMode === 'calendar' && (
-          <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-1 border-l border-clio-gray-200 dark:border-clio-gray-700 pl-6 ml-6">
             {(['month', 'week', 'day', 'agenda'] as View[]).map((view) => (
               <button
                 key={view}
                 onClick={() => onCalendarViewChange(view)}
-                className={`px-3 py-2 rounded-md text-sm font-medium capitalize transition-all ${
+                className={`px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${
                   calendarView === view
-                    ? 'bg-blue-500 text-white shadow-sm'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                    ? 'bg-clio-blue text-white shadow-sm'
+                    : 'bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 text-clio-gray-500 dark:text-clio-gray-400 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700'
                 }`}
               >
                 {view}

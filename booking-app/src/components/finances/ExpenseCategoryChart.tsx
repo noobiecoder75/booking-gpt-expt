@@ -66,10 +66,10 @@ export function ExpenseCategoryChart({ expenses }: ExpenseCategoryChartProps) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Expense Breakdown</CardTitle>
-          <CardDescription>By category</CardDescription>
+          <CardTitle className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Expense Breakdown</CardTitle>
+          <CardDescription className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">By category</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center h-[300px] text-muted-foreground">
+        <CardContent className="flex items-center justify-center h-[300px] text-clio-gray-400 font-medium">
           No expense data available
         </CardContent>
       </Card>
@@ -79,8 +79,8 @@ export function ExpenseCategoryChart({ expenses }: ExpenseCategoryChartProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Expense Breakdown</CardTitle>
-        <CardDescription>Total: ${totalExpenses.toFixed(2)}</CardDescription>
+        <CardTitle className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Expense Breakdown</CardTitle>
+        <CardDescription className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">Total: ${totalExpenses.toFixed(2)}</CardDescription>
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
@@ -101,13 +101,24 @@ export function ExpenseCategoryChart({ expenses }: ExpenseCategoryChartProps) {
             </Pie>
             <Tooltip
               formatter={(value: number) => `$${value.toFixed(2)}`}
-              contentStyle={{ backgroundColor: 'var(--tooltip-bg, #fff)', borderColor: 'var(--tooltip-border, #e5e7eb)' }}
-              itemStyle={{ color: 'var(--tooltip-text, #000)' }}
+              contentStyle={{ 
+                backgroundColor: 'rgb(var(--clio-gray-950))', 
+                borderColor: 'rgb(var(--clio-gray-800))',
+                borderRadius: '8px',
+                borderWidth: '1px',
+                color: '#fff'
+              }}
+              itemStyle={{ color: '#fff' }}
+              labelStyle={{ color: '#fff', fontWeight: 'bold' }}
             />
             <Legend
               verticalAlign="bottom"
               height={36}
-              formatter={(value, entry: any) => `${value} ($${entry.payload.value.toFixed(2)})`}
+              formatter={(value, entry: any) => (
+                <span className="text-xs font-bold text-clio-gray-600 dark:text-clio-gray-400 uppercase tracking-tight">
+                  {value} (${entry.payload.value.toFixed(2)})
+                </span>
+              )}
             />
           </PieChart>
         </ResponsiveContainer>

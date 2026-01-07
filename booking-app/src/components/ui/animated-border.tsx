@@ -25,7 +25,7 @@ const AnimatedBorder = React.forwardRef<HTMLDivElement, AnimatedBorderProps>(
             animation: `borderAnimation ${duration}s linear infinite ${reverse ? 'reverse' : ''}`
           }}
         >
-          <div className="h-full w-full rounded-xl bg-white dark:bg-gray-900">
+          <div className="h-full w-full rounded-xl bg-white dark:bg-clio-gray-950">
             {children}
           </div>
         </div>

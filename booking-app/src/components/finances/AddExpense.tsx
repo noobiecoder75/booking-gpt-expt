@@ -77,7 +77,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="date">Date</Label>
+          <Label htmlFor="date" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Date</Label>
           <Input
             id="date"
             type="date"
@@ -88,7 +88,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="amount">Amount</Label>
+          <Label htmlFor="amount" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Amount</Label>
           <Input
             id="amount"
             type="number"
@@ -103,7 +103,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="category">Category</Label>
+          <Label htmlFor="category" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Category</Label>
           <Select
             value={formData.category}
             onValueChange={(value) => setFormData({ ...formData, category: value as ExpenseCategory })}
@@ -125,7 +125,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="subcategory">Subcategory (Optional)</Label>
+          <Label htmlFor="subcategory" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Subcategory (Optional)</Label>
           <Input
             id="subcategory"
             placeholder="e.g., Facebook Ads"
@@ -137,7 +137,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
 
       {isSupplierPayment ? (
         <div className="space-y-2">
-          <Label htmlFor="supplier">Supplier *</Label>
+          <Label htmlFor="supplier" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Supplier *</Label>
           <Select
             value={formData.supplierId}
             onValueChange={(value) => setFormData({ ...formData, supplierId: value, vendor: '' })}
@@ -147,7 +147,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
             </SelectTrigger>
             <SelectContent>
               {suppliers.length === 0 ? (
-                <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                <div className="px-2 py-1.5 text-sm text-clio-gray-500">
                   No suppliers found. Add suppliers in Contacts.
                 </div>
               ) : (
@@ -159,13 +159,13 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
               )}
             </SelectContent>
           </Select>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight">
             Supplier payments require a linked supplier for tracking
           </p>
         </div>
       ) : (
         <div className="space-y-2">
-          <Label htmlFor="vendor">Vendor (Optional)</Label>
+          <Label htmlFor="vendor" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Vendor (Optional)</Label>
           <Input
             id="vendor"
             placeholder="Vendor name (or select supplier above)"
@@ -174,7 +174,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
           />
           {suppliers.length > 0 && (
             <div className="space-y-2">
-              <Label htmlFor="supplier-link" className="text-xs">Or link to existing supplier</Label>
+              <Label htmlFor="supplier-link" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Or link to existing supplier</Label>
               <Select
                 value={formData.supplierId}
                 onValueChange={(value) => setFormData({ ...formData, supplierId: value })}
@@ -197,7 +197,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="description">Description</Label>
+        <Label htmlFor="description" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Description</Label>
         <Input
           id="description"
           placeholder="Brief description of the expense"
@@ -208,7 +208,7 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="notes">Notes (Optional)</Label>
+        <Label htmlFor="notes" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight">Notes (Optional)</Label>
         <Textarea
           id="notes"
           placeholder="Additional details..."
@@ -218,8 +218,8 @@ export function AddExpense({ onSuccess }: AddExpenseProps) {
         />
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button type="submit">Add Expense</Button>
+      <div className="flex justify-end gap-2 pt-4">
+        <Button type="submit" className="w-full sm:w-auto font-bold uppercase tracking-tight">Add Expense</Button>
       </div>
     </form>
   );

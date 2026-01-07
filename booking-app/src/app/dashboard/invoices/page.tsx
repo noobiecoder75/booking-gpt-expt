@@ -243,13 +243,13 @@ export default function InvoicesPage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Invoices</h1>
-              <p className="text-gray-600 mt-2">
-                Manage your invoices and track payments
+              <h1 className="text-3xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">Invoices</h1>
+              <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2 font-medium">
+                Manage your billing cycles and track real-time payment statuses
               </p>
             </div>
 
-            <Button className="mt-4 md:mt-0" onClick={handleCreateInvoice}>
+            <Button className="mt-4 md:mt-0 bg-clio-blue hover:bg-clio-blue-hover text-white font-bold uppercase tracking-tight text-xs h-11 px-8 shadow-lg shadow-clio-blue/20" onClick={handleCreateInvoice}>
               <Plus className="w-4 h-4 mr-2" />
               Create Invoice
             </Button>
@@ -257,60 +257,68 @@ export default function InvoicesPage() {
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Invoices</CardTitle>
-                <Receipt className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Total Invoices</CardTitle>
+                <div className="p-1.5 rounded-lg bg-clio-blue/10">
+                  <Receipt className="h-3.5 w-3.5 text-clio-blue" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{totalInvoices}</div>
-                <p className="text-xs text-gray-500">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-clio-gray-900 dark:text-white">{totalInvoices}</div>
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
                   {draftInvoices} drafts, {paidInvoices} paid
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-                <DollarSign className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Total Revenue</CardTitle>
+                <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+                  <DollarSign className="h-3.5 w-3.5 text-emerald-600" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-600">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400">
                   {formatCurrency(totalRevenue)}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
                   From paid invoices
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-                <Clock className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Outstanding</CardTitle>
+                <div className="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-900/20">
+                  <Clock className="h-3.5 w-3.5 text-amber-600" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-orange-600">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-amber-600 dark:text-amber-400">
                   {formatCurrency(totalOutstanding)}
                 </div>
-                <p className="text-xs text-gray-500">
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
                   Awaiting payment
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Overdue</CardTitle>
-                <AlertTriangle className="h-4 w-4 text-gray-500" />
+            <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 bg-clio-gray-50/30 dark:bg-clio-gray-800/10">
+                <CardTitle className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400">Overdue</CardTitle>
+                <div className="p-1.5 rounded-lg bg-red-50 dark:bg-red-900/20">
+                  <AlertTriangle className="h-3.5 w-3.5 text-red-600" />
+                </div>
               </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-red-600">
+              <CardContent className="pt-4">
+                <div className="text-2xl font-black text-red-600 dark:text-red-400">
                   {formatCurrency(overdueAmount)}
                 </div>
-                <p className="text-xs text-gray-500">
-                  {overdueInvoices} invoices
+                <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight mt-1">
+                  {overdueInvoices} invoices overdue
                 </p>
               </CardContent>
             </Card>
@@ -319,7 +327,7 @@ export default function InvoicesPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search invoices by customer, invoice number..."
                 value={searchQuery}
@@ -329,11 +337,13 @@ export default function InvoicesPage() {
             </div>
 
             <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as InvoiceStatus | 'all')}>
-              <SelectTrigger className="w-[180px]">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter by status" />
+              <SelectTrigger className="w-[200px] bg-white dark:bg-clio-gray-900 font-bold border-clio-gray-200 dark:border-clio-gray-800">
+                <div className="flex items-center">
+                  <Filter className="w-4 h-4 mr-2 text-clio-gray-400" />
+                  <SelectValue placeholder="Status Filter" />
+                </div>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
                 <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
                 <SelectItem value="sent">Sent</SelectItem>
@@ -346,99 +356,109 @@ export default function InvoicesPage() {
           </div>
 
           {/* Invoices Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Invoices ({filteredInvoices.length})</CardTitle>
+          <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-xl overflow-hidden">
+            <CardHeader className="bg-clio-gray-50/50 dark:bg-clio-gray-800/20 border-b border-clio-gray-100 dark:border-clio-gray-800 px-8 py-6">
+              <CardTitle className="text-sm font-black uppercase tracking-widest text-clio-gray-500">Invoice Ledger ({filteredInvoices.length})</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-0">
               {filteredInvoices.length === 0 ? (
-                <div className="text-center py-8">
-                  <Receipt className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No invoices found</h3>
-                  <p className="text-gray-600">
-                    {searchQuery ? 'Try adjusting your search criteria.' : 'Create your first invoice to get started.'}
+                <div className="text-center py-24 bg-white dark:bg-clio-gray-950">
+                  <Receipt className="w-16 h-16 text-clio-gray-200 dark:text-clio-gray-800 mx-auto mb-4" />
+                  <h3 className="text-xl font-black text-clio-gray-900 dark:text-white mb-2 uppercase tracking-tight">No invoices found</h3>
+                  <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium max-w-sm mx-auto">
+                    {searchQuery ? 'Try adjusting your search criteria or clearing filters.' : 'Your invoice list is empty. Generate your first invoice from an accepted quote.'}
                   </p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-medium">Invoice #</th>
-                        <th className="text-left py-3 px-4 font-medium">Customer</th>
-                        <th className="text-left py-3 px-4 font-medium">Issue Date</th>
-                        <th className="text-left py-3 px-4 font-medium">Due Date</th>
-                        <th className="text-left py-3 px-4 font-medium">Amount</th>
-                        <th className="text-left py-3 px-4 font-medium">Status</th>
-                        <th className="text-left py-3 px-4 font-medium">Actions</th>
+                      <tr className="border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/30 dark:bg-clio-gray-900/50">
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Invoice #</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Customer</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Dates</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Amount</th>
+                        <th className="text-left py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Status</th>
+                        <th className="text-right py-4 px-8 text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Actions</th>
                       </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-clio-gray-50 dark:divide-clio-gray-800/50">
                       {filteredInvoices.map((invoice) => (
-                        <tr key={invoice.id} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4">
-                            <div className="font-medium">{invoice.invoiceNumber}</div>
+                        <tr key={invoice.id} className="hover:bg-clio-gray-50/50 dark:hover:bg-clio-gray-900/50 transition-colors group">
+                          <td className="py-5 px-8">
+                            <div className="font-black text-clio-gray-900 dark:text-white group-hover:text-clio-blue transition-colors">#{invoice.invoiceNumber}</div>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium">{invoice.customerName}</div>
-                            <div className="text-sm text-gray-600">{invoice.customerEmail}</div>
+                          <td className="py-5 px-8">
+                            <div className="font-bold text-clio-gray-900 dark:text-white">{invoice.customerName}</div>
+                            <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">{invoice.customerEmail}</div>
                           </td>
-                          <td className="py-3 px-4 text-sm">
-                            {formatDate(invoice.issueDate)}
-                          </td>
-                          <td className="py-3 px-4">
-                            <div className={`text-sm ${isOverdue(invoice) ? 'text-red-600 font-medium' : ''}`}>
-                              {formatDate(invoice.dueDate)}
-                              {isOverdue(invoice) && (
-                                <div className="text-xs text-red-600">Overdue</div>
-                              )}
+                          <td className="py-5 px-8">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-black uppercase text-clio-gray-400 w-10">Issued</span>
+                                <span className="text-xs font-bold text-clio-gray-700 dark:text-clio-gray-300">{formatDate(invoice.issueDate)}</span>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-black uppercase text-clio-gray-400 w-10">Due</span>
+                                <span className={cn("text-xs font-bold", isOverdue(invoice) ? 'text-red-600' : 'text-clio-gray-700 dark:text-clio-gray-300')}>
+                                  {formatDate(invoice.dueDate)}
+                                  {isOverdue(invoice) && <span className="ml-2 inline-flex items-center px-1.5 py-0.5 rounded-full bg-red-50 text-red-600 text-[8px] font-black uppercase tracking-widest">Overdue</span>}
+                                </span>
+                              </div>
                             </div>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="font-medium">{formatCurrency(invoice.total)}</div>
+                          <td className="py-5 px-8">
+                            <div className="font-black text-clio-gray-900 dark:text-white">{formatCurrency(invoice.total)}</div>
                             {invoice.paidAmount > 0 && (
-                              <div className="text-xs text-green-600">
+                              <div className="text-[10px] font-black text-emerald-600 uppercase tracking-tight mt-1">
                                 {formatCurrency(invoice.paidAmount)} paid
                               </div>
                             )}
                           </td>
-                          <td className="py-3 px-4">
-                            <Badge className={`${getStatusColor(invoice.status)} flex items-center gap-1 w-fit`}>
+                          <td className="py-5 px-8">
+                            <Badge className={cn(
+                              "shadow-none text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg border-none flex items-center gap-1.5 w-fit",
+                              invoice.status === 'draft' && "bg-clio-gray-100 text-clio-gray-600 dark:bg-clio-gray-800 dark:text-clio-gray-400",
+                              invoice.status === 'sent' && "bg-clio-blue/10 text-clio-blue",
+                              invoice.status === 'paid' && "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400",
+                              invoice.status === 'overdue' && "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400",
+                              invoice.status === 'partial' && "bg-amber-50 text-amber-600 dark:bg-amber-950/30 dark:text-amber-400"
+                            )}>
                               {getStatusIcon(invoice.status)}
-                              {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
+                              {invoice.status}
                             </Badge>
                           </td>
-                          <td className="py-3 px-4">
-                            <div className="flex items-center gap-2">
+                          <td className="py-5 px-8 text-right">
+                            <div className="flex items-center justify-end gap-1">
                               <Button
                                 size="sm"
                                 variant="ghost"
+                                className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-blue hover:bg-clio-blue/5"
                                 onClick={() => handleViewInvoice(invoice)}
-                                title="View Invoice"
                               >
                                 <Eye className="w-4 h-4" />
                               </Button>
                               <Button
                                 size="sm"
                                 variant="ghost"
+                                className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-blue hover:bg-clio-blue/5"
                                 onClick={() => handleEditInvoice(invoice)}
-                                title="Edit Invoice"
                               >
                                 <Edit className="w-4 h-4" />
                               </Button>
                               <Button
                                 size="sm"
                                 variant="ghost"
+                                className="h-8 w-8 p-0 text-clio-gray-400 hover:text-emerald-600 hover:bg-emerald-50"
                                 onClick={() => handleDownloadInvoice(invoice)}
-                                title="Download Invoice"
                               >
                                 <Download className="w-4 h-4" />
                               </Button>
                               <Button
                                 size="sm"
                                 variant="ghost"
+                                className="h-8 w-8 p-0 text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white"
                                 onClick={() => handleInvoiceMenu(invoice)}
-                                title="More Actions"
                               >
                                 <MoreHorizontal className="w-4 h-4" />
                               </Button>

@@ -3,6 +3,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useTasksQuery } from '@/hooks/queries/useTasksQuery';
 import { useTaskMutations } from '@/hooks/mutations/useTaskMutations';
+import { useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { TaskStatus, TaskPriority, TaskType, BookingTask } from '@/types/task';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { MainLayout } from '@/components/layout/MainLayout';
@@ -29,6 +31,8 @@ export default function TasksPage() {
 }
 
 function TasksContent() {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   const { data: tasks = [] } = useTasksQuery();
   const {
     updateTaskStatus,
@@ -39,6 +43,36 @@ function TasksContent() {
   const [statusFilter, setStatusFilter] = useState<TaskStatus | 'all'>('all');
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [executingTaskId, setExecutingTaskId] = useState<string | null>(null);
+
+  const handleExecuteBooking = async (taskId: string) => {
+    if (!confirm('Are you sure you want to execute this API booking? This will confirm the booking with the supplier.')) {
+      return;
+    }
+
+    try {
+      setExecutingTaskId(taskId);
+      const response = await fetch('/api/bookings/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskId }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Successfully executed booking! Confirmation: ${data.confirmationNumber}`);
+        queryClient.invalidateQueries({ queryKey: ['tasks', user?.id] });
+      } else {
+        alert(`Execution failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Execution failed:', error);
+      alert('An unexpected error occurred during execution.');
+    } finally {
+      setExecutingTaskId(null);
+    }
+  };
 
   useEffect(() => {
     console.log('[TasksPage] Component mounted, tasks loaded:', tasks.length);
@@ -194,45 +228,45 @@ function TasksContent() {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Booking Tasks</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
+          <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Booking Tasks</h1>
+          <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium mt-2">
             Manage manual booking tasks and upload confirmations
           </p>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Pending</div>
-            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">{summary.pending}</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white dark:bg-clio-gray-900 p-6 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400 mb-1">Pending</div>
+            <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">{summary.pending}</div>
           </div>
-          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">In Progress</div>
-            <div className="text-2xl font-bold text-clio-blue">{summary.inProgress}</div>
+          <div className="bg-white dark:bg-clio-gray-900 p-6 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400 mb-1">In Progress</div>
+            <div className="text-3xl font-bold text-clio-blue">{summary.inProgress}</div>
           </div>
-          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Overdue</div>
-            <div className="text-2xl font-bold text-red-600">{summary.overdue}</div>
+          <div className="bg-white dark:bg-clio-gray-900 p-6 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400 mb-1">Overdue</div>
+            <div className="text-3xl font-bold text-red-600 dark:text-red-400">{summary.overdue}</div>
           </div>
-          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Completed</div>
-            <div className="text-2xl font-bold text-emerald-600">{summary.completed}</div>
+          <div className="bg-white dark:bg-clio-gray-900 p-6 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm">
+            <div className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400 mb-1">Completed</div>
+            <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{summary.completed}</div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800 mb-6">
+        <div className="bg-white dark:bg-clio-gray-900 p-6 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm mb-6">
           <div className="flex flex-wrap gap-4">
             {/* Search */}
-            <div className="flex-1 min-w-[200px]">
+            <div className="flex-1 min-w-[300px]">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-5 h-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-5 h-5" />
                 <input
                   type="text"
                   placeholder="Search tasks..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-clio-gray-200 dark:border-clio-gray-700 bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all"
+                  className="w-full h-12 pl-12 pr-4 bg-clio-gray-50 dark:bg-clio-gray-950 border border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-medium"
                 />
               </div>
             </div>
@@ -241,7 +275,7 @@ function TasksContent() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as TaskStatus | 'all')}
-              className="px-4 py-2 border border-clio-gray-200 dark:border-clio-gray-700 bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-[10px]"
+              className="h-12 px-4 bg-clio-gray-50 dark:bg-clio-gray-950 border border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-xs min-w-[160px]"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -255,7 +289,7 @@ function TasksContent() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | 'all')}
-              className="px-4 py-2 border border-clio-gray-200 dark:border-clio-gray-700 bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-[10px]"
+              className="h-12 px-4 bg-clio-gray-50 dark:bg-clio-gray-950 border border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-xs min-w-[160px]"
             >
               <option value="all">All Priorities</option>
               <option value="urgent">Urgent</option>
@@ -267,32 +301,38 @@ function TasksContent() {
         </div>
 
         {/* Task List */}
-        <div className="space-y-3">
+        <div className="space-y-4">
           {filteredTasks.length === 0 ? (
-            <div className="bg-white dark:bg-clio-gray-900 p-12 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800 text-center">
-              <p className="text-clio-gray-500 dark:text-clio-gray-400 font-medium">No tasks found</p>
+            <div className="bg-white dark:bg-clio-gray-900 p-24 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 text-center">
+              <div className="w-16 h-16 bg-clio-gray-50 dark:bg-clio-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="h-8 w-8 text-clio-gray-400" />
+              </div>
+              <p className="text-xl font-bold text-clio-gray-900 dark:text-white mb-1">No tasks found</p>
+              <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">Try adjusting your filters or search terms</p>
             </div>
           ) : (
             filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className="bg-white dark:bg-clio-gray-900 p-5 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800 hover:shadow-md transition-all"
+                className="bg-white dark:bg-clio-gray-900 p-6 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm hover:shadow-md transition-all group"
               >
                 <div className="flex items-start gap-4">
                   {/* Status Icon */}
                   <div className="flex-shrink-0 mt-1">
-                    {getStatusIcon(task.status)}
+                    <div className="p-2 rounded-xl bg-clio-gray-50 dark:bg-clio-gray-800 group-hover:bg-clio-gray-100 dark:group-hover:bg-clio-gray-700 transition-colors">
+                      {getStatusIcon(task.status)}
+                    </div>
                   </div>
 
                   {/* Task Content */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-4">
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                        <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
                           {task.title}
                         </h3>
                         {task.description && (
-                          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                          <p className="text-sm font-medium text-clio-gray-600 dark:text-clio-gray-400 mt-1">
                             {task.description}
                           </p>
                         )}
@@ -300,7 +340,7 @@ function TasksContent() {
 
                       {/* Priority Badge */}
                       <span
-                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight border ${getPriorityColor(
+                        className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border shadow-none ${getPriorityColor(
                           task.priority
                         ).replace('bg-', 'bg-').replace('100', '50 dark:bg-opacity-20').replace('text-', 'dark:text-').replace('800', '400')}`}
                       >
@@ -309,49 +349,72 @@ function TasksContent() {
                     </div>
 
                     {/* Task Meta */}
-                    <div className="flex flex-wrap items-center gap-4 mt-3 text-sm">
-                      <div className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
-                        <User className="w-4 h-4" />
-                        <span>{task.customerName}</span>
+                    <div className="flex flex-wrap items-center gap-6 mt-4">
+                      <div className="flex items-center gap-2 text-clio-gray-600 dark:text-clio-gray-400">
+                        <div className="w-8 h-8 rounded-full bg-clio-blue/10 flex items-center justify-center">
+                          <User className="w-4 h-4 text-clio-blue" />
+                        </div>
+                        <span className="text-xs font-bold uppercase tracking-tight">{task.customerName}</span>
                       </div>
 
                       {task.itemName && (
-                        <div className="text-gray-600 dark:text-gray-400">
-                          <span className="font-medium">{task.itemType}:</span> {task.itemName}
+                        <div className="text-clio-gray-500 dark:text-clio-gray-400 flex items-center gap-2">
+                          <span className="text-[10px] font-black uppercase tracking-widest opacity-60">{task.itemType}:</span>
+                          <span className="text-xs font-bold text-clio-gray-700 dark:text-clio-gray-300">{task.itemName}</span>
                         </div>
                       )}
 
                       {task.dueDate && (
-                        <div className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {formatDueDate(task.dueDate)}
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-clio-gray-400" />
+                          <span className="text-xs font-bold uppercase tracking-tight">{formatDueDate(task.dueDate)}</span>
                         </div>
                       )}
 
                       {task.assignedToName && (
-                        <div className="text-blue-600 dark:text-blue-400">
-                          Assigned to: {task.assignedToName}
+                        <div className="px-3 py-1 bg-clio-blue/5 dark:bg-clio-blue/10 rounded-lg text-clio-blue text-[10px] font-black uppercase tracking-widest border border-clio-blue/20">
+                          Assignee: {task.assignedToName}
                         </div>
                       )}
                     </div>
 
                     {/* Actions */}
-                    <div className="flex gap-2 mt-3">
+                    <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-clio-gray-50 dark:border-clio-gray-800">
                       {task.status === 'pending' && (
                         <button
                           onClick={() => updateTaskStatus.mutate({ id: task.id, status: 'in_progress' })}
-                          className="px-3 py-1 bg-blue-500 text-white text-sm rounded hover:bg-blue-600"
+                          className="px-6 py-2 bg-clio-blue text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-clio-blue/90 shadow-sm shadow-clio-blue/20 transition-all"
                         >
-                          Start
+                          Start Task
                         </button>
                       )}
 
                       {task.status === 'in_progress' && (
                         <button
                           onClick={() => completeTask.mutate({ id: task.id })}
-                          className="px-3 py-1 bg-green-500 text-white text-sm rounded hover:bg-green-600"
+                          className="px-6 py-2 bg-emerald-600 text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-700 shadow-sm shadow-emerald-600/20 transition-all"
                         >
-                          Complete
+                          Mark Complete
+                        </button>
+                      )}
+
+                      {/* Execute API Booking Button (Human in the Loop) */}
+                      {(task.attachments as any)?.executionType === 'api' && task.status !== 'completed' && (
+                        <button
+                          onClick={() => handleExecuteBooking(task.id)}
+                          disabled={executingTaskId === task.id || !(task.attachments as any)?.isReady}
+                          className={`px-6 py-2 text-white text-[10px] font-black uppercase tracking-widest rounded-xl flex items-center gap-2 transition-all ${
+                            (task.attachments as any)?.isReady 
+                              ? 'bg-emerald-600 hover:bg-emerald-700 shadow-sm shadow-emerald-600/20' 
+                              : 'bg-clio-gray-300 dark:bg-clio-gray-800 text-clio-gray-500 cursor-not-allowed'
+                          }`}
+                        >
+                          {executingTaskId === task.id ? (
+                            <Clock className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <CheckCircle2 className="w-4 h-4" />
+                          )}
+                          {(task.attachments as any)?.isReady ? 'Execute API Booking' : 'Waiting for Funds'}
                         </button>
                       )}
 
@@ -361,7 +424,7 @@ function TasksContent() {
                             // TODO: Open upload modal
                             alert('Upload modal coming soon!');
                           }}
-                          className="px-3 py-1 bg-purple-500 text-white text-sm rounded hover:bg-purple-600 flex items-center gap-1"
+                          className="px-6 py-2 bg-clio-navy dark:bg-clio-blue text-white text-[10px] font-black uppercase tracking-widest rounded-xl hover:opacity-90 transition-all flex items-center gap-2 shadow-sm"
                         >
                           <Upload className="w-4 h-4" />
                           Upload Document

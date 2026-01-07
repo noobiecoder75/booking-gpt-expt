@@ -82,7 +82,7 @@ export default function BookingsPage() {
     return (
       <MainLayout>
         <div className="flex items-center justify-center h-96">
-          <div className="text-lg text-gray-600">Loading bookings...</div>
+          <div className="text-lg font-medium text-clio-gray-500 animate-pulse">Loading bookings...</div>
         </div>
       </MainLayout>
     );
@@ -113,15 +113,15 @@ export default function BookingsPage() {
         {/* Filters and Search */}
         <Card className="p-6 mt-8">
           <div className="flex flex-col md:flex-row gap-4 mb-6">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <Input
-                placeholder="Search by reference, customer, or email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-5 h-5" />
+            <Input
+              placeholder="Search by reference, customer, or email..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-10"
+            />
+          </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full md:w-[200px]">
                 <SelectValue placeholder="Filter by status" />
@@ -138,12 +138,12 @@ export default function BookingsPage() {
 
           {/* Bookings Table */}
           {filteredBookings.length === 0 ? (
-            <div className="text-center py-12">
-              <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <div className="text-center py-16">
+              <Package className="w-16 h-16 text-clio-gray-200 dark:text-clio-gray-800 mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white mb-2">
                 No bookings found
               </h3>
-              <p className="text-gray-600">
+              <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
                 {searchQuery || statusFilter !== 'all'
                   ? 'Try adjusting your search or filters'
                   : 'Create your first booking from an accepted quote'}
@@ -153,7 +153,7 @@ export default function BookingsPage() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="hover:bg-transparent border-clio-gray-100 dark:border-clio-gray-800">
                     <TableHead>Reference</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Date</TableHead>
@@ -171,16 +171,16 @@ export default function BookingsPage() {
                       className="cursor-pointer dark:hover:bg-clio-gray-900/50"
                       onClick={() => handleViewDetails(booking)}
                     >
-                      <TableCell className="font-mono text-sm font-semibold">
+                      <TableCell className="font-mono text-sm font-semibold text-clio-gray-900 dark:text-white">
                         {booking.bookingReference}
                       </TableCell>
                       <TableCell>
                         <div>
-                          <div className="font-medium">{booking.contact.name}</div>
-                          <div className="text-sm text-gray-500">{booking.contact.email}</div>
+                          <div className="font-bold text-clio-gray-900 dark:text-white">{booking.contact.name}</div>
+                          <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">{booking.contact.email}</div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      <TableCell className="text-sm font-medium text-clio-gray-600 dark:text-clio-gray-400">
                         {format(new Date(booking.createdAt), 'MMM dd, yyyy')}
                       </TableCell>
                       <TableCell>
@@ -201,13 +201,14 @@ export default function BookingsPage() {
                           {booking.items.length}
                         </span>
                       </TableCell>
-                      <TableCell className="text-right font-semibold">
+                      <TableCell className="text-right font-bold text-clio-gray-900 dark:text-white">
                         {formatCurrency(booking.totalAmount)}
                       </TableCell>
                       <TableCell className="text-center">
                         <Button
                           variant="ghost"
                           size="sm"
+                          className="hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 text-clio-gray-500 hover:text-clio-blue"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleViewDetails(booking);

@@ -195,6 +195,53 @@ export async function POST(request: NextRequest) {
 
     console.log('📄 [Confirm Payment] Invoice generated:', invoiceId);
 
+    // Calculate payment status and update quote
+    const { data: currentQuote } = await supabase
+      .from('quotes')
+      .select('total_amount, total_paid')
+      .eq('id', quoteId)
+      .single();
+
+    const newTotalPaid = (currentQuote?.total_paid || 0) + paymentAmount;
+    const remainingBalance = quote.totalCost - newTotalPaid;
+    
+    let newPaymentStatus: 'unpaid' | 'deposit_paid' | 'partially_paid' | 'paid_in_full' = 'unpaid';
+    if (newTotalPaid >= quote.totalCost) {
+      newPaymentStatus = 'paid_in_full';
+    } else if (newTotalPaid > 0) {
+      newPaymentStatus = paymentType === 'deposit' ? 'deposit_paid' : 'partially_paid';
+    }
+
+    console.log('📊 [Confirm Payment] Updating quote payment status:', {
+      newStatus: newPaymentStatus,
+      totalPaid: newTotalPaid,
+      remaining: remainingBalance
+    });
+
+    await supabase
+      .from('quotes')
+      .update({
+        status: 'accepted',
+        payment_status: newPaymentStatus,
+        total_paid: newTotalPaid,
+        remaining_balance: remainingBalance,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', quoteId);
+
+    // Update invoice status and balance
+    if (invoiceId) {
+      await supabase
+        .from('invoices')
+        .update({
+          status: newPaymentStatus === 'paid_in_full' ? 'paid' : 'partially_paid',
+          paid_amount: paymentAmount,
+          remaining_amount: remainingBalance,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', invoiceId);
+    }
+
     // Generate commission for agent (linked to invoice)
     const commissionId = await generateCommissionForBooking(quote, quoteId, paymentId, invoiceId, paymentTransactionId, userId);
 
@@ -206,32 +253,9 @@ export async function POST(request: NextRequest) {
       await createSupplierExpenses(quote, quoteId, paymentId, paymentTransactionId, userId);
     }
 
-    // Calculate payment status
-    const totalPaid = paymentAmount; // Simplified for now
-    let newPaymentStatus: 'unpaid' | 'deposit_paid' | 'partially_paid' | 'paid_in_full' = 'unpaid';
-
-    if (paymentType === 'deposit') {
-      newPaymentStatus = 'deposit_paid';
-    } else if (paymentType === 'full' || totalPaid >= quote.totalCost) {
-      newPaymentStatus = 'paid_in_full';
-    } else if (totalPaid > 0) {
-      newPaymentStatus = 'partially_paid';
-    }
-
-    console.log('📊 [Confirm Payment] Payment status:', {
-      newStatus: newPaymentStatus,
-      totalPaid,
-      quoteCost: quote.totalCost,
-      remaining: quote.totalCost - totalPaid
-    });
-
-    // If full payment, trigger booking confirmation
-    if (newPaymentStatus === 'paid_in_full') {
-      console.log('🎯 [Confirm Payment] Full payment - triggering booking confirmation');
-      await triggerBookingConfirmation(quoteId, paymentId, quote);
-    } else {
-      console.log('📅 [Confirm Payment] Deposit payment - balance payment required');
-    }
+    // Initialize the Booking Workflow (Human in the Loop)
+    console.log('🎯 [Confirm Payment] Initializing booking workflow');
+    await initializeBookingWorkflow(quoteId, paymentId, quote, userId, paymentType, paymentAmount);
 
     console.log('✅ [Confirm Payment] Payment confirmed successfully');
 
@@ -242,8 +266,8 @@ export async function POST(request: NextRequest) {
       commissionId,
       status: 'completed',
       paymentStatus: newPaymentStatus,
-      totalPaid,
-      remainingBalance: quote.totalCost - totalPaid,
+      totalPaid: newTotalPaid,
+      remainingBalance: remainingBalance,
       receiptUrl,
     });
   } catch (error) {
@@ -257,51 +281,68 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Trigger booking confirmation process
- * This will:
- * 1. Auto-book API items
- * 2. Create tasks for agent to manually book offline items
- * 3. Create fund allocation
- * 4. Release agent commission
- * 5. Schedule supplier payments
+ * Initialize the booking workflow (Human in the Loop)
+ * This creates tasks for the agent to verify and execute bookings.
  */
-async function triggerBookingConfirmation(quoteId: string, paymentId: string, quote: TravelQuote) {
-  console.log(`🎯 [Booking] Triggering booking confirmation for quote: ${quoteId}, payment: ${paymentId}`);
+async function initializeBookingWorkflow(
+  quoteId: string, 
+  paymentId: string, 
+  quote: TravelQuote,
+  userId: string,
+  paymentType: PaymentType,
+  amount: number
+) {
+  console.log(`🚀 [Workflow] Initializing booking workflow for quote: ${quoteId}. Type: ${paymentType}`);
 
-  // Create fund allocation
+  // 1. Create fund allocation to track money split
   await createFundAllocation(quote, paymentId);
 
-  // Process hybrid booking (API auto-booking + manual task creation)
+  // 2. Create tasks for Agent to verify and execute booking
   try {
-    const bookingResult = await processHybridBooking(quote as any, paymentId);
+    const supabase = getSupabaseClient();
+    
+    for (const item of quote.items) {
+      const isAPI = ['api_hotelbeds', 'api_amadeus', 'api_sabre'].includes(item.supplierSource || '');
+      const isRefundable = item.cancellationPolicy?.nonRefundable === false;
+      
+      // Determine if this item is "safe" to book with the current funds
+      // For deposits, we only allow booking if it's refundable
+      const hasSufficientFunds = amount >= item.price;
+      const canProceed = hasSufficientFunds || (item.type === 'hotel' && isRefundable);
 
-    console.log('📊 [Booking] Hybrid booking processed:', {
-      success: bookingResult.success,
-      apiSuccess: bookingResult.summary.apiSuccess,
-      apiFailed: bookingResult.summary.apiFailed,
-      manualTasks: bookingResult.summary.manualTasks,
-    });
+      const title = `Execute ${item.type} booking: ${item.name}`;
+      const description = isAPI 
+        ? `Customer has paid ${paymentType.replace('_', ' ')}. ${canProceed ? 'Ready for agent verification and execution.' : 'WARNING: Insufficient funds for non-refundable item. Wait for full payment.'}`
+        : `Manual booking required for offline item. Check details and confirm with supplier.`;
 
-    // Update quote status based on booking results
-    if (bookingResult.summary.apiSuccess > 0 || bookingResult.summary.manualTasks > 0) {
-      // TODO: Refactor to use direct Supabase query instead of store
-      // const quoteStore = useQuoteStore.getState();
-      // quoteStore.updateQuote(quoteId, {
-      //   status: 'accepted', // Only use 'accepted' since 'confirmed' is not in the type
-      //   paymentStatus: 'paid_in_full',
-      // });
-      console.warn('Quote update temporarily disabled during migration to TanStack Query');
+      const { error: taskError } = await supabase.from('tasks').insert({
+        user_id: userId,
+        booking_id: null, // We link to quote instead
+        quote_id: quoteId,
+        title,
+        description,
+        status: 'pending',
+        priority: canProceed ? 'high' : 'medium',
+        attachments: {
+          quoteItemId: item.id,
+          executionType: isAPI ? 'api' : 'manual',
+          provider: item.supplierSource,
+          isReady: canProceed,
+          paymentType,
+          paidAmount: amount,
+          refundable: isRefundable
+        }
+      });
+
+      if (taskError) {
+        console.error(`❌ [Workflow] Failed to create task for ${item.name}:`, taskError);
+      }
     }
-
-    // TODO: Release commission to agent
-    // TODO: Schedule supplier payments
-
+    
+    console.log('✅ [Workflow] Booking execution tasks created for agent.');
   } catch (error) {
-    console.error('❌ [Booking] Hybrid booking failed:', error);
-    // Don't throw - payment already succeeded
+    console.error('❌ [Workflow] Failed to initialize booking workflow:', error);
   }
-
-  console.log('✅ [Booking] Booking confirmation triggered successfully');
 }
 
 /**

@@ -49,12 +49,12 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
   };
 
   return (
-    <div className="max-w-4xl mx-auto bg-white p-8 shadow-lg" id="invoice-template">
+    <div className="max-w-4xl mx-auto bg-white dark:bg-clio-gray-950 p-12 border border-clio-gray-100 dark:border-clio-gray-800 shadow-sm rounded-2xl" id="invoice-template">
       {/* Header */}
-      <div className="flex justify-between items-start mb-8">
+      <div className="flex justify-between items-start mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">{companyInfo.name}</h1>
-          <div className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">{companyInfo.name}</h1>
+          <div className="text-clio-gray-500 dark:text-clio-gray-400 mt-4 space-y-1 text-sm font-medium uppercase tracking-widest">
             <p>{companyInfo.address}</p>
             <p>{companyInfo.city}, {companyInfo.state} {companyInfo.zip}</p>
             <p>Phone: {companyInfo.phone}</p>
@@ -65,61 +65,61 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
         </div>
 
         <div className="text-right">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">INVOICE</h2>
-          <div className="text-gray-600">
-            <p><span className="font-semibold">Invoice #:</span> {invoice.invoiceNumber}</p>
-            <p><span className="font-semibold">Issue Date:</span> {formatDate(invoice.issueDate)}</p>
-            <p><span className="font-semibold">Due Date:</span> {formatDate(invoice.dueDate)}</p>
-            <p><span className="font-semibold">Status:</span>
-              <span className={`ml-1 px-2 py-1 rounded text-xs font-semibold ${
-                invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                invoice.status === 'sent' ? 'bg-blue-100 text-blue-800' :
-                invoice.status === 'overdue' ? 'bg-red-100 text-red-800' :
-                'bg-gray-100 text-gray-800'
+          <h2 className="text-4xl font-black text-clio-blue mb-6 tracking-tighter">INVOICE</h2>
+          <div className="space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400"><span className="text-clio-gray-900 dark:text-white">Invoice #:</span> {invoice.invoiceNumber}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400"><span className="text-clio-gray-900 dark:text-white">Issue Date:</span> {formatDate(invoice.issueDate)}</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400"><span className="text-clio-gray-900 dark:text-white">Due Date:</span> {formatDate(invoice.dueDate)}</p>
+            <div className="mt-4">
+              <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
+                invoice.status === 'paid' ? 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-400 border border-green-200 dark:border-green-900/30' :
+                invoice.status === 'sent' ? 'bg-clio-blue/10 dark:bg-clio-blue/20 text-clio-blue border border-clio-blue/20' :
+                invoice.status === 'overdue' ? 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-900/30' :
+                'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400'
               }`}>
-                {invoice.status.toUpperCase()}
+                {invoice.status}
               </span>
-            </p>
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bill To */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">Bill To:</h3>
-        <div className="text-gray-700">
-          <p className="font-semibold">{invoice.customerName}</p>
-          <p>{invoice.customerEmail}</p>
+      <div className="mb-12 bg-clio-gray-50 dark:bg-clio-gray-900/50 p-6 rounded-xl border border-clio-gray-100 dark:border-clio-gray-800">
+        <h3 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mb-4">Bill To:</h3>
+        <div className="text-clio-gray-900 dark:text-white space-y-1">
+          <p className="text-lg font-bold uppercase tracking-tight">{invoice.customerName}</p>
+          <p className="text-sm font-medium text-clio-gray-500 uppercase tracking-tight">{invoice.customerEmail}</p>
           {invoice.customerAddress && (
-            <>
+            <div className="text-sm font-medium text-clio-gray-500 uppercase tracking-tight mt-2">
               <p>{invoice.customerAddress.street}</p>
               <p>{invoice.customerAddress.city}, {invoice.customerAddress.state} {invoice.customerAddress.zip}</p>
               {invoice.customerAddress.country && <p>{invoice.customerAddress.country}</p>}
-            </>
+            </div>
           )}
         </div>
       </div>
 
       {/* Invoice Items Table */}
-      <div className="mb-8">
-        <table className="w-full border-collapse border border-gray-300">
+      <div className="mb-12 overflow-hidden rounded-xl border border-clio-gray-100 dark:border-clio-gray-800">
+        <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-50">
-              <th className="border border-gray-300 px-4 py-3 text-left font-semibold">Description</th>
-              <th className="border border-gray-300 px-4 py-3 text-center font-semibold">Qty</th>
-              <th className="border border-gray-300 px-4 py-3 text-right font-semibold">Unit Price</th>
-              <th className="border border-gray-300 px-4 py-3 text-right font-semibold">Amount</th>
+            <tr className="bg-clio-gray-50 dark:bg-clio-gray-900 border-b border-clio-gray-100 dark:border-clio-gray-800">
+              <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Description</th>
+              <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Qty</th>
+              <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Unit Price</th>
+              <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Amount</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-clio-gray-100 dark:divide-clio-gray-800">
             {invoice.items.map((item, index) => (
-              <tr key={item.id || index}>
-                <td className="border border-gray-300 px-4 py-3">
-                  <div className="font-medium">{item.description}</div>
+              <tr key={item.id || index} className="hover:bg-clio-gray-50 dark:hover:bg-clio-gray-900/50 transition-colors">
+                <td className="px-6 py-5">
+                  <div className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight text-sm">{item.description}</div>
                 </td>
-                <td className="border border-gray-300 px-4 py-3 text-center">{item.quantity}</td>
-                <td className="border border-gray-300 px-4 py-3 text-right">{formatCurrency(item.unitPrice)}</td>
-                <td className="border border-gray-300 px-4 py-3 text-right font-semibold">{formatCurrency(item.total)}</td>
+                <td className="px-6 py-5 text-center text-sm font-bold text-clio-gray-600 dark:text-clio-gray-400">{item.quantity}</td>
+                <td className="px-6 py-5 text-right text-sm font-medium text-clio-gray-600 dark:text-clio-gray-400">{formatCurrency(item.unitPrice)}</td>
+                <td className="px-6 py-5 text-right font-black text-clio-gray-900 dark:text-white text-sm">{formatCurrency(item.total)}</td>
               </tr>
             ))}
           </tbody>
@@ -127,93 +127,95 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
       </div>
 
       {/* Totals */}
-      <div className="flex justify-end mb-8">
-        <div className="w-80">
-          <div className="flex justify-between items-center py-2 border-b border-gray-200">
-            <span className="font-medium">Subtotal:</span>
-            <span>{formatCurrency(invoice.subtotal)}</span>
+      <div className="flex justify-end mb-12">
+        <div className="w-80 space-y-3">
+          <div className="flex justify-between items-center py-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Subtotal</span>
+            <span className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(invoice.subtotal)}</span>
           </div>
 
           {invoice.discountAmount && invoice.discountAmount > 0 && (
-            <div className="flex justify-between items-center py-2 border-b border-gray-200">
-              <span className="font-medium">Discount:</span>
-              <span>-{formatCurrency(invoice.discountAmount)}</span>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-green-600">Discount</span>
+              <span className="font-bold text-green-600">-{formatCurrency(invoice.discountAmount)}</span>
             </div>
           )}
 
           {invoice.taxRate > 0 && (
-            <div className="flex justify-between items-center py-2 border-b border-gray-200">
-              <span className="font-medium">Tax ({invoice.taxRate}%):</span>
-              <span>{formatCurrency(invoice.taxAmount)}</span>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Tax ({invoice.taxRate}%)</span>
+              <span className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(invoice.taxAmount)}</span>
             </div>
           )}
 
-          <div className="flex justify-between items-center py-3 border-b-2 border-gray-400 text-lg font-bold">
-            <span>Total:</span>
-            <span>{formatCurrency(invoice.total)}</span>
+          <div className="flex justify-between items-center py-4 border-t-2 border-clio-gray-900 dark:border-white">
+            <span className="text-xs font-black uppercase tracking-widest text-clio-gray-900 dark:text-white">Total Amount</span>
+            <span className="text-2xl font-black text-clio-blue">{formatCurrency(invoice.total)}</span>
           </div>
 
           {invoice.paidAmount > 0 && (
-            <>
-              <div className="flex justify-between items-center py-2 text-green-600">
-                <span className="font-medium">Amount Paid:</span>
-                <span>-{formatCurrency(invoice.paidAmount)}</span>
+            <div className="space-y-3 pt-2">
+              <div className="flex justify-between items-center py-2">
+                <span className="text-[10px] font-black uppercase tracking-widest text-green-600">Amount Paid</span>
+                <span className="font-bold text-green-600">-{formatCurrency(invoice.paidAmount)}</span>
               </div>
-              <div className="flex justify-between items-center py-2 border-t border-gray-200 text-lg font-bold">
-                <span>Balance Due:</span>
-                <span className={invoice.remainingAmount > 0 ? 'text-red-600' : 'text-green-600'}>
+              <div className="flex justify-between items-center py-4 bg-clio-gray-50 dark:bg-clio-gray-900 px-4 rounded-xl border border-clio-gray-100 dark:border-clio-gray-800">
+                <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-900 dark:text-white">Balance Due</span>
+                <span className={`text-xl font-black ${invoice.remainingAmount > 0 ? 'text-red-600' : 'text-green-600'}`}>
                   {formatCurrency(invoice.remainingAmount)}
                 </span>
               </div>
-            </>
+            </div>
           )}
         </div>
       </div>
 
       {/* Payment Information */}
       {invoice.payments && invoice.payments.length > 0 && (
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-3">Payment History:</h3>
-          <table className="w-full border-collapse border border-gray-300">
-            <thead>
-              <tr className="bg-gray-50">
-                <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Date</th>
-                <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Method</th>
-                <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Reference</th>
-                <th className="border border-gray-300 px-4 py-2 text-right font-semibold">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoice.payments.map((payment, index) => (
-                <tr key={payment.id || index}>
-                  <td className="border border-gray-300 px-4 py-2">
-                    {new Date(payment.processedDate).toLocaleDateString()}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2 capitalize">
-                    {payment.method.replace('_', ' ')}
-                  </td>
-                  <td className="border border-gray-300 px-4 py-2">{payment.transactionId || 'N/A'}</td>
-                  <td className="border border-gray-300 px-4 py-2 text-right">{formatCurrency(payment.amount)}</td>
+        <div className="mb-12">
+          <h3 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mb-4 ml-1">Payment History</h3>
+          <div className="overflow-hidden rounded-xl border border-clio-gray-100 dark:border-clio-gray-800">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-clio-gray-50 dark:bg-clio-gray-900">
+                  <th className="px-6 py-3 text-left text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Date</th>
+                  <th className="px-6 py-3 text-left text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Method</th>
+                  <th className="px-6 py-3 text-left text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Reference</th>
+                  <th className="px-6 py-3 text-right text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Amount</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-clio-gray-100 dark:divide-clio-gray-800">
+                {invoice.payments.map((payment, index) => (
+                  <tr key={payment.id || index}>
+                    <td className="px-6 py-4 text-sm font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
+                      {new Date(payment.processedDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-[10px] font-black text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest">
+                      {payment.method.replace('_', ' ')}
+                    </td>
+                    <td className="px-6 py-4 text-xs font-medium text-clio-gray-400">{payment.transactionId || 'N/A'}</td>
+                    <td className="px-6 py-4 text-right text-sm font-black text-green-600">{formatCurrency(payment.amount)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* Terms and Notes */}
-      <div className="border-t border-gray-200 pt-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="border-t border-clio-gray-100 dark:border-clio-gray-800 pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
           {invoice.terms && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Payment Terms:</h3>
-              <p className="text-gray-700 text-sm">{invoice.terms}</p>
+              <h3 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-900 dark:text-white mb-3">Payment Terms</h3>
+              <p className="text-sm font-medium text-clio-gray-500 uppercase tracking-tight leading-relaxed">{invoice.terms}</p>
             </div>
           )}
 
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Notes:</h3>
-            <p className="text-gray-700 text-sm">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-900 dark:text-white mb-3">Notes</h3>
+            <p className="text-sm font-medium text-clio-gray-500 uppercase tracking-tight leading-relaxed">
               Thank you for your business! Please remit payment by the due date to avoid late fees.
               For questions about this invoice, please contact us at {companyInfo.email} or {companyInfo.phone}.
             </p>
@@ -222,19 +224,19 @@ export const InvoiceTemplate: React.FC<InvoiceTemplateProps> = ({
       </div>
 
       {/* Footer - GAAP Compliance */}
-      <div className="mt-8 pt-4 border-t border-gray-200 text-xs text-gray-500">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <p><strong>Accounting Basis:</strong> Accrual Method</p>
-            <p><strong>Revenue Recognition:</strong> GAAP ASC 606</p>
+      <div className="mt-12 pt-8 border-t border-clio-gray-100 dark:border-clio-gray-800">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-1">
+            <p className="text-[8px] font-black uppercase tracking-widest text-clio-gray-400"><strong className="text-clio-gray-600 dark:text-clio-gray-300">Accounting Basis:</strong> Accrual Method</p>
+            <p className="text-[8px] font-black uppercase tracking-widest text-clio-gray-400"><strong className="text-clio-gray-600 dark:text-clio-gray-300">Revenue Recognition:</strong> GAAP ASC 606</p>
           </div>
-          <div>
-            <p><strong>Document Type:</strong> Commercial Invoice</p>
-            <p><strong>Currency:</strong> USD</p>
+          <div className="space-y-1">
+            <p className="text-[8px] font-black uppercase tracking-widest text-clio-gray-400"><strong className="text-clio-gray-600 dark:text-clio-gray-300">Document Type:</strong> Commercial Invoice</p>
+            <p className="text-[8px] font-black uppercase tracking-widest text-clio-gray-400"><strong className="text-clio-gray-600 dark:text-clio-gray-300">Currency:</strong> USD</p>
           </div>
-          <div>
-            <p><strong>Generated:</strong> {new Date().toLocaleDateString()}</p>
-            {companyInfo.taxId && <p><strong>Tax ID:</strong> {companyInfo.taxId}</p>}
+          <div className="space-y-1 md:text-right">
+            <p className="text-[8px] font-black uppercase tracking-widest text-clio-gray-400"><strong className="text-clio-gray-600 dark:text-clio-gray-300">Generated:</strong> {new Date().toLocaleDateString()}</p>
+            {companyInfo.taxId && <p className="text-[8px] font-black uppercase tracking-widest text-clio-gray-400"><strong className="text-clio-gray-600 dark:text-clio-gray-300">Tax ID:</strong> {companyInfo.taxId}</p>}
           </div>
         </div>
       </div>

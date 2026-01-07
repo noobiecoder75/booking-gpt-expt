@@ -129,47 +129,52 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-4xl shadow-xl max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 bg-clio-navy/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-clio-gray-950 rounded-2xl w-full max-w-4xl shadow-strong max-h-[90vh] overflow-hidden flex flex-col border border-clio-gray-200 dark:border-clio-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center gap-3">
-            <MapPin className="w-6 h-6 text-orange-600" />
-            <h3 className="text-xl font-semibold text-gray-900">Add Activity</h3>
+        <div className="flex items-center justify-between p-8 border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-white dark:bg-clio-gray-900 rounded-xl flex items-center justify-center shadow-sm">
+              <MapPin className="w-6 h-6 text-clio-blue" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Add Activity</h3>
+              <p className="text-[10px] font-black text-clio-gray-400 uppercase tracking-widest">Configure tour or excursion details</p>
+            </div>
           </div>
-          <button onClick={onCancel} className="text-gray-400 hover:text-gray-600">
+          <button onClick={onCancel} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 transition-colors text-clio-gray-400">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-200 px-6">
+        <div className="flex border-b border-clio-gray-100 dark:border-clio-gray-800 px-8 bg-white dark:bg-clio-gray-950">
           <button
             onClick={() => setActiveTab('offline')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${
               activeTab === 'offline'
-                ? 'border-orange-600 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-clio-blue text-clio-blue'
+                : 'border-transparent text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200'
             }`}
           >
             Offline Rates ({activityRatesInDateRange.length})
           </button>
           <button
             onClick={() => setActiveTab('manual')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${
               activeTab === 'manual'
-                ? 'border-orange-600 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-clio-blue text-clio-blue'
+                : 'border-transparent text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200'
             }`}
           >
             Manual Entry
           </button>
           <button
             onClick={() => setActiveTab('api')}
-            className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+            className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest border-b-2 transition-all ${
               activeTab === 'api'
-                ? 'border-orange-600 text-orange-600'
-                : 'border-transparent text-gray-500 hover:text-gray-700'
+                ? 'border-clio-blue text-clio-blue'
+                : 'border-transparent text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200'
             }`}
           >
             API Search
@@ -177,69 +182,70 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
         </div>
 
         {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-8 bg-white dark:bg-clio-gray-950">
           {/* Tab 1: Offline Rates */}
           {activeTab === 'offline' && (
-            <div className="space-y-4">
+            <div className="space-y-8">
               {/* Search Bar */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-clio-gray-400" />
                 <input
                   type="text"
                   placeholder="Search by activity name, location, or category..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-3.5 bg-clio-gray-50 dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-[10px]"
                 />
               </div>
 
               {/* Results */}
               {filteredRates.length === 0 ? (
-                <div className="text-center py-12">
-                  <MapPin className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">
-                    {searchQuery ? 'No activities found' : 'No offline activity rates uploaded'}
-                  </p>
-                  <p className="text-sm text-gray-400 mt-1">
+                <div className="text-center py-16 bg-clio-gray-50 dark:bg-clio-gray-900/50 rounded-2xl border-2 border-dashed border-clio-gray-200 dark:border-clio-gray-800">
+                  <div className="w-16 h-16 bg-white dark:bg-clio-gray-800 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-6">
+                    <MapPin className="w-8 h-8 text-clio-gray-300 dark:text-clio-gray-600" />
+                  </div>
+                  <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight mb-2">No activities found</h3>
+                  <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest max-w-xs mx-auto">
                     Try adjusting your search or switch to Manual Entry
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-1 gap-4 max-h-[400px] overflow-y-auto pr-2">
                   {filteredRates.map((rate) => (
                     <button
                       key={rate.id}
                       onClick={() => handleSelectRate(rate)}
-                      className="text-left p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors"
+                      className="text-left p-6 bg-white dark:bg-clio-gray-900 border border-clio-gray-100 dark:border-clio-gray-800 rounded-2xl hover:border-clio-blue hover:shadow-lg transition-all group"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <div className="font-semibold text-gray-900">{rate.activityName}</div>
-                          <div className="text-sm text-gray-600 mt-1">
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" />
-                              {rate.location}
-                            </span>
+                          <div className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight text-lg group-hover:text-clio-blue transition-colors">{rate.activityName}</div>
+                          <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-clio-blue mt-1">
+                            <MapPin className="w-3.5 h-3.5" />
+                            {rate.location}
                           </div>
-                          {rate.category && (
-                            <div className="text-xs text-gray-500 mt-1">
-                              Category: {rate.category}
-                            </div>
-                          )}
-                          {rate.duration && (
-                            <div className="text-xs text-gray-500">
-                              Duration: {rate.duration} hours
-                            </div>
-                          )}
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="flex items-center gap-3 mt-4">
+                            {rate.category && (
+                              <div className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 bg-clio-gray-50 dark:bg-clio-gray-800 px-2 py-1 rounded">
+                                Category: {rate.category}
+                              </div>
+                            )}
+                            {rate.duration && (
+                              <div className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 bg-clio-gray-50 dark:bg-clio-gray-800 px-2 py-1 rounded">
+                                Duration: {rate.duration} hours
+                              </div>
+                            )}
+                          </div>
+                          <div className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-tight mt-4">
                             Supplier: {rate.supplier}
                           </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-bold text-gray-900">
-                            {rate.currency} {rate.rate.toFixed(2)}
+                        <div className="text-right flex flex-col items-end">
+                          <div className="bg-clio-blue/5 dark:bg-clio-blue/10 px-4 py-2.5 rounded-xl border border-clio-blue/10 group-hover:bg-clio-blue group-hover:text-white transition-all">
+                            <div className="text-[10px] font-black uppercase tracking-widest opacity-70">Quote Price</div>
+                            <div className="text-2xl font-black">{rate.currency} {rate.rate.toFixed(2)}</div>
                           </div>
-                          <div className="text-xs text-green-600">
+                          <div className="mt-2 text-[10px] font-bold text-green-600 uppercase tracking-tight">
                             {rate.commissionPercent}% commission
                           </div>
                         </div>
@@ -253,42 +259,45 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
 
           {/* Tab 2: Manual Entry */}
           {activeTab === 'manual' && (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="name">Activity Name *</Label>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Activity Name *</Label>
                   <Input
                     id="name"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="e.g., City Walking Tour"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="location">Location *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="location" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Location *</Label>
                   <Input
                     id="location"
                     required
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     placeholder="e.g., Paris, France"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="category">Category</Label>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="category" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Category</Label>
                   <Input
                     id="category"
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                     placeholder="e.g., Sightseeing, Adventure"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="duration">Duration (hours)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="duration" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Duration (hours)</Label>
                   <Input
                     id="duration"
                     type="number"
@@ -296,35 +305,38 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
                     placeholder="e.g., 3.5"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="startDate">Date *</Label>
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="startDate" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Date *</Label>
                   <Input
                     id="startDate"
                     type="date"
                     required
                     value={formData.startDate}
                     onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="endDate">End Date (Optional)</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="endDate" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">End Date (Optional)</Label>
                   <Input
                     id="endDate"
                     type="date"
                     value={formData.endDate}
                     onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label htmlFor="price">Price *</Label>
+              <div className="grid grid-cols-3 gap-8">
+                <div className="space-y-2">
+                  <Label htmlFor="price" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Price *</Label>
                   <Input
                     id="price"
                     type="number"
@@ -333,10 +345,11 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     placeholder="0.00"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="quantity">Quantity *</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="quantity" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Quantity *</Label>
                   <Input
                     id="quantity"
                     type="number"
@@ -344,10 +357,11 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
                     required
                     value={formData.quantity}
                     onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="commission">Commission %</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="commission" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Commission %</Label>
                   <Input
                     id="commission"
                     type="number"
@@ -355,49 +369,63 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
                     value={formData.commissionPercent}
                     onChange={(e) => setFormData({ ...formData, commissionPercent: e.target.value })}
                     placeholder="10"
+                    className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                   />
                 </div>
               </div>
 
-              <div>
-                <Label htmlFor="supplier">Supplier</Label>
+              <div className="space-y-2">
+                <Label htmlFor="supplier" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Supplier</Label>
                 <Input
                   id="supplier"
                   value={formData.supplier}
                   onChange={(e) => setFormData({ ...formData, supplier: e.target.value })}
                   placeholder="Tour operator or supplier name"
+                  className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t">
-                <Button type="button" variant="outline" onClick={onCancel}>
-                  Cancel
-                </Button>
-                <Button type="submit" className="bg-orange-600 hover:bg-orange-700">
+              <div className="flex items-center justify-between pt-8 border-t border-clio-gray-100 dark:border-clio-gray-800">
+                <button 
+                  type="button" 
+                  onClick={onCancel}
+                  className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white transition-colors"
+                >
+                  Cancel Entry
+                </button>
+                <Button 
+                  type="submit" 
+                  className="bg-clio-blue hover:bg-clio-blue/90 text-white font-black uppercase tracking-widest h-12 px-8 rounded-xl shadow-lg shadow-clio-blue/20"
+                >
                   Add Activity
                 </Button>
               </div>
             </form>
           )}
 
-          {/* Tab 3: API Search (Placeholder) */}
+          {/* Tab 3: API Search */}
           {activeTab === 'api' && (
-            <div className="text-center py-12">
-              <Search className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">API Search Coming Soon</h4>
-              <p className="text-gray-600 max-w-md mx-auto">
-                Search external activity APIs like Viator, GetYourGuide, and more to find and book activities in real-time.
-              </p>
-              <div className="mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => setActiveTab('manual')}
-                >
-                  Use Manual Entry Instead
-                </Button>
+            <div className="text-center py-24 bg-clio-gray-50 dark:bg-clio-gray-900/50 rounded-2xl border-2 border-dashed border-clio-gray-200 dark:border-clio-gray-800">
+              <div className="w-20 h-20 bg-white dark:bg-clio-gray-800 rounded-2xl flex items-center justify-center shadow-sm mx-auto mb-6">
+                <Search className="w-10 h-10 text-clio-gray-300 dark:text-clio-gray-600" />
               </div>
+              <h4 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight mb-2">API Search Coming Soon</h4>
+              <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-widest max-w-md mx-auto mb-8">
+                Search external activity APIs like Viator and GetYourGuide to find and book activities in real-time.
+              </p>
+              <Button
+                variant="outline"
+                onClick={() => setActiveTab('manual')}
+                className="border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-11 px-8"
+              >
+                Use Manual Entry Instead
+              </Button>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
         </div>
       </div>
     </div>

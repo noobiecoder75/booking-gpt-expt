@@ -16,10 +16,10 @@ function QuoteWizardContent() {
       <MainLayout>
         <div className="container mx-auto px-4 py-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white mb-3 uppercase tracking-tight">
               {editQuoteId ? 'Edit Travel Quote' : 'Create Travel Quote'}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
               {editQuoteId
                 ? 'Update your travel quote with the latest details and pricing'
                 : 'Step-by-step intelligent wizard to create comprehensive travel quotes'

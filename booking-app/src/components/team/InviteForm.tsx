@@ -61,13 +61,13 @@ export function InviteTeamMemberForm({ onClose, onSuccess }: InviteTeamMemberFor
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-md">
+    <div className="fixed inset-0 bg-clio-navy/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+      <div className="bg-white dark:bg-clio-gray-900 rounded-2xl w-full max-w-md border border-clio-gray-200 dark:border-clio-gray-800 shadow-strong overflow-hidden animate-in zoom-in-95 duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">Invite Team Member</h2>
-          <Button variant="ghost" size="sm" onClick={onClose} disabled={loading}>
-            <X className="w-4 h-4" />
+        <div className="flex items-center justify-between p-6 border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/50 dark:bg-clio-gray-800/20">
+          <h2 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Invite Team Member</h2>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200" onClick={onClose} disabled={loading}>
+            <X className="w-5 h-5" />
           </Button>
         </div>
 
@@ -75,19 +75,21 @@ export function InviteTeamMemberForm({ onClose, onSuccess }: InviteTeamMemberFor
         <form onSubmit={handleInvite} className="p-6 space-y-6">
           {/* Error Message */}
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{error}</p>
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/30 rounded-xl">
+              <p className="text-sm font-medium text-red-600 dark:text-red-400">{error}</p>
             </div>
           )}
 
           {/* Invite Link Display */}
           {inviteLink && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-md space-y-3">
+            <div className="p-5 bg-green-50/50 dark:bg-green-950/20 border border-green-100 dark:border-green-900/30 rounded-2xl space-y-4">
               <div className="flex items-start">
-                <Mail className="w-5 h-5 text-green-600 mr-2 mt-0.5" />
+                <div className="p-2 bg-white dark:bg-clio-gray-950 rounded-lg shadow-sm mr-3">
+                  <Mail className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
                 <div>
-                  <p className="text-sm font-medium text-green-800">Invite Link Generated</p>
-                  <p className="text-sm text-green-600 mt-1">
+                  <p className="text-sm font-bold text-green-900 dark:text-green-400 uppercase tracking-tight">Invite Link Generated</p>
+                  <p className="text-sm font-medium text-green-700 dark:text-green-400/80 mt-0.5">
                     Share this link with {email} to join your team.
                   </p>
                 </div>
@@ -97,24 +99,25 @@ export function InviteTeamMemberForm({ onClose, onSuccess }: InviteTeamMemberFor
                 <Input
                   value={inviteLink}
                   readOnly
-                  className="text-sm font-mono bg-white"
+                  className="text-xs font-mono bg-white dark:bg-clio-gray-950 border-green-200 dark:border-green-900/50"
                 />
                 <Button
                   type="button"
                   variant="outline"
-                  size="sm"
+                  size="icon"
+                  className="h-10 w-10 shrink-0 border-green-200 dark:border-green-900/50 hover:bg-green-100 dark:hover:bg-green-900/30"
                   onClick={copyToClipboard}
                 >
                   {copied ? (
-                    <Check className="w-4 h-4 text-green-600" />
+                    <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
                   ) : (
-                    <Copy className="w-4 h-4" />
+                    <Copy className="w-4 h-4 text-green-600 dark:text-green-400" />
                   )}
                 </Button>
               </div>
 
-              <p className="text-xs text-gray-600">
-                Note: In production, this would be sent via email automatically.
+              <p className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-widest text-center">
+                In production, this would be sent via email automatically.
               </p>
             </div>
           )}
@@ -122,7 +125,7 @@ export function InviteTeamMemberForm({ onClose, onSuccess }: InviteTeamMemberFor
           {!inviteLink && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address *</Label>
+                <Label htmlFor="email" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-widest ml-1">Email Address *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -131,36 +134,37 @@ export function InviteTeamMemberForm({ onClose, onSuccess }: InviteTeamMemberFor
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={loading}
                   required
+                  className="h-12 rounded-xl"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="role">Role</Label>
+                <Label htmlFor="role" className="text-[10px] font-bold text-clio-gray-500 uppercase tracking-widest ml-1">Role & Permissions</Label>
                 <select
                   id="role"
                   value={role}
                   onChange={(e) => setRole(e.target.value as 'admin' | 'agent' | 'client')}
-                  className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full h-12 px-4 bg-clio-gray-50 dark:bg-clio-gray-950 border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl text-clio-gray-900 dark:text-white focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-xs"
                   disabled={loading}
                 >
-                  <option value="agent">Agent - Can manage their own contacts</option>
-                  <option value="admin">Admin - Full access to everything</option>
-                  <option value="client">Client - Limited read-only access</option>
+                  <option value="agent">Agent - Team Member Access</option>
+                  <option value="admin">Admin - Full Workspace Access</option>
+                  <option value="client">Client - Limited Portal Access</option>
                 </select>
-                <p className="text-xs text-gray-600">
-                  You can change this later from the team management page.
+                <p className="text-[10px] font-medium text-clio-gray-400 uppercase tracking-tight ml-1">
+                  You can change permissions anytime from settings.
                 </p>
               </div>
             </>
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
+          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-clio-gray-100 dark:border-clio-gray-800">
+            <Button type="button" variant="ghost" className="font-bold uppercase tracking-tight text-xs h-11 px-6" onClick={onClose} disabled={loading}>
               {inviteLink ? 'Close' : 'Cancel'}
             </Button>
             {!inviteLink && (
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" className="font-bold uppercase tracking-tight text-xs h-11 px-8 rounded-xl shadow-lg shadow-clio-blue/20" disabled={loading}>
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -174,6 +178,7 @@ export function InviteTeamMemberForm({ onClose, onSuccess }: InviteTeamMemberFor
             {inviteLink && (
               <Button
                 type="button"
+                className="font-bold uppercase tracking-tight text-xs h-11 px-10 rounded-xl"
                 onClick={() => {
                   onSuccess();
                   onClose();

@@ -289,14 +289,23 @@ export function TimelineCalendar({
   };
 
   return (
-    <div className="p-4">
+    <div className="p-0">
       {events.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <Filter className="w-16 h-16 text-gray-300 mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No items match your filters</h3>
-          <p className="text-gray-600 mb-4">
-            Try adjusting your filters to see more travel items
+        <div className="flex flex-col items-center justify-center py-24 text-center bg-clio-gray-50 dark:bg-clio-gray-900/50 rounded-2xl border-2 border-dashed border-clio-gray-200 dark:border-clio-gray-800">
+          <div className="p-4 bg-white dark:bg-clio-gray-800 rounded-2xl shadow-sm mb-6">
+            <Filter className="w-12 h-12 text-clio-gray-300 dark:text-clio-gray-600" />
+          </div>
+          <h3 className="text-xl font-black text-clio-gray-900 dark:text-white mb-2 uppercase tracking-tight">No items found</h3>
+          <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium max-w-xs mx-auto mb-8">
+            We couldn't find any travel items matching your current filter criteria.
           </p>
+          <Button 
+            variant="outline" 
+            onClick={() => window.location.reload()}
+            className="border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-11 px-8"
+          >
+            Reset Filters
+          </Button>
         </div>
       ) : (
         <BigCalendar
@@ -318,7 +327,7 @@ export function TimelineCalendar({
           step={60}
           showMultiDayTimes
           defaultView="week"
-          className="bg-white dark:bg-clio-gray-900 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800"
+          className="bg-white dark:bg-clio-gray-950 rounded-2xl"
         />
       )}
     </div>

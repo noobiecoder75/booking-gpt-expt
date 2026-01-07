@@ -56,16 +56,16 @@ export function InvoiceList() {
 
   const getStatusBadge = (status: InvoiceStatus) => {
     const variants: Record<InvoiceStatus, string> = {
-      draft: 'bg-gray-100 text-gray-800',
-      sent: 'bg-blue-100 text-blue-800',
-      paid: 'bg-green-100 text-green-800',
-      overdue: 'bg-red-100 text-red-800',
-      cancelled: 'bg-gray-100 text-gray-800',
-      partial: 'bg-yellow-100 text-yellow-800',
+      draft: 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400',
+      sent: 'bg-clio-blue/10 dark:bg-clio-blue/20 text-clio-blue',
+      paid: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-400',
+      overdue: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-400',
+      cancelled: 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400',
+      partial: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400',
     };
 
     return (
-      <Badge className={variants[status]}>
+      <Badge className={`${variants[status]} border-none shadow-none text-[10px] font-bold uppercase tracking-tight`}>
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
@@ -75,12 +75,12 @@ export function InvoiceList() {
     <div className="space-y-4">
       <div className="flex items-center gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-clio-gray-400" />
           <Input
             placeholder="Search invoices by number, customer..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8"
+            className="pl-10"
           />
         </div>
         <Select value={statusFilter} onValueChange={(value) => setStatusFilter(value as any)}>
@@ -100,53 +100,56 @@ export function InvoiceList() {
       </div>
 
       {filteredInvoices.length === 0 ? (
-        <div className="text-center py-12 text-muted-foreground">
-          <FileText className="mx-auto h-12 w-12 mb-4 opacity-50" />
-          <p>No invoices found</p>
+        <div className="text-center py-16">
+          <div className="w-16 h-16 bg-clio-gray-50 dark:bg-clio-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FileText className="h-8 w-8 text-clio-gray-400" />
+          </div>
+          <p className="text-lg font-bold text-clio-gray-900 dark:text-white">No invoices found</p>
+          <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">Try adjusting your filters</p>
         </div>
       ) : (
-        <div className="border rounded-lg">
+        <div className="border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl overflow-hidden bg-white dark:bg-clio-gray-950">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Invoice #</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Issue Date</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="text-right">Paid</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+              <TableRow className="hover:bg-transparent border-b border-clio-gray-200 dark:border-clio-gray-800">
+                <TableHead className="text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Invoice #</TableHead>
+                <TableHead className="text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Customer</TableHead>
+                <TableHead className="text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Issue Date</TableHead>
+                <TableHead className="text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Due Date</TableHead>
+                <TableHead className="text-right text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Amount</TableHead>
+                <TableHead className="text-right text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Paid</TableHead>
+                <TableHead className="text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Status</TableHead>
+                <TableHead className="text-right text-[10px] font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredInvoices.map((invoice) => (
-                <TableRow key={invoice.id}>
-                  <TableCell className="font-medium">{invoice.invoiceNumber}</TableCell>
+                <TableRow key={invoice.id} className="hover:bg-clio-gray-50 dark:hover:bg-clio-gray-900/50 transition-colors border-b border-clio-gray-100 dark:border-clio-gray-800 last:border-0">
+                  <TableCell className="font-bold text-clio-gray-900 dark:text-white">{invoice.invoiceNumber}</TableCell>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{invoice.customerName}</div>
-                      <div className="text-sm text-muted-foreground">{invoice.customerEmail}</div>
+                      <div className="font-bold text-clio-gray-900 dark:text-white">{invoice.customerName}</div>
+                      <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">{invoice.customerEmail}</div>
                     </div>
                   </TableCell>
-                  <TableCell>{new Date(invoice.issueDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right font-medium">
+                  <TableCell className="font-medium text-clio-gray-600 dark:text-clio-gray-400">{new Date(invoice.issueDate).toLocaleDateString()}</TableCell>
+                  <TableCell className="font-medium text-clio-gray-600 dark:text-clio-gray-400">{new Date(invoice.dueDate).toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right font-bold text-clio-gray-900 dark:text-white">
                     ${invoice.total.toFixed(2)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right font-medium text-clio-gray-600 dark:text-clio-gray-400">
                     ${invoice.paidAmount.toFixed(2)}
                   </TableCell>
                   <TableCell>{getStatusBadge(invoice.status)}</TableCell>
                   <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" title="View Invoice">
+                    <div className="flex items-center justify-end gap-1">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-clio-gray-400 hover:text-clio-blue hover:bg-clio-blue/10" title="View Invoice">
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" title="Download PDF">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-clio-gray-400 hover:text-clio-blue hover:bg-clio-blue/10" title="Download PDF">
                         <Download className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" title="Send Email">
+                      <Button variant="ghost" size="icon" className="h-8 w-8 text-clio-gray-400 hover:text-clio-blue hover:bg-clio-blue/10" title="Send Email">
                         <Mail className="h-4 w-4" />
                       </Button>
                     </div>

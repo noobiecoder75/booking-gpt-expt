@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { X, Filter } from 'lucide-react';
-import { getContactDisplayName } from '@/lib/utils';
+import { getContactDisplayName, cn } from '@/lib/utils';
 
 interface TimelineFiltersProps {
   selectedContactId: string | null;
@@ -63,37 +63,41 @@ export function TimelineFilters({
   };
 
   return (
-    <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm mb-6">
+    <div className="bg-white dark:bg-clio-gray-900 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-md mb-8 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-clio-gray-100 dark:border-clio-gray-800">
-        <div className="flex items-center space-x-3">
-          <Filter className="w-5 h-5 text-clio-blue" />
-          <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white">Filters</h3>
-          {hasActiveFilters && (
-            <span className="px-2 py-0.5 bg-clio-blue/10 text-clio-blue text-[10px] font-bold uppercase tracking-tight rounded-full">
-              {[selectedContactId ? 1 : 0, 4 - selectedStatuses.length].filter(n => n > 0).reduce((a, b) => a + b, 0)} active
-            </span>
-          )}
-          {itemCount !== undefined && (
-            <span className="text-xs font-bold uppercase tracking-tight text-clio-gray-500 dark:text-clio-gray-400">
-              • {itemCount} {itemCount === 1 ? 'item' : 'items'}
-            </span>
-          )}
+      <div className="flex items-center justify-between p-6 border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/50 dark:bg-clio-gray-800/20">
+        <div className="flex items-center space-x-4">
+          <div className="p-2 bg-clio-blue/10 rounded-lg">
+            <Filter className="w-5 h-5 text-clio-blue" />
+          </div>
+          <h3 className="text-xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">Timeline Filters</h3>
+          <div className="flex items-center gap-2">
+            {hasActiveFilters && (
+              <span className="px-3 py-1 bg-clio-blue text-white text-[10px] font-black uppercase tracking-widest rounded-full shadow-sm shadow-clio-blue/20">
+                {[selectedContactId ? 1 : 0, 4 - selectedStatuses.length].filter(n => n > 0).reduce((a, b) => a + b, 0)} active
+              </span>
+            )}
+            {itemCount !== undefined && (
+              <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400">
+                {itemCount} {itemCount === 1 ? 'item' : 'items'} showing
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-3">
           {hasActiveFilters && (
             <Button
               variant="ghost"
               size="sm"
               onClick={onClearFilters}
-              className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+              className="text-xs font-bold uppercase tracking-tight text-clio-gray-500 hover:text-red-500 h-9"
             >
-              Clear All
+              Reset All
             </Button>
           )}
           <button
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white dark:bg-clio-gray-800 border border-clio-gray-100 dark:border-clio-gray-700 text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white transition-all shadow-sm"
           >
             {isExpanded ? '▼' : '▶'}
           </button>
@@ -102,108 +106,96 @@ export function TimelineFilters({
 
       {/* Filter Content */}
       {isExpanded && (
-        <div className="p-4 space-y-6">
-          {/* Client Filter */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Client</Label>
-            <Select
-              value={selectedContactId || 'all'}
-              onValueChange={(value) => onContactChange(value === 'all' ? null : value)}
-            >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="All Clients" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">
-                  <span className="font-medium">All Clients</span>
-                </SelectItem>
-                {contacts
-                  .sort((a, b) =>
-                    getContactDisplayName(a.firstName, a.lastName)
-                      .localeCompare(getContactDisplayName(b.firstName, b.lastName))
-                  )
-                  .map((contact) => (
-                    <SelectItem key={contact.id} value={contact.id}>
-                      <div className="flex flex-col">
-                        <span className="font-medium">
-                          {getContactDisplayName(contact.firstName, contact.lastName)}
-                        </span>
-                        <span className="text-xs text-gray-500">{contact.email}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Status Filter */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="text-sm font-medium text-gray-700 dark:text-gray-300">Quote Status</Label>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleSelectAllStatuses}
-                className="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 h-auto p-1"
-              >
-                {selectedStatuses.length === 4 ? 'Deselect All' : 'Select All'}
-              </Button>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {QUOTE_STATUSES.map((status) => (
-                <div
-                  key={status.value}
-                  className="flex items-center space-x-2 p-3 rounded-xl hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 cursor-pointer border border-transparent hover:border-clio-gray-100 dark:hover:border-clio-gray-800 transition-all"
-                  onClick={() => handleStatusToggle(status.value)}
-                >
-                  <Checkbox
-                    id={`status-${status.value}`}
-                    checked={selectedStatuses.includes(status.value)}
-                    onCheckedChange={() => handleStatusToggle(status.value)}
-                  />
-                  <Label
-                    htmlFor={`status-${status.value}`}
-                    className="flex-1 cursor-pointer"
-                  >
-                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-tight ${status.color.replace('text-', 'dark:text-').replace('bg-', 'bg-').replace('100', '100 dark:bg-opacity-20')}`}>
-                      {status.label}
-                    </span>
-                  </Label>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Active Filters Display */}
-          {hasActiveFilters && (
-            <div className="pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
-              <div className="flex items-center space-x-2 flex-wrap gap-2">
-                <span className="text-xs font-bold uppercase tracking-tight text-clio-gray-500 dark:text-clio-gray-400">Active:</span>
-                {selectedContact && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-clio-blue/10 text-clio-blue rounded-md text-xs font-bold">
-                    <span>{getContactDisplayName(selectedContact.firstName, selectedContact.lastName)}</span>
-                    <button
-                      onClick={() => onContactChange(null)}
-                      className="hover:text-clio-navy dark:hover:text-blue-100"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
-                )}
-                {selectedStatuses.length < 4 && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md text-xs font-bold">
-                    <span>{selectedStatuses.length} {selectedStatuses.length === 1 ? 'status' : 'statuses'}</span>
-                    <button
-                      onClick={() => onStatusChange(['draft', 'sent', 'accepted', 'rejected'])}
-                      className="hover:text-purple-900 dark:hover:text-purple-100"
-                    >
-                      <X className="w-3 h-3" />
-                    </button>
-                  </div>
+        <div className="p-8 space-y-8 animate-in slide-in-from-top-2 duration-200">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            {/* Client Filter */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-black uppercase tracking-widest text-clio-gray-500">Client Account</Label>
+                {selectedContactId && (
+                  <button onClick={() => onContactChange(null)} className="text-[10px] font-bold text-clio-blue hover:underline uppercase tracking-tight">Clear selection</button>
                 )}
               </div>
+              <Select
+                value={selectedContactId || 'all'}
+                onValueChange={(value) => onContactChange(value === 'all' ? null : value)}
+              >
+                <SelectTrigger className="w-full h-12 bg-clio-gray-50 dark:bg-clio-gray-950 font-bold border-clio-gray-200 dark:border-clio-gray-800">
+                  <SelectValue placeholder="All Clients" />
+                </SelectTrigger>
+                <SelectContent className="bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
+                  <SelectItem value="all">
+                    <span className="font-bold">All Clients</span>
+                  </SelectItem>
+                  {contacts
+                    .sort((a, b) =>
+                      getContactDisplayName(a.firstName, a.lastName)
+                        .localeCompare(getContactDisplayName(b.firstName, b.lastName))
+                    )
+                    .map((contact) => (
+                      <SelectItem key={contact.id} value={contact.id}>
+                        <div className="flex flex-col py-1">
+                          <span className="font-bold text-clio-gray-900 dark:text-white">
+                            {getContactDisplayName(contact.firstName, contact.lastName)}
+                          </span>
+                          <span className="text-[10px] font-medium text-clio-gray-400">{contact.email}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
-          )}
+
+            {/* Status Filter */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs font-black uppercase tracking-widest text-clio-gray-500">Filter by Status</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSelectAllStatuses}
+                  className="text-[10px] font-black uppercase tracking-widest text-clio-blue hover:bg-clio-blue/10 h-7 px-3 rounded-full"
+                >
+                  {selectedStatuses.length === 4 ? 'Deselect All' : 'Select All'}
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {QUOTE_STATUSES.map((status) => (
+                  <div
+                    key={status.value}
+                    className={cn(
+                      "flex items-center space-x-3 p-4 rounded-xl cursor-pointer border transition-all duration-200",
+                      selectedStatuses.includes(status.value)
+                        ? "bg-white dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 shadow-sm"
+                        : "bg-clio-gray-50 dark:bg-clio-gray-900/50 border-transparent opacity-60 hover:opacity-100"
+                    )}
+                    onClick={() => handleStatusToggle(status.value)}
+                  >
+                    <Checkbox
+                      id={`status-${status.value}`}
+                      checked={selectedStatuses.includes(status.value)}
+                      onCheckedChange={() => handleStatusToggle(status.value)}
+                      className="border-clio-gray-300 dark:border-clio-gray-700 data-[state=checked]:bg-clio-blue"
+                    />
+                    <Label
+                      htmlFor={`status-${status.value}`}
+                      className="flex-1 cursor-pointer font-bold uppercase tracking-widest text-[10px]"
+                    >
+                      <span className={cn(
+                        "px-2 py-1 rounded-lg",
+                        status.value === 'draft' && "bg-clio-gray-100 text-clio-gray-600 dark:bg-clio-gray-800 dark:text-clio-gray-400",
+                        status.value === 'sent' && "bg-clio-blue/10 text-clio-blue",
+                        status.value === 'accepted' && "bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400",
+                        status.value === 'rejected' && "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400"
+                      )}>
+                        {status.label}
+                      </span>
+                    </Label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

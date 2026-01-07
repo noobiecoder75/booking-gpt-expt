@@ -94,98 +94,104 @@ export function QuoteDetails({ contact, quote, onComplete, isSubmitting = false 
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <h2 className="text-2xl font-black text-clio-gray-900 dark:text-white mb-2 uppercase tracking-tight">
           Quote Details
         </h2>
-        <p className="text-gray-600">
-          Creating quote for {getContactDisplayName(contact.firstName, contact.lastName)}
+        <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+          Creating quote for <span className="text-clio-blue font-bold">{getContactDisplayName(contact.firstName, contact.lastName)}</span>
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Title */}
-        <FormField
-          {...register('title')}
-          label="Quote Title"
-          type="text"
-          placeholder="e.g., European Vacation 2024"
-          error={errors.title?.message}
-        />
-
-        {/* Travel Dates */}
-        <div className="grid grid-cols-2 gap-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        <div className="grid grid-cols-1 gap-8">
+          {/* Title */}
           <FormField
-            {...register('startDate')}
-            label="Travel Start Date"
-            type="date"
-            min={today}
-            error={errors.startDate?.message}
+            {...register('title')}
+            label="Quote Title"
+            type="text"
+            placeholder="e.g., European Vacation 2024"
+            error={errors.title?.message}
+            className="text-lg font-bold"
           />
 
-          <FormField
-            {...register('endDate')}
-            label="Travel End Date"
-            type="date"
-            min={getMinEndDate()}
-            disabled={!startDate}
-            error={errors.endDate?.message}
-          />
+          {/* Travel Dates */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField
+              {...register('startDate')}
+              label="Travel Start Date"
+              type="date"
+              min={today}
+              error={errors.startDate?.message}
+            />
+
+            <FormField
+              {...register('endDate')}
+              label="Travel End Date"
+              type="date"
+              min={getMinEndDate()}
+              disabled={!startDate}
+              error={errors.endDate?.message}
+            />
+          </div>
         </div>
 
         {/* Advanced Settings */}
-        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+        <div className="border border-clio-gray-200 dark:border-clio-gray-800 rounded-2xl p-6 bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
           <button
             type="button"
             onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
             className="w-full flex items-center justify-between text-left"
           >
-            <div className="flex items-center gap-2">
-              <Settings className="w-4 h-4 text-gray-600" />
-              <span className="text-sm font-medium text-gray-700">Advanced Settings</span>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-clio-gray-100 dark:bg-clio-gray-800 rounded-lg">
+                <Settings className="w-4 h-4 text-clio-gray-600 dark:text-clio-gray-400" />
+              </div>
+              <span className="text-sm font-bold uppercase tracking-widest text-clio-gray-700 dark:text-clio-gray-300">Advanced Settings</span>
             </div>
             {showAdvancedSettings ? (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
+              <ChevronUp className="w-4 h-4 text-clio-gray-400" />
             ) : (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
+              <ChevronDown className="w-4 h-4 text-clio-gray-400" />
             )}
           </button>
 
           {showAdvancedSettings && (
-            <div className="mt-4 space-y-4 border-t border-gray-200 pt-4">
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <input
-                    id="useCustomCommission"
-                    type="checkbox"
-                    checked={useCustomCommission}
-                    onChange={(e) => {
-                      setUseCustomCommission(e.target.checked);
-                      if (!e.target.checked) {
-                        setValue('commissionRate', settings.defaultCommissionRate);
-                      }
-                    }}
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <Label htmlFor="useCustomCommission" className="text-sm">
-                    Use custom commission rate for this quote
-                  </Label>
-                  <div className="group relative">
-                    <Info className="w-3 h-3 text-gray-400 cursor-help" />
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-64 p-2 bg-gray-800 text-white text-xs rounded shadow-lg z-10">
-                      Override the default commission rate for special clients, complex itineraries, or promotional deals. Leave unchecked to use automatic rates based on travel items.
-                    </div>
+            <div className="mt-6 space-y-6 border-t border-clio-gray-200 dark:border-clio-gray-800 pt-6">
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <div className="flex items-center h-5">
+                    <input
+                      id="useCustomCommission"
+                      type="checkbox"
+                      checked={useCustomCommission}
+                      onChange={(e) => {
+                        setUseCustomCommission(e.target.checked);
+                        if (!e.target.checked) {
+                          setValue('commissionRate', settings.defaultCommissionRate);
+                        }
+                      }}
+                      className="w-4 h-4 rounded border-clio-gray-300 text-clio-blue focus:ring-clio-blue"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <Label htmlFor="useCustomCommission" className="text-sm font-bold text-clio-gray-900 dark:text-white leading-none">
+                      Use custom commission rate for this quote
+                    </Label>
+                    <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400 mt-1 font-medium">
+                      Override the default commission rate for special clients or complex itineraries.
+                    </p>
                   </div>
                 </div>
 
                 {useCustomCommission && (
-                  <div className="space-y-2">
-                    <Label htmlFor="commissionRate" className="flex items-center gap-2">
-                      <Percent className="w-4 h-4 text-blue-600" />
+                  <div className="space-y-3 pl-7">
+                    <Label htmlFor="commissionRate" className="flex items-center gap-2 text-xs font-bold uppercase tracking-tight text-clio-gray-500">
+                      <Percent className="w-3 h-3 text-clio-blue" />
                       Commission Rate (%)
                     </Label>
-                    <div className="relative">
+                    <div className="relative max-w-[200px]">
                       <Input
                         {...register('commissionRate', { valueAsNumber: true })}
                         id="commissionRate"
@@ -193,33 +199,48 @@ export function QuoteDetails({ contact, quote, onComplete, isSubmitting = false 
                         min={settings.minCommissionRate}
                         max={settings.maxCommissionRate}
                         step="0.1"
-                        className={errors.commissionRate ? 'border-red-500' : ''}
+                        className={cn("font-bold text-lg", errors.commissionRate ? 'border-red-500 ring-red-500/10' : '')}
                       />
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                        <span className="text-gray-500 text-sm">%</span>
+                        <span className="text-clio-gray-400 font-bold">%</span>
                       </div>
                     </div>
                     {errors.commissionRate && (
-                      <p className="text-sm text-red-600">{errors.commissionRate.message}</p>
+                      <p className="text-xs text-red-600 font-bold">{errors.commissionRate.message}</p>
                     )}
-                    <p className="text-xs text-gray-500">
-                      Range: {settings.minCommissionRate}% - {settings.maxCommissionRate}%
+                    <p className="text-[10px] text-clio-gray-400 font-bold uppercase tracking-tight">
+                      Valid range: {settings.minCommissionRate}% - {settings.maxCommissionRate}%
                     </p>
                   </div>
                 )}
 
                 {!useCustomCommission && (
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                    <p className="text-sm text-blue-800">
-                      <strong>Automatic commission rates will be used:</strong>
+                  <div className="p-4 bg-clio-blue/5 border border-clio-blue/10 rounded-xl pl-7">
+                    <p className="text-xs font-bold uppercase tracking-widest text-clio-blue mb-2">
+                      Automatic Rates
                     </p>
-                    <ul className="text-xs text-blue-700 mt-1 space-y-1">
-                      <li>• Flights: {settings.flightCommissionRate}%</li>
-                      <li>• Hotels: {settings.hotelCommissionRate}%</li>
-                      <li>• Activities: {settings.activityCommissionRate}%</li>
-                      <li>• Transfers: {settings.transferCommissionRate}%</li>
-                      <li>• Default: {settings.defaultCommissionRate}%</li>
-                    </ul>
+                    <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Flights</span>
+                        <div className="text-sm font-black text-clio-gray-900 dark:text-white">{settings.flightCommissionRate}%</div>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Hotels</span>
+                        <div className="text-sm font-black text-clio-gray-900 dark:text-white">{settings.hotelCommissionRate}%</div>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Activities</span>
+                        <div className="text-sm font-black text-clio-gray-900 dark:text-white">{settings.activityCommissionRate}%</div>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Transfers</span>
+                        <div className="text-sm font-black text-clio-gray-900 dark:text-white">{settings.transferCommissionRate}%</div>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[10px] font-bold text-clio-gray-400 uppercase">Default</span>
+                        <div className="text-sm font-black text-clio-blue">{settings.defaultCommissionRate}%</div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -227,11 +248,11 @@ export function QuoteDetails({ contact, quote, onComplete, isSubmitting = false 
           )}
         </div>
 
-        <div className="flex justify-center">
-          <Button type="submit" size="lg" disabled={isSubmitting}>
+        <div className="flex justify-center pt-4">
+          <Button type="submit" size="lg" className="bg-clio-blue hover:bg-clio-blue-hover text-white font-black uppercase tracking-tight text-sm h-14 px-10 shadow-lg shadow-clio-blue/20" disabled={isSubmitting}>
             {isSubmitting ? (
               <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-5 h-5 mr-3 animate-spin" />
                 Saving Quote...
               </>
             ) : (

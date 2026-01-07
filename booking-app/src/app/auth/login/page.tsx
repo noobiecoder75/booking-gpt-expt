@@ -75,101 +75,111 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Welcome Back</CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+    <div className="flex items-center justify-center min-h-screen bg-white dark:bg-clio-gray-950 p-4">
+      <div className="w-full max-w-lg">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-3xl border border-clio-gray-100 dark:border-clio-gray-800 shadow-strong overflow-hidden">
+          <div className="p-10 border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/50 dark:bg-clio-gray-800/20 text-center">
+            <div className="w-16 h-16 bg-clio-blue rounded-2xl flex items-center justify-center shadow-lg shadow-clio-blue/20 mx-auto mb-6">
+              <Loader2 className="w-8 h-8 text-white animate-spin-slow" />
+            </div>
+            <h1 className="text-2xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">Welcome Back</h1>
+            <p className="text-[10px] font-black text-clio-gray-400 uppercase tracking-widest mt-2">Access your travel management portal</p>
+          </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+          <div className="p-10 space-y-8">
+            {error && (
+              <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-red-600 dark:text-red-400">{error}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleLogin} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Work Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="name@company.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={loading}
+                  className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between ml-1">
+                  <Label htmlFor="password" title="Password" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Security Key</Label>
+                  <Link href="/auth/reset" className="text-[10px] font-black uppercase tracking-widest text-clio-blue hover:underline">Forgot?</Link>
+                </div>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={loading}
+                  className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                />
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full bg-clio-blue hover:bg-clio-blue/90 text-white font-black uppercase tracking-widest h-14 rounded-xl shadow-lg shadow-clio-blue/20"
                 disabled={loading}
-              />
+              >
+                {loading ? (
+                  <div className="flex items-center">
+                    <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                    Authenticating...
+                  </div>
+                ) : (
+                  'Authorize Access'
+                )}
+              </Button>
+            </form>
+
+            <div className="relative py-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-clio-gray-100 dark:border-clio-gray-800"></div>
+              </div>
+              <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest">
+                <span className="bg-white dark:bg-clio-gray-900 px-4 text-clio-gray-400">SSO Gateway</span>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
+            <div className="grid grid-cols-2 gap-4">
+              <Button
+                variant="outline"
+                onClick={() => handleOAuthLogin('google')}
                 disabled={loading}
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In'
-              )}
-            </Button>
-          </form>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-gray-950 px-2 text-gray-600 dark:text-gray-400">
-                Or continue with
-              </span>
+                className="h-12 rounded-xl border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px]"
+              >
+                Google
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => handleOAuthLogin('github')}
+                disabled={loading}
+                className="h-12 rounded-xl border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px]"
+              >
+                GitHub
+              </Button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Button
-              variant="outline"
-              onClick={() => handleOAuthLogin('google')}
-              disabled={loading}
-            >
-              Google
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => handleOAuthLogin('github')}
-              disabled={loading}
-            >
-              GitHub
-            </Button>
+          <div className="p-8 bg-clio-gray-50 dark:bg-clio-gray-800/20 border-t border-clio-gray-100 dark:border-clio-gray-800 text-center">
+            <p className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400">
+              New to the platform?{' '}
+              <Link href="/auth/signup" className="text-clio-blue hover:underline">
+                Create Workspace
+              </Link>
+            </p>
           </div>
-        </CardContent>
-        <CardFooter>
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400 w-full">
-            Don't have an account?{' '}
-            <Link href="/auth/signup" className="text-primary hover:underline">
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

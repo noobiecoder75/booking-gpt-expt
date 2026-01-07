@@ -97,6 +97,10 @@ function dbRowToQuote(row: any): TravelQuote {
     status: row.status as TravelQuote['status'],
     totalCost: totalCost,
     items: items,
+    // Payment tracking from database
+    paymentStatus: row.payment_status as TravelQuote['paymentStatus'],
+    totalPaid: row.total_paid ? parseFloat(row.total_paid) : 0,
+    remainingBalance: row.remaining_balance ? parseFloat(row.remaining_balance) : totalCost,
     travelDates: row.travel_start_date && row.travel_end_date
       ? {
           start: new Date(row.travel_start_date),

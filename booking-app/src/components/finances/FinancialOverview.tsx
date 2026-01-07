@@ -91,12 +91,12 @@ export function FinancialOverview() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Total Revenue</CardTitle>
+            <DollarSign className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalRevenue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">${totalRevenue.toFixed(2)}</div>
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               From paid invoices
             </p>
           </CardContent>
@@ -104,14 +104,14 @@ export function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Outstanding</CardTitle>
+            <FileText className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalOutstanding.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">${totalOutstanding.toFixed(2)}</div>
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               {overdueCount > 0 && (
-                <span className="text-red-600">{overdueCount} overdue</span>
+                <span className="text-red-600 dark:text-red-400 font-bold">{overdueCount} overdue</span>
               )}
               {overdueCount === 0 && 'All invoices current'}
             </p>
@@ -120,12 +120,12 @@ export function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-            <TrendingDown className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Total Expenses</CardTitle>
+            <TrendingDown className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalExpenses.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">${totalExpenses.toFixed(2)}</div>
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               All time expenses
             </p>
           </CardContent>
@@ -133,12 +133,12 @@ export function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pending Commissions</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Pending Commissions</CardTitle>
+            <Users className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${totalCommissionsPending.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">${totalCommissionsPending.toFixed(2)}</div>
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               Awaiting approval/payment
             </p>
           </CardContent>
@@ -149,14 +149,14 @@ export function FinancialOverview() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Profit Margin</CardTitle>
-            <Percent className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Profit Margin</CardTitle>
+            <Percent className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${profitMargin >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-2xl font-bold ${profitMargin >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {profitMargin.toFixed(1)}%
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               Net profit: ${netProfit.toFixed(2)}
             </p>
           </CardContent>
@@ -164,14 +164,14 @@ export function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Cash Flow</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Cash Flow</CardTitle>
+            <TrendingUp className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${cashFlow >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <div className={`text-2xl font-bold ${cashFlow >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               ${Math.abs(cashFlow).toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               {cashFlow >= 0 ? 'Positive' : 'Negative'} cash flow
             </p>
           </CardContent>
@@ -179,12 +179,12 @@ export function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Collection Rate</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Collection Rate</CardTitle>
+            <CreditCard className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{collectionRate.toFixed(1)}%</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">{collectionRate.toFixed(1)}%</div>
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               Invoices collected
             </p>
           </CardContent>
@@ -192,12 +192,12 @@ export function FinancialOverview() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Transaction</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">Avg Transaction</CardTitle>
+            <DollarSign className="h-4 w-4 text-clio-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">${avgTransaction.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">${avgTransaction.toFixed(2)}</div>
+            <p className="text-xs text-clio-gray-500 dark:text-clio-gray-400">
               Per paid invoice
             </p>
           </CardContent>
@@ -222,16 +222,16 @@ export function FinancialOverview() {
 
       {/* Overdue Warning Banner */}
       {overdueTotal > 0 && (
-        <Card className="border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20">
+        <Card className="border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20 shadow-none">
           <CardHeader>
-            <CardTitle className="text-red-900 dark:text-red-100">⚠️ Overdue Invoices Alert</CardTitle>
-            <CardDescription className="text-red-700 dark:text-red-400">
+            <CardTitle className="text-red-900 dark:text-red-400 font-bold uppercase tracking-tight">⚠️ Overdue Invoices Alert</CardTitle>
+            <CardDescription className="text-red-700 dark:text-red-400/70 font-medium">
               {overdueCount} invoice{overdueCount !== 1 ? 's' : ''} past due date
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-red-900 dark:text-red-100">${overdueTotal.toFixed(2)}</div>
-            <p className="text-sm text-red-700 dark:text-red-400 mt-2 font-medium">
+            <div className="text-3xl font-bold text-red-900 dark:text-red-400">${overdueTotal.toFixed(2)}</div>
+            <p className="text-sm text-red-700 dark:text-red-400/80 mt-2 font-bold">
               Immediate action required - follow up with customers for payment
             </p>
           </CardContent>

@@ -115,14 +115,14 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Header Controls */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
             Timeline List View
           </h3>
-          <Badge className="bg-blue-100 text-blue-800">
+          <Badge className="bg-clio-blue/10 text-clio-blue border-none">
             {quote.items.length} items
           </Badge>
         </div>
@@ -130,16 +130,16 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
           variant="outline"
           size="sm"
           onClick={toggleAllDays}
-          className="flex items-center space-x-1"
+          className="flex items-center space-x-2 border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px]"
         >
           {expandAll ? (
             <>
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="w-4 h-4 text-clio-gray-400" />
               <span>Collapse All</span>
             </>
           ) : (
             <>
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-4 h-4 text-clio-gray-400" />
               <span>Expand All</span>
             </>
           )}
@@ -147,12 +147,14 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
       </div>
 
       {/* Day Groups */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {sortedDates.length === 0 ? (
-          <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <MapPin className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <p className="text-gray-600">No items added yet</p>
-            <p className="text-sm text-gray-500 mt-1">
+          <div className="text-center py-24 bg-clio-gray-50/50 dark:bg-clio-gray-900/50 rounded-2xl border border-dashed border-clio-gray-200 dark:border-clio-gray-800">
+            <div className="w-16 h-16 bg-white dark:bg-clio-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <MapPin className="w-8 h-8 text-clio-gray-300 dark:text-clio-gray-600" />
+            </div>
+            <p className="text-lg font-bold text-clio-gray-900 dark:text-white mb-1">No items added yet</p>
+            <p className="text-sm font-medium text-clio-gray-500 dark:text-clio-gray-400">
               Add flights, hotels, and activities to build your itinerary
             </p>
           </div>
@@ -165,36 +167,40 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
             const formattedDate = moment(date).format('MMMM D, YYYY');
 
             return (
-              <div key={date} className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+              <div key={date} className="bg-white dark:bg-clio-gray-950 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm overflow-hidden">
                 {/* Day Header */}
                 <button
                   onClick={() => toggleDay(date)}
-                  className="w-full px-6 py-4 bg-gray-50 hover:bg-gray-100 transition-colors flex items-center justify-between"
+                  className="w-full px-6 py-5 bg-clio-gray-50/50 dark:bg-clio-gray-900/50 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-900 transition-all flex items-center justify-between group"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                      {isExpanded ? (
-                        <ChevronDown className="w-5 h-5 text-gray-600" />
-                      ) : (
-                        <ChevronRight className="w-5 h-5 text-gray-600" />
-                      )}
-                      <Calendar className="w-5 h-5 text-gray-600" />
+                  <div className="flex items-center space-x-5">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-lg bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 flex items-center justify-center group-hover:border-clio-blue transition-colors">
+                        {isExpanded ? (
+                          <ChevronDown className="w-4 h-4 text-clio-blue" />
+                        ) : (
+                          <ChevronRight className="w-4 h-4 text-clio-gray-400" />
+                        )}
+                      </div>
+                      <div className="w-10 h-10 rounded-xl bg-clio-blue/10 flex items-center justify-center">
+                        <Calendar className="w-5 h-5 text-clio-blue" />
+                      </div>
                     </div>
                     <div className="text-left">
-                      <div className="font-semibold text-gray-900">
+                      <div className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
                         {dayOfWeek}
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-xs font-bold text-clio-gray-400 uppercase tracking-widest">
                         {formattedDate}
                       </div>
                     </div>
-                    <Badge className="bg-blue-100 text-blue-800">
+                    <Badge variant="secondary" className="bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400 border-none ml-2">
                       {items.length} {items.length === 1 ? 'item' : 'items'}
                     </Badge>
                   </div>
                   <div className="text-right">
-                    <div className="text-sm text-gray-600">Day Total</div>
-                    <div className="font-semibold text-gray-900">
+                    <div className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mb-0.5">Day Total</div>
+                    <div className="text-xl font-black text-clio-blue">
                       {formatCurrency(dayTotal)}
                     </div>
                   </div>
@@ -202,40 +208,41 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
 
                 {/* Day Items */}
                 {isExpanded && (
-                  <div className="divide-y divide-gray-200">
+                  <div className="divide-y divide-clio-gray-100 dark:divide-clio-gray-800">
                     {items.map((item, index) => (
                       <div
                         key={item.id}
-                        className="px-6 py-4 hover:bg-gray-50 transition-colors"
+                        className="px-8 py-6 hover:bg-clio-gray-50/30 dark:hover:bg-clio-gray-900/30 transition-colors"
                       >
                         <div className="flex items-start justify-between">
-                          <div className="flex items-start space-x-4 flex-1">
+                          <div className="flex items-start space-x-6 flex-1">
                             {/* Drag Handle */}
-                            <div className="pt-1 cursor-move opacity-30 hover:opacity-60">
-                              <GripVertical className="w-5 h-5" />
+                            <div className="pt-2.5 cursor-move opacity-20 hover:opacity-50 transition-opacity">
+                              <GripVertical className="w-5 h-5 text-clio-gray-400" />
                             </div>
 
                             {/* Item Icon */}
                             <div 
-                              className="p-2 rounded-lg"
+                              className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm"
                               style={{ 
-                                backgroundColor: `${getTravelItemColor(item.type)}20`,
-                                color: getTravelItemColor(item.type)
+                                backgroundColor: `${getTravelItemColor(item.type)}15`,
+                                color: getTravelItemColor(item.type),
+                                border: `1px solid ${getTravelItemColor(item.type)}30`
                               }}
                             >
                               {getItemIcon(item.type)}
                             </div>
 
                             {/* Item Details */}
-                            <div className="flex-1">
-                              <div className="flex items-start justify-between mb-2">
-                                <div>
-                                  <h4 className="font-medium text-gray-900">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-start justify-between mb-3 gap-4">
+                                <div className="min-w-0">
+                                  <h4 className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight truncate">
                                     {item.name}
                                   </h4>
-                                  <div className="flex items-center space-x-4 mt-1 text-sm text-gray-600">
-                                    <div className="flex items-center space-x-1">
-                                      <Clock className="w-4 h-4" />
+                                  <div className="flex flex-wrap items-center gap-4 mt-1">
+                                    <div className="flex items-center space-x-1.5 text-xs font-bold text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight">
+                                      <Clock className="w-3.5 h-3.5 text-clio-blue" />
                                       <span>
                                         {moment(item.startDate).format('h:mm A')}
                                         {item.endDate && item.endDate !== item.startDate && (
@@ -244,18 +251,18 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
                                       </span>
                                     </div>
                                     {item.quantity > 1 && (
-                                      <span className="text-gray-500">
+                                      <div className="px-2 py-0.5 bg-clio-gray-100 dark:bg-clio-gray-800 rounded-lg text-[10px] font-black uppercase tracking-widest text-clio-gray-500">
                                         Qty: {item.quantity}
-                                      </span>
+                                      </div>
                                     )}
                                   </div>
                                 </div>
-                                <div className="text-right">
-                                  <div className="font-semibold text-gray-900">
+                                <div className="text-right shrink-0">
+                                  <div className="text-lg font-black text-clio-gray-900 dark:text-white">
                                     {formatCurrency(item.price * item.quantity)}
                                   </div>
                                   {item.quantity > 1 && (
-                                    <div className="text-sm text-gray-500">
+                                    <div className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-tight">
                                       {formatCurrency(item.price)} each
                                     </div>
                                   )}
@@ -264,12 +271,12 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
 
                               {/* Item Metadata */}
                               {item.details && Object.keys(item.details).length > 0 && (
-                                <div className="flex flex-wrap gap-2 mt-2">
+                                <div className="flex flex-wrap gap-2 mb-4">
                                   {Object.entries(item.details).slice(0, 3).map(([key, value]) => (
                                     <Badge
                                       key={key}
                                       variant="outline"
-                                      className="text-xs"
+                                      className="text-[10px] font-bold border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-500 dark:text-clio-gray-400 uppercase tracking-tight bg-clio-gray-50/50 dark:bg-clio-gray-900/50"
                                     >
                                       {key.replace(/_/g, ' ')}: {String(value)}
                                     </Badge>
@@ -278,32 +285,32 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
                               )}
 
                               {/* Action Buttons */}
-                              <div className="flex items-center space-x-2 mt-3">
+                              <div className="flex items-center gap-1">
                                 <Button
                                   size="sm"
                                   variant="ghost"
                                   onClick={() => onEditItem(item)}
-                                  className="text-gray-600 hover:text-gray-900"
+                                  className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 hover:text-clio-blue hover:bg-clio-blue/10 h-8 px-3"
                                 >
-                                  <Edit2 className="w-4 h-4 mr-1" />
+                                  <Edit2 className="w-3.5 h-3.5 mr-1.5" />
                                   Edit
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="ghost"
                                   onClick={() => duplicateItem(item)}
-                                  className="text-gray-600 hover:text-gray-900"
+                                  className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-500 hover:text-clio-blue hover:bg-clio-blue/10 h-8 px-3"
                                 >
-                                  <Copy className="w-4 h-4 mr-1" />
+                                  <Copy className="w-3.5 h-3.5 mr-1.5" />
                                   Duplicate
                                 </Button>
                                 <Button
                                   size="sm"
                                   variant="ghost"
                                   onClick={() => onDeleteItem(item.id)}
-                                  className="text-red-600 hover:text-red-700"
+                                  className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 h-8 px-3 ml-auto"
                                 >
-                                  <Trash2 className="w-4 h-4 mr-1" />
+                                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
                                   Delete
                                 </Button>
                               </div>
@@ -319,7 +326,6 @@ export function TravelListView({ quote, onEditItem, onDeleteItem }: TravelListVi
           })
         )}
       </div>
-
     </div>
   );
 }

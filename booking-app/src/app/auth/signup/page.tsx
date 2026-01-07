@@ -87,14 +87,14 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-        <Card className="w-full max-w-md">
+      <div className="flex items-center justify-center min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950">
+        <Card className="w-full max-w-md bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
           <CardHeader>
-            <CardTitle className="text-2xl font-bold text-center">Check Your Email</CardTitle>
+            <CardTitle className="text-2xl font-bold text-center uppercase tracking-tight">Check Your Email</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-center text-gray-600 dark:text-gray-400">
-              We've sent you a confirmation email to <strong>{email}</strong>.
+            <p className="text-center text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+              We've sent you a confirmation email to <strong className="text-clio-gray-900 dark:text-white">{email}</strong>.
               Please click the link in the email to verify your account.
             </p>
           </CardContent>
@@ -111,18 +111,18 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950 p-4">
+      <Card className="w-full max-w-md bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Create Account</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-2xl font-bold text-center uppercase tracking-tight">Create Account</CardTitle>
+          <CardDescription className="text-center text-clio-gray-500 dark:text-clio-gray-400">
             Create your workspace as the admin
           </CardDescription>
-          <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded-md">
-            <p className="text-sm text-blue-800">
-              <strong>First user?</strong> You'll become the admin automatically.
+          <div className="mt-3 p-3 bg-clio-blue/10 border border-clio-blue/20 rounded-xl">
+            <p className="text-sm text-clio-blue font-bold">
+              First user? <span className="font-normal opacity-90">You'll become the admin automatically.</span>
             </p>
-            <p className="text-xs text-blue-600 mt-1">
+            <p className="text-xs text-clio-blue/70 mt-1">
               Already have a workspace? Ask your admin for an invite link.
             </p>
           </div>
@@ -203,7 +203,7 @@ export default function SignUpPage() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-clio-blue hover:bg-clio-blue-hover text-white"
               disabled={loading}
             >
               {loading ? (
@@ -217,12 +217,12 @@ export default function SignUpPage() {
             </Button>
           </form>
 
-          <div className="relative">
+          <div className="relative py-4">
             <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
+              <span className="w-full border-t border-clio-gray-100 dark:border-clio-gray-800" />
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white dark:bg-gray-950 px-2 text-gray-600 dark:text-gray-400">
+            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
+              <span className="bg-white dark:bg-clio-gray-900 px-3 text-clio-gray-400">
                 Or continue with
               </span>
             </div>
@@ -233,6 +233,7 @@ export default function SignUpPage() {
               variant="outline"
               onClick={() => handleOAuthSignUp('google')}
               disabled={loading}
+              className="border-clio-gray-200 dark:border-clio-gray-700"
             >
               Google
             </Button>
@@ -240,15 +241,16 @@ export default function SignUpPage() {
               variant="outline"
               onClick={() => handleOAuthSignUp('github')}
               disabled={loading}
+              className="border-clio-gray-200 dark:border-clio-gray-700"
             >
               GitHub
             </Button>
           </div>
         </CardContent>
         <CardFooter>
-          <p className="text-center text-sm text-gray-600 dark:text-gray-400 w-full">
+          <p className="text-center text-sm text-clio-gray-600 dark:text-clio-gray-400 w-full font-medium">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary hover:underline">
+            <Link href="/auth/login" className="text-clio-blue hover:underline font-bold">
               Sign in
             </Link>
           </p>

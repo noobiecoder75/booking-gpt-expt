@@ -137,22 +137,22 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
   };
 
   return (
-    <div className={`bg-white rounded-lg border border-gray-200 ${className}`}>
+    <div className={cn("bg-white dark:bg-clio-gray-950 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm overflow-hidden", className)}>
       {/* Search Bar */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center space-x-3">
-          <div className="relative flex-1">
-            <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+      <div className="p-4 border-b border-clio-gray-100 dark:border-clio-gray-800">
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative flex-1 w-full">
+            <Search className="w-5 h-5 text-clio-gray-400 absolute left-4 top-1/2 transform -translate-y-1/2" />
             <Input
               placeholder="Search items by name or details..."
               value={filters.search}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="pl-10 pr-4"
+              className="pl-12 h-12 bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 focus:ring-clio-blue/20 focus:border-clio-blue"
             />
             {filters.search && (
               <button
                 onClick={() => handleSearchChange('')}
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-clio-gray-400 hover:text-clio-gray-600 dark:hover:text-clio-gray-200"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -162,27 +162,27 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
           <Button
             variant="outline"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="flex items-center space-x-2"
+            className="flex items-center gap-2 h-12 px-6 border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs w-full sm:w-auto"
           >
-            <Filter className="w-4 h-4" />
+            <Filter className="w-4 h-4 text-clio-blue" />
             <span>Filters</span>
             {activeFilters > 0 && (
-              <Badge className="bg-blue-500 text-white text-xs">
+              <Badge className="bg-clio-blue text-white ml-1">
                 {activeFilters}
               </Badge>
             )}
-            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''} text-clio-gray-400`} />
           </Button>
         </div>
       </div>
 
       {/* Expanded Filters */}
       {isExpanded && (
-        <div className="p-4 space-y-6 border-b border-gray-200">
+        <div className="p-6 space-y-8 border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/30 dark:bg-clio-gray-900/30 animate-in slide-in-from-top-2 duration-200">
           {/* Item Type Filters */}
           <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-3">Item Types</h4>
-            <div className="flex flex-wrap gap-2">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 mb-4">Item Types</h4>
+            <div className="flex flex-wrap gap-3">
               {([
                 { type: 'flight', label: 'Flights' },
                 { type: 'hotel', label: 'Hotels' },
@@ -192,15 +192,15 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
                 <button
                   key={type}
                   onClick={() => toggleType(type)}
-                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl border transition-all duration-200 ${
                     filters.types.has(type)
-                      ? 'bg-blue-50 border-blue-200 text-blue-700'
-                      : 'bg-gray-50 border-gray-200 text-gray-600 hover:bg-gray-100'
+                      ? 'bg-clio-blue/10 border-clio-blue/30 text-clio-blue shadow-sm'
+                      : 'bg-white dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400 hover:border-clio-gray-300 dark:hover:border-clio-gray-700'
                   }`}
                 >
                   {getTypeIcon(type)}
-                  <span className="text-sm font-medium">{label}</span>
-                  <Badge className="bg-gray-500 text-white text-xs">
+                  <span className="text-sm font-bold uppercase tracking-tight">{label}</span>
+                  <Badge variant="secondary" className="ml-1">
                     {typeCounts[type]}
                   </Badge>
                 </button>
@@ -208,13 +208,14 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
             </div>
           </div>
 
-          {/* Quick Date Filters */}
+          {/* Quick Filters */}
           <div>
-            <h4 className="text-sm font-medium text-gray-900 mb-3">Quick Filters</h4>
-            <div className="flex flex-wrap gap-2">
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 mb-4">Quick Filters</h4>
+            <div className="flex flex-wrap gap-3">
               <Button
                 size="sm"
                 variant="outline"
+                className="rounded-xl font-bold uppercase tracking-tight text-[10px] h-9"
                 onClick={() => {
                   const today = new Date();
                   const tomorrow = new Date(today);
@@ -227,12 +228,13 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
                   applyFilters(newFilters);
                 }}
               >
-                <Calendar className="w-4 h-4 mr-1" />
+                <Calendar className="w-3.5 h-3.5 mr-1.5 text-clio-blue" />
                 Today
               </Button>
               <Button
                 size="sm"
                 variant="outline"
+                className="rounded-xl font-bold uppercase tracking-tight text-[10px] h-9"
                 onClick={() => {
                   const newFilters = {
                     ...filters,
@@ -242,12 +244,13 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
                   applyFilters(newFilters);
                 }}
               >
-                <DollarSign className="w-4 h-4 mr-1" />
+                <DollarSign className="w-3.5 h-3.5 mr-1.5 text-clio-blue" />
                 Under $100
               </Button>
               <Button
                 size="sm"
                 variant="outline"
+                className="rounded-xl font-bold uppercase tracking-tight text-[10px] h-9"
                 onClick={() => {
                   const newFilters = {
                     ...filters,
@@ -257,12 +260,13 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
                   applyFilters(newFilters);
                 }}
               >
-                <DollarSign className="w-4 h-4 mr-1" />
+                <DollarSign className="w-3.5 h-3.5 mr-1.5 text-clio-blue" />
                 $100-500
               </Button>
               <Button
                 size="sm"
                 variant="outline"
+                className="rounded-xl font-bold uppercase tracking-tight text-[10px] h-9"
                 onClick={() => {
                   const newFilters = {
                     ...filters,
@@ -272,7 +276,7 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
                   applyFilters(newFilters);
                 }}
               >
-                <DollarSign className="w-4 h-4 mr-1" />
+                <DollarSign className="w-3.5 h-3.5 mr-1.5 text-clio-blue" />
                 $500+
               </Button>
             </div>
@@ -280,14 +284,14 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
 
           {/* Clear Filters */}
           {activeFilters > 0 && (
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={clearAllFilters}
-                className="text-red-600 hover:text-red-700"
+                className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 font-bold uppercase tracking-tight text-[10px]"
               >
-                <X className="w-4 h-4 mr-1" />
+                <X className="w-3.5 h-3.5 mr-1.5" />
                 Clear All Filters
               </Button>
             </div>
@@ -297,8 +301,8 @@ export function FilterControls({ items, onFilterChange, className }: FilterContr
 
       {/* Active Filters Summary */}
       {activeFilters > 0 && (
-        <div className="px-4 py-2 bg-blue-50 text-sm text-blue-700">
-          Showing filtered results • {activeFilters} filter{activeFilters > 1 ? 's' : ''} active
+        <div className="px-6 py-2.5 bg-clio-blue/5 dark:bg-clio-blue/10 text-[10px] font-bold text-clio-blue uppercase tracking-widest border-t border-clio-blue/10">
+          <span className="opacity-70">Showing filtered results</span> • {activeFilters} filter{activeFilters > 1 ? 's' : ''} active
         </div>
       )}
     </div>

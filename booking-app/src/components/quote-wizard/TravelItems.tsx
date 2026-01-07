@@ -616,20 +616,20 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-2xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight mb-2">
             Travel Timeline
           </h2>
-          <p className="text-gray-600">
-            <span className="font-medium">Interactive Calendar:</span> Click empty space to choose item type • Drag to move • Resize to adjust duration • Click items to edit
+          <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+            <span className="text-clio-blue font-bold">Interactive Calendar:</span> Click empty space to add items • Drag to move • Resize to adjust duration
           </p>
         </div>
-        <div className="flex items-center space-x-2">
-          <CalendarIcon className="w-5 h-5 text-gray-400" />
-          <span className="text-sm text-gray-600">
+        <div className="flex items-center space-x-3 bg-clio-gray-50 dark:bg-clio-gray-800/50 px-4 py-2.5 rounded-xl border border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
+          <CalendarIcon className="w-5 h-5 text-clio-blue" />
+          <span className="text-sm font-bold text-clio-gray-700 dark:text-clio-gray-300 uppercase tracking-widest">
             {moment(quote.travelDates.start).format('MMM D')} - {moment(quote.travelDates.end).format('MMM D, YYYY')}
           </span>
         </div>
@@ -643,49 +643,49 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
       />
 
       {/* Quick Add Buttons */}
-      <div className="flex items-center space-x-2 p-4 bg-gray-50 rounded-lg border mb-4">
-        <span className="text-sm font-medium text-gray-700">Quick Add:</span>
+      <div className="flex flex-wrap items-center gap-3 p-6 bg-white dark:bg-clio-gray-900 rounded-2xl border border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-clio-gray-400 mr-2">Quick Add</span>
         <Button
           size="sm"
           variant="outline"
           onClick={() => setShowFlightBuilder(true)}
-          className="flex items-center space-x-1"
+          className="flex items-center space-x-2 border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px] h-10 px-4 hover:bg-clio-blue/5 hover:border-clio-blue hover:text-clio-blue"
         >
-          <Plane className="w-4 h-4" />
+          <Plane className="w-3.5 h-3.5" />
           <span>Flight</span>
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => setShowHotelBuilder(true)}
-          className="flex items-center space-x-1"
+          className="flex items-center space-x-2 border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px] h-10 px-4 hover:bg-emerald-50 dark:hover:bg-emerald-950/20 hover:border-emerald-500 hover:text-emerald-600"
         >
-          <Hotel className="w-4 h-4" />
+          <Hotel className="w-3.5 h-3.5" />
           <span>Hotel</span>
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => setShowActivityBuilder(true)}
-          className="flex items-center space-x-1"
+          className="flex items-center space-x-2 border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px] h-10 px-4 hover:bg-orange-50 dark:hover:bg-orange-950/20 hover:border-orange-500 hover:text-orange-600"
         >
-          <MapPin className="w-4 h-4" />
+          <MapPin className="w-3.5 h-3.5" />
           <span>Activity</span>
         </Button>
         <Button
           size="sm"
           variant="outline"
           onClick={() => setShowTransferBuilder(true)}
-          className="flex items-center space-x-1"
+          className="flex items-center space-x-2 border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px] h-10 px-4 hover:bg-purple-50 dark:hover:bg-purple-950/20 hover:border-purple-500 hover:text-purple-600"
         >
-          <Car className="w-4 h-4" />
+          <Car className="w-3.5 h-3.5" />
           <span>Transfer</span>
         </Button>
       </div>
 
       {/* Main Content Area */}
       <div className="w-full">
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white dark:bg-clio-gray-950 rounded-2xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-xl overflow-hidden">
           {/* Persistent Navigation */}
           <TimelineNavigation
             viewMode={viewMode}
@@ -728,7 +728,7 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
                 defaultView="month"
                 step={60}
                 showMultiDayTimes
-                className="bg-white rounded-lg"
+                className="bg-white dark:bg-clio-gray-900 rounded-lg"
                 tooltipAccessor={(event: CalendarEvent) => {
                   const item = quote.items.find(item => item.id === event.id);
                   if (!item) return event.title;
@@ -771,30 +771,36 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
 
       {/* Floating Summary Bar */}
       {quote.items.length > 0 && !isAnyOverlayOpen && (
-        <div className="fixed bottom-4 left-4 lg:left-[272px] right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-40">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-1 rounded-full">
+        <div className="fixed bottom-6 left-6 lg:left-[300px] right-6 bg-clio-navy dark:bg-clio-blue rounded-2xl shadow-2xl p-6 z-40 text-white animate-in slide-in-from-bottom-4 duration-300">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex items-center space-x-4">
+              <div className="bg-white/20 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-white/10">
                 {quote.items.length} item{quote.items.length !== 1 ? 's' : ''}
               </div>
-              <span className="text-gray-600 text-sm">added to quote</span>
+              <span className="text-white/80 font-bold text-sm uppercase tracking-tight">Summary of travel items</span>
             </div>
-            <div className="flex items-center space-x-3">
-              <div className="text-right space-y-1">
-                <div className="flex items-center justify-end space-x-3 text-xs text-gray-500">
+            <div className="flex items-center space-x-8">
+              <div className="text-right space-y-1 hidden sm:block">
+                <div className="flex items-center justify-end space-x-4 text-[10px] font-black uppercase tracking-widest opacity-60">
                   <span>Cost: {formatCurrency(quote.items.reduce((sum, item) => sum + (item.supplierCost || item.price * 0.80), 0))}</span>
-                  <span className="text-green-600">
-                    +Markup: {formatCurrency(quote.items.reduce((sum, item) => {
-                      const supplierCost = item.supplierCost || item.price * 0.80;
-                      return sum + (item.price - supplierCost);
-                    }, 0))}
-                  </span>
+                  <span>Profit: {formatCurrency(quote.items.reduce((sum, item) => {
+                    const supplierCost = item.supplierCost || item.price * 0.80;
+                    return sum + (item.price - supplierCost);
+                  }, 0))}</span>
                 </div>
-                <div className="text-sm text-gray-600">Client Total</div>
-                <div className="text-lg font-bold text-gray-900">
-                  {formatCurrency(quote.totalCost)}
+                <div className="flex items-center justify-end gap-6">
+                  <span className="text-xs font-bold uppercase tracking-widest opacity-80">Client Total</span>
+                  <div className="text-3xl font-black tracking-tighter leading-none">
+                    {formatCurrency(quote.totalCost)}
+                  </div>
                 </div>
               </div>
+              
+              <div className="sm:hidden text-center">
+                 <div className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Total</div>
+                 <div className="text-2xl font-black">{formatCurrency(quote.totalCost)}</div>
+              </div>
+
               <Button
                 onClick={() => {
                   // Pre-transition validation with detailed checks
@@ -825,9 +831,10 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
 
                   onComplete();
                 }}
-                className="min-w-[140px]"
+                className="bg-white text-clio-navy hover:bg-clio-gray-100 font-black uppercase tracking-tight text-sm h-14 px-10 shadow-lg"
               >
                 Continue to Review
+                <ChevronRight className="w-5 h-5 ml-2" />
               </Button>
             </div>
           </div>

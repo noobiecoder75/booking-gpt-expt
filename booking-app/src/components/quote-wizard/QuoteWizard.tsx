@@ -178,8 +178,8 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
         <div className="text-center space-y-4">
-          <Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-600" />
-          <p className="text-gray-600">Loading quote...</p>
+          <Loader2 className="w-10 h-10 animate-spin mx-auto text-clio-blue" />
+          <p className="text-clio-gray-500 font-bold uppercase tracking-widest text-xs">Loading quote...</p>
         </div>
       </div>
     );
@@ -188,20 +188,20 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   // Show error state
   if (state.matches('error')) {
     return (
-      <ModernCard variant="elevated" className="p-8">
-        <div className="text-center space-y-4">
+      <ModernCard variant="elevated" className="p-12 border-red-100 dark:border-red-900/30">
+        <div className="text-center space-y-6">
           <div className="flex justify-center">
-            <div className="p-3 bg-red-100 rounded-full">
-              <AlertTriangle className="w-8 h-8 text-red-600" />
+            <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-2xl">
+              <AlertTriangle className="w-10 h-10 text-red-600" />
             </div>
           </div>
-          <h3 className="text-lg font-semibold">Failed to load quote</h3>
-          <p className="text-gray-600">{state.context.error}</p>
-          <div className="flex-gap-3 justify-center">
-            <ModernButton onClick={() => send({ type: 'RETRY' })}>
+          <h3 className="text-2xl font-black text-clio-gray-900 dark:text-white">Failed to load quote</h3>
+          <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium max-w-md mx-auto">{state.context.error}</p>
+          <div className="flex items-center gap-3 justify-center">
+            <ModernButton className="bg-clio-blue hover:bg-clio-blue-hover text-white px-8" onClick={() => send({ type: 'RETRY' })}>
               Try Again
             </ModernButton>
-            <ModernButton variant="outline" onClick={handleCancel}>
+            <ModernButton variant="outline" className="border-clio-gray-200 dark:border-clio-gray-800" onClick={handleCancel}>
               Cancel
             </ModernButton>
           </div>
@@ -301,8 +301,8 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
   return (
     <div className="space-y-8">
       {/* Progress Steps */}
-      <ModernCard variant="elevated" className="p-6 bg-white">
-        <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+      <ModernCard variant="elevated" className="p-8">
+        <div className="flex flex-col md:flex-row items-center justify-between space-y-8 md:space-y-0">
           {steps.map((step, index) => (
             <div
               key={step.id}
@@ -312,31 +312,35 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
             >
               <div className="flex flex-col items-center flex-1 md:flex-initial">
                 <div
-                  className={`w-12 h-12 rounded-xl flex items-center justify-center text-sm font-medium transition-colors ${
-                    index <= currentStepIndex
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-600 border border-gray-200'
+                  className={`w-14 h-14 rounded-2xl flex items-center justify-center text-lg font-black transition-all shadow-sm ${
+                    index < currentStepIndex
+                      ? 'bg-emerald-500 text-white shadow-emerald-200'
+                      : index === currentStepIndex
+                      ? 'bg-clio-blue text-white shadow-clio-blue/20 ring-4 ring-clio-blue/10'
+                      : 'bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-400 border border-clio-gray-200 dark:border-clio-gray-700'
                   }`}
                 >
-                  {index + 1}
+                  {index < currentStepIndex ? '✓' : index + 1}
                 </div>
-                <div className="mt-3 text-center">
+                <div className="mt-4 text-center">
                   <div
-                    className={`text-sm font-medium ${
-                      index <= currentStepIndex ? 'text-gray-900' : 'text-gray-600'
+                    className={`text-xs font-black uppercase tracking-widest ${
+                      index <= currentStepIndex ? 'text-clio-gray-900 dark:text-white' : 'text-clio-gray-400'
                     }`}
                   >
                     {step.label}
                   </div>
-                  <div className="text-xs text-gray-500 mt-1 hidden md:block">
+                  <div className={`text-[10px] font-bold mt-1 hidden md:block ${
+                    index <= currentStepIndex ? 'text-clio-gray-500 dark:text-clio-gray-400' : 'text-clio-gray-300'
+                  }`}>
                     {step.description}
                   </div>
                 </div>
               </div>
               {index < steps.length - 1 && (
                 <div
-                  className={`hidden md:flex flex-1 h-0.5 mx-6 rounded-full transition-colors ${
-                    index < currentStepIndex ? 'bg-blue-600' : 'bg-gray-200'
+                  className={`hidden md:flex flex-1 h-1 mx-6 rounded-full transition-all duration-500 ${
+                    index < currentStepIndex ? 'bg-emerald-500' : 'bg-clio-gray-100 dark:bg-clio-gray-800'
                   }`}
                 />
               )}
@@ -346,11 +350,12 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       </ModernCard>
 
       {/* Navigation */}
-      <ModernCard variant="default" className="p-6 bg-white">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <ModernCard variant="default" className="p-6">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <ModernButton
               variant="outline"
+              className="flex-1 sm:flex-none border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-11"
               onClick={() => send({ type: 'PREVIOUS' })}
               disabled={
                 state.matches('selectingContact') ||
@@ -362,7 +367,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
               Previous
             </ModernButton>
 
-            <ModernButton variant="ghost" onClick={handleSaveAndExit}>
+            <ModernButton variant="ghost" className="flex-1 sm:flex-none font-bold uppercase tracking-tight text-xs h-11 text-clio-gray-600 dark:text-clio-gray-400" onClick={handleSaveAndExit}>
               <Save className="w-4 h-4 mr-2" />
               Save & Exit
             </ModernButton>
@@ -370,6 +375,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
 
           <div className="flex items-center space-x-3 w-full sm:w-auto">
             <ModernButton
+              className="flex-1 sm:flex-none bg-clio-blue hover:bg-clio-blue-hover text-white font-bold uppercase tracking-tight text-xs h-11 px-8"
               onClick={() => send({ type: 'NEXT' })}
               disabled={
                 state.matches('reviewing') ||
@@ -381,7 +387,7 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
               <ChevronRight className="w-4 h-4 ml-2" />
             </ModernButton>
 
-            <ModernButton variant="ghost" onClick={handleCancel}>
+            <ModernButton variant="ghost" className="flex-1 sm:flex-none font-bold uppercase tracking-tight text-xs h-11 text-clio-gray-400 hover:text-red-500" onClick={handleCancel}>
               <X className="w-4 h-4 mr-2" />
               Cancel
             </ModernButton>
@@ -390,9 +396,9 @@ export function QuoteWizard({ editQuoteId }: QuoteWizardProps) {
       </ModernCard>
 
       {/* Step Content */}
-      <ModernCard variant="elevated" className="p-8 bg-white">
+      <div className="bg-white dark:bg-clio-gray-900 rounded-2xl border border-clio-gray-100 dark:border-clio-gray-800 p-8 shadow-md">
         {renderStepContent()}
-      </ModernCard>
+      </div>
     </div>
   );
 }

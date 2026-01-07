@@ -133,96 +133,106 @@ export function ContactForm({ contact, onClose, onSuccess }: ContactFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-clio-navy/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <div className="bg-white dark:bg-clio-gray-950 rounded-2xl w-full max-w-2xl shadow-strong max-h-[90vh] overflow-hidden flex flex-col border border-clio-gray-200 dark:border-clio-gray-800">
         {/* Header */}
-        <div className="sticky top-0 bg-white flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
-            {contact ? 'Edit Contact' : 'Add New Contact'}
-          </h2>
-          <Button variant="ghost" size="sm" onClick={onClose} disabled={loading}>
-            <X className="w-4 h-4" />
-          </Button>
+        <div className="sticky top-0 bg-clio-gray-50 dark:bg-clio-gray-900/50 flex items-center justify-between p-8 border-b border-clio-gray-100 dark:border-clio-gray-800 z-10">
+          <div>
+            <h2 className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
+              {contact ? 'Edit Contact' : 'Add New Contact'}
+            </h2>
+            <p className="text-[10px] font-black text-clio-gray-400 uppercase tracking-widest mt-1">Manage relationship details</p>
+          </div>
+          <button 
+            onClick={onClose} 
+            disabled={loading}
+            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 transition-colors text-clio-gray-400"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit} className="p-8 space-y-10 overflow-y-auto">
           {/* Error Message */}
           {errors.submit && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-sm text-red-600">{errors.submit}</p>
+            <div className="p-4 bg-red-50 dark:bg-red-950/20 border border-red-100 dark:border-red-900/30 rounded-xl">
+              <p className="text-[10px] font-black uppercase tracking-widest text-red-600">{errors.submit}</p>
             </div>
           )}
 
           {/* Basic Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-medium text-gray-900">Basic Information</h3>
+          <div className="space-y-6">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Identity Details</h3>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-8">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name *</Label>
+                <Label htmlFor="firstName" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">First Name *</Label>
                 <Input
                   id="firstName"
                   type="text"
                   value={formData.firstName}
                   onChange={(e) => handleChange('firstName', e.target.value)}
-                  className={errors.firstName ? 'border-red-500' : ''}
+                  className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold ${errors.firstName ? 'border-red-500' : ''}`}
                   disabled={loading}
                 />
                 {errors.firstName && (
-                  <p className="text-sm text-red-600">{errors.firstName}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 ml-1">{errors.firstName}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name *</Label>
+                <Label htmlFor="lastName" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Last Name *</Label>
                 <Input
                   id="lastName"
                   type="text"
                   value={formData.lastName}
                   onChange={(e) => handleChange('lastName', e.target.value)}
-                  className={errors.lastName ? 'border-red-500' : ''}
+                  className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold ${errors.lastName ? 'border-red-500' : ''}`}
                   disabled={loading}
                 />
                 {errors.lastName && (
-                  <p className="text-sm text-red-600">{errors.lastName}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 ml-1">{errors.lastName}</p>
                 )}
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email *</Label>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => handleChange('email', e.target.value)}
-                className={errors.email ? 'border-red-500' : ''}
-                disabled={loading}
-              />
-              {errors.email && (
-                <p className="text-sm text-red-600">{errors.email}</p>
-              )}
+            <div className="grid grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Email Address *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => handleChange('email', e.target.value)}
+                  className={`h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold ${errors.email ? 'border-red-500' : ''}`}
+                  disabled={loading}
+                />
+                {errors.email && (
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 ml-1">{errors.email}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Phone Number</Label>
+                <Input
+                  id="phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) => handleChange('phone', e.target.value)}
+                  className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                  disabled={loading}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
-              <Input
-                id="phone"
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => handleChange('phone', e.target.value)}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="type">Contact Type</Label>
+              <Label htmlFor="type" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Contact Type</Label>
               <select
                 id="type"
                 value={formData.type}
                 onChange={(e) => handleChange('type', e.target.value as 'customer' | 'supplier')}
-                className="w-full h-10 px-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-12 px-4 bg-clio-gray-50 dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl focus:ring-2 focus:ring-clio-blue/20 transition-all font-bold uppercase tracking-tight text-[10px]"
                 disabled={loading}
               >
                 <option value="customer">Customer</option>
@@ -232,117 +242,127 @@ export function ContactForm({ contact, onClose, onSuccess }: ContactFormProps) {
           </div>
 
           {/* Advanced Details - Collapsible */}
-          <div className="border-t pt-4">
+          <div className="pt-6 border-t border-clio-gray-100 dark:border-clio-gray-800">
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center w-full py-2 text-sm font-medium text-gray-700 hover:text-gray-900"
+              className="flex items-center justify-between w-full py-4 px-6 rounded-xl bg-clio-gray-50 dark:bg-clio-gray-900/50 hover:bg-clio-gray-100 dark:hover:bg-clio-gray-900 transition-colors group"
             >
-              Advanced Details
-              <ChevronDown className={`ml-2 h-4 w-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+              <span className="text-[10px] font-black uppercase tracking-widest text-clio-gray-500 group-hover:text-clio-gray-900 dark:group-hover:text-white transition-colors">Advanced Information</span>
+              <ChevronDown className={`h-4 w-4 text-clio-gray-400 transition-transform duration-300 ${showAdvanced ? 'rotate-180' : ''}`} />
             </button>
 
             {showAdvanced && (
-              <div className="space-y-4 mt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="company">Company</Label>
-                  <Input
-                    id="company"
-                    type="text"
-                    value={formData.company}
-                    onChange={(e) => handleChange('company', e.target.value)}
-                    disabled={loading}
-                  />
+              <div className="space-y-8 mt-10 px-2 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="grid grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <Label htmlFor="company" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Company / Organization</Label>
+                    <Input
+                      id="company"
+                      type="text"
+                      value={formData.company}
+                      onChange={(e) => handleChange('company', e.target.value)}
+                      className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                      disabled={loading}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="tags" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Relationship Tags</Label>
+                    <Input
+                      id="tags"
+                      type="text"
+                      placeholder="e.g., VIP, corporate, frequent"
+                      value={formData.tags}
+                      onChange={(e) => handleChange('tags', e.target.value)}
+                      className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
+                      disabled={loading}
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="tags">Tags (comma-separated)</Label>
-                  <Input
-                    id="tags"
-                    type="text"
-                    placeholder="e.g., VIP, corporate, frequent"
-                    value={formData.tags}
-                    onChange={(e) => handleChange('tags', e.target.value)}
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="notes">Notes</Label>
+                  <Label htmlFor="notes" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Internal Auditor Notes</Label>
                   <Textarea
                     id="notes"
-                    rows={3}
+                    rows={4}
                     value={formData.notes}
                     onChange={(e) => handleChange('notes', e.target.value)}
+                    className="rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                     disabled={loading}
                   />
                 </div>
 
                 {/* Address */}
-                <div className="space-y-4 pt-4 border-t">
-                  <h4 className="font-medium text-sm text-gray-900">Address</h4>
+                <div className="space-y-6 pt-10 border-t border-clio-gray-100 dark:border-clio-gray-800">
+                  <h4 className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Physical Address</h4>
 
                   <div className="space-y-2">
-                    <Label htmlFor="street">Street Address</Label>
+                    <Label htmlFor="street" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Street Address</Label>
                     <Input
                       id="street"
                       type="text"
                       value={formData.address.street}
                       onChange={(e) => handleAddressChange('street', e.target.value)}
+                      className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                       disabled={loading}
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <Label htmlFor="city">City</Label>
+                      <Label htmlFor="city" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">City</Label>
                       <Input
                         id="city"
                         type="text"
                         value={formData.address.city}
                         onChange={(e) => handleAddressChange('city', e.target.value)}
+                        className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                         disabled={loading}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="state">State</Label>
+                      <Label htmlFor="state" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">State / Province</Label>
                       <Input
                         id="state"
                         type="text"
                         value={formData.address.state}
                         onChange={(e) => handleAddressChange('state', e.target.value)}
+                        className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                         disabled={loading}
                       />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <Label htmlFor="zipCode">ZIP Code</Label>
+                      <Label htmlFor="zipCode" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">ZIP / Postal Code</Label>
                       <Input
                         id="zipCode"
                         type="text"
                         value={formData.address.zipCode}
                         onChange={(e) => handleAddressChange('zipCode', e.target.value)}
+                        className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                         disabled={loading}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="country">Country</Label>
+                      <Label htmlFor="country" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Country</Label>
                       <Input
                         id="country"
                         type="text"
                         value={formData.address.country}
                         onChange={(e) => handleAddressChange('country', e.target.value)}
+                        className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                         disabled={loading}
                       />
                     </div>
                   </div>
 
                   {errors.address && (
-                    <p className="text-sm text-red-600">{errors.address}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-red-500 ml-1">{errors.address}</p>
                   )}
                 </div>
               </div>
@@ -350,18 +370,27 @@ export function ContactForm({ contact, onClose, onSuccess }: ContactFormProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t">
-            <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={loading}>
+          <div className="flex items-center justify-between pt-10 border-t border-clio-gray-100 dark:border-clio-gray-800">
+            <button 
+              type="button" 
+              onClick={onClose} 
+              disabled={loading}
+              className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white transition-colors"
+            >
+              Cancel Request
+            </button>
+            <Button 
+              type="submit" 
+              disabled={loading}
+              className="bg-clio-blue hover:bg-clio-blue/90 text-white font-black uppercase tracking-widest h-12 px-8 rounded-xl shadow-lg shadow-clio-blue/20"
+            >
               {loading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
+                  <Loader2 className="w-4 h-4 mr-3 animate-spin" />
+                  Processing...
                 </>
               ) : (
-                contact ? 'Update Contact' : 'Add Contact'
+                contact ? 'Update Record' : 'Create Contact'
               )}
             </Button>
           </div>

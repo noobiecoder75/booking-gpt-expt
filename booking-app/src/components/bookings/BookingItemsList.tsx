@@ -26,15 +26,15 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
 
   const getItemStatusBadge = (status: BookingItem['bookingStatus']) => {
     const config = {
-      not_booked: { label: 'Not Booked', className: 'bg-gray-100 text-gray-800' },
-      pending: { label: 'Pending', className: 'bg-orange-100 text-orange-800' },
-      confirmed: { label: 'Confirmed', className: 'bg-green-100 text-green-800' },
-      failed: { label: 'Failed', className: 'bg-red-100 text-red-800' },
-      cancelled: { label: 'Cancelled', className: 'bg-red-100 text-red-800' }
+      not_booked: { label: 'Not Booked', className: 'bg-clio-gray-100 text-clio-gray-700 dark:bg-clio-gray-800 dark:text-clio-gray-400 border-clio-gray-200 dark:border-clio-gray-700' },
+      pending: { label: 'Pending', className: 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-800' },
+      confirmed: { label: 'Confirmed', className: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800' },
+      failed: { label: 'Failed', className: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800' },
+      cancelled: { label: 'Cancelled', className: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800' }
     };
 
     const { label, className } = config[status];
-    return <Badge className={className}>{label}</Badge>;
+    return <Badge className={cn("text-[10px] uppercase font-bold tracking-tight px-2 py-0.5", className)}>{label}</Badge>;
   };
 
   const formatCurrency = (amount: number) => {
@@ -64,24 +64,24 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
     <div className="space-y-6">
       {Object.entries(groupedItems).map(([type, typeItems]) => (
         <div key={type}>
-          <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-clio-gray-500 dark:text-clio-gray-400 mb-4 flex items-center gap-2">
             {getItemIcon(type as BookingItem['type'])}
             {typeLabels[type as keyof typeof typeLabels]} ({typeItems.length})
           </h3>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             {typeItems.map((item) => (
-              <Card key={item.id}>
-                <CardHeader className="pb-3">
+              <Card key={item.id} className="border-clio-gray-100 dark:border-clio-gray-800 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                <CardHeader className="pb-4 bg-clio-gray-50/50 dark:bg-clio-gray-800/20">
                   <div className="flex justify-between items-start">
                     <div>
-                      <CardTitle className="text-base">{item.name}</CardTitle>
-                      <div className="flex items-center gap-2 mt-1 text-sm text-gray-500">
-                        <Calendar className="w-4 h-4" />
+                      <CardTitle className="text-base font-bold text-clio-gray-900 dark:text-white">{item.name}</CardTitle>
+                      <div className="flex items-center gap-2 mt-1.5 text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">
+                        <Calendar className="w-3.5 h-3.5" />
                         {format(new Date(item.startDate), 'MMM dd, yyyy')}
                         {item.endDate && (
                           <>
-                            <span>→</span>
+                            <span className="text-clio-gray-300 dark:text-clio-gray-600">→</span>
                             {format(new Date(item.endDate), 'MMM dd, yyyy')}
                           </>
                         )}
@@ -90,25 +90,25 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
                     {getItemStatusBadge(item.bookingStatus)}
                   </div>
                 </CardHeader>
-                <CardContent className="pb-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                <CardContent className="pt-5 pb-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                     {/* Pricing Info */}
                     {showPricing && (
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-gray-600">Price:</span>
-                          <span className="font-semibold">{formatCurrency(item.price)}</span>
+                          <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Price</span>
+                          <span className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(item.price)}</span>
                         </div>
                         {item.quantity > 1 && (
                           <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Quantity:</span>
-                            <span>{item.quantity}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Quantity</span>
+                            <span className="font-bold text-clio-gray-900 dark:text-white">{item.quantity}</span>
                           </div>
                         )}
                         {item.quantity > 1 && (
-                          <div className="flex items-center justify-between">
-                            <span className="text-gray-600">Total:</span>
-                            <span className="font-semibold">{formatCurrency(item.price * item.quantity)}</span>
+                          <div className="flex items-center justify-between pt-1 border-t border-clio-gray-100 dark:border-clio-gray-800">
+                            <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Subtotal</span>
+                            <span className="font-bold text-clio-blue">{formatCurrency(item.price * item.quantity)}</span>
                           </div>
                         )}
                       </div>
@@ -116,19 +116,23 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
 
                     {/* Supplier Info */}
                     {(item.supplier || item.confirmationNumber) && (
-                      <div className="space-y-1">
+                      <div className="space-y-2">
                         {item.supplier && (
-                          <div className="flex items-center gap-2">
-                            <Building2 className="w-4 h-4 text-gray-400" />
-                            <span className="text-gray-600">Supplier:</span>
-                            <span className="font-medium">{item.supplier}</span>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Supplier</span>
+                            <div className="flex items-center gap-2">
+                              <Building2 className="w-3.5 h-3.5 text-clio-gray-400" />
+                              <span className="font-bold text-clio-gray-900 dark:text-white">{item.supplier}</span>
+                            </div>
                           </div>
                         )}
                         {item.confirmationNumber && (
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4 text-green-600" />
-                            <span className="text-gray-600">Confirmation:</span>
-                            <span className="font-mono text-xs font-semibold">{item.confirmationNumber}</span>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Confirmation</span>
+                            <div className="flex items-center gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                              <span className="font-mono text-xs font-bold text-clio-gray-900 dark:text-white tracking-wider">{item.confirmationNumber}</span>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -136,24 +140,24 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
 
                     {/* Profit Tracking (if available) */}
                     {showPricing && (item.supplierCost || item.clientPrice) && (
-                      <div className="md:col-span-2 pt-2 border-t">
-                        <div className="grid grid-cols-3 gap-2 text-xs">
+                      <div className="md:col-span-2 pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
+                        <div className="grid grid-cols-3 gap-4">
                           {item.supplierCost && (
                             <div>
-                              <span className="text-gray-500">Supplier Cost:</span>
-                              <div className="font-semibold">{formatCurrency(item.supplierCost)}</div>
+                              <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 block mb-1">Supplier Cost</span>
+                              <div className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(item.supplierCost)}</div>
                             </div>
                           )}
                           {item.clientPrice && (
                             <div>
-                              <span className="text-gray-500">Client Price:</span>
-                              <div className="font-semibold">{formatCurrency(item.clientPrice)}</div>
+                              <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 block mb-1">Client Price</span>
+                              <div className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(item.clientPrice)}</div>
                             </div>
                           )}
                           {item.supplierCost && item.clientPrice && (
                             <div>
-                              <span className="text-gray-500">Profit:</span>
-                              <div className="font-semibold text-green-600">
+                              <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 block mb-1">Profit</span>
+                              <div className="font-bold text-emerald-600 dark:text-emerald-400">
                                 {formatCurrency(item.clientPrice - item.supplierCost)}
                               </div>
                             </div>
@@ -171,12 +175,14 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
 
       {/* Total Summary */}
       {showPricing && items.length > 0 && (
-        <div className="border-t pt-4 mt-6">
-          <div className="flex justify-between items-center">
-            <span className="text-lg font-semibold">Total</span>
-            <span className="text-2xl font-bold">
-              {formatCurrency(items.reduce((sum, item) => sum + (item.price * item.quantity), 0))}
-            </span>
+        <div className="border-t border-clio-gray-200 dark:border-clio-gray-800 pt-6 mt-8">
+          <div className="flex justify-between items-end">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400 block mb-1">Grand Total</span>
+              <span className="text-3xl font-black text-clio-gray-900 dark:text-white tracking-tight">
+                {formatCurrency(items.reduce((sum, item) => sum + (item.price * item.quantity), 0))}
+              </span>
+            </div>
           </div>
         </div>
       )}

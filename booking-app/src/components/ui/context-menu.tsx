@@ -69,7 +69,7 @@ export function ContextMenu({ x, y, isOpen, onClose, children }: ContextMenuProp
   const menu = (
     <div
       ref={menuRef}
-      className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-lg py-1 min-w-[160px]"
+      className="fixed z-50 bg-white dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl shadow-strong py-1.5 min-w-[180px] animate-in fade-in zoom-in-95 duration-100"
       style={{
         left: adjustedPosition.x,
         top: adjustedPosition.y,
@@ -92,10 +92,10 @@ interface ContextMenuItemProps {
 export function ContextMenuItem({ onClick, icon, children, className = '' }: ContextMenuItemProps) {
   return (
     <button
-      className={`w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 flex items-center space-x-2 transition-colors ${className}`}
+      className={`w-full text-left px-4 py-2.5 text-sm font-bold uppercase tracking-tight text-clio-gray-600 dark:text-clio-gray-400 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 hover:text-clio-blue dark:hover:text-clio-blue flex items-center space-x-3 transition-all ${className}`}
       onClick={onClick}
     >
-      {icon && <span className="flex-shrink-0">{icon}</span>}
+      {icon && <span className="flex-shrink-0 opacity-70 group-hover:opacity-100">{icon}</span>}
       <span>{children}</span>
     </button>
   );

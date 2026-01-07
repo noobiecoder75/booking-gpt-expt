@@ -55,12 +55,12 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+        <h2 className="text-2xl font-black text-clio-gray-900 dark:text-white mb-2 uppercase tracking-tight">
           Select a Contact
         </h2>
-        <p className="text-gray-600">
+        <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
           Choose an existing contact or create a new one for this travel quote.
         </p>
       </div>
@@ -68,7 +68,7 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
       {/* Search and Create */}
       <div className="flex items-center space-x-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-4 h-4" />
           <Input
             type="text"
             placeholder="Search contacts..."
@@ -80,7 +80,7 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
         <Button
           variant="outline"
           onClick={() => setShowNewContactForm(true)}
-          className="flex items-center space-x-2"
+          className="flex items-center space-x-2 border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-xs h-12 px-6"
         >
           <Plus className="w-4 h-4" />
           <span>New Contact</span>
@@ -89,36 +89,37 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
 
       {/* Contact List */}
       {isLoading ? (
-        <div className="text-center py-12 text-gray-500 flex items-center justify-center gap-2">
-          <Loader2 className="w-5 h-5 animate-spin" />
-          Loading contacts...
+        <div className="text-center py-16 bg-clio-gray-50 dark:bg-clio-gray-800/20 rounded-2xl border border-clio-gray-100 dark:border-clio-gray-800">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-clio-blue mb-4" />
+          <p className="text-clio-gray-500 font-bold uppercase tracking-widest text-xs">Loading contacts...</p>
         </div>
       ) : filteredContacts.length > 0 ? (
-        <div className="space-y-2 max-h-96 overflow-y-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
           {filteredContacts.map((contact) => (
             <div
               key={contact.id}
-              className={`p-4 rounded-lg border cursor-pointer transition-all ${
+              className={`p-6 rounded-2xl border-2 cursor-pointer transition-all duration-200 ${
                 selectedContactId === contact.id
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                  ? 'border-clio-blue bg-clio-blue/5 shadow-sm ring-4 ring-clio-blue/5'
+                  : 'border-clio-gray-100 dark:border-clio-gray-800 bg-white dark:bg-clio-gray-900/50 hover:border-clio-gray-200 dark:hover:border-clio-gray-700'
               }`}
               onClick={() => handleContactSelect(contact)}
             >
-              <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0">
-                  <User className="w-8 h-8 text-gray-400" />
+              <div className="flex items-center space-x-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-lg font-black transition-colors ${
+                  selectedContactId === contact.id ? 'bg-clio-blue text-white' : 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-400'
+                }`}>
+                  {contact.firstName[0]}{contact.lastName[0]}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium text-gray-900">
+                  <div className="text-base font-black text-clio-gray-900 dark:text-white tracking-tight truncate">
                     {getContactDisplayName(contact.firstName, contact.lastName)}
                   </div>
-                  <div className="text-sm text-gray-500">{contact.email}</div>
-                  {contact.phone && (
-                    <div className="text-sm text-gray-500">{contact.phone}</div>
-                  )}
-                  <div className="text-xs text-gray-400 mt-1">
-                    {contact.quotes.length} {contact.quotes.length === 1 ? 'quote' : 'quotes'}
+                  <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400 truncate">{contact.email}</div>
+                  <div className="flex items-center gap-3 mt-2">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-clio-blue bg-clio-blue/10 px-2 py-0.5 rounded-full">
+                      {contact.quotes.length} {contact.quotes.length === 1 ? 'quote' : 'quotes'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -126,17 +127,21 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 text-gray-500">
-          {searchQuery
-            ? 'No contacts found matching your search.'
-            : 'No contacts available. Create your first contact to get started.'}
+        <div className="text-center py-16 bg-clio-gray-50 dark:bg-clio-gray-800/20 rounded-2xl border border-clio-gray-100 dark:border-clio-gray-800">
+          <User className="w-12 h-12 text-clio-gray-200 dark:text-clio-gray-700 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white mb-2">No contacts found</h3>
+          <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+            {searchQuery
+              ? 'No contacts found matching your search.'
+              : 'No contacts available. Create your first contact to get started.'}
+          </p>
         </div>
       )}
 
       {/* Confirm Selection */}
       {selectedContactId && (
-        <div className="flex justify-center">
-          <Button onClick={handleConfirmSelection} size="lg">
+        <div className="flex justify-center pt-4">
+          <Button onClick={handleConfirmSelection} className="bg-clio-blue hover:bg-clio-blue-hover text-white font-black uppercase tracking-tight text-sm h-14 px-10 shadow-lg shadow-clio-blue/20">
             Continue with Selected Contact
           </Button>
         </div>
@@ -144,8 +149,8 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
 
       {/* Help text */}
       {filteredContacts.length > 0 && !selectedContactId && (
-        <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
-          Click on a contact above to select them, then continue to the next step.
+        <div className="text-center text-clio-gray-400 font-bold uppercase tracking-widest text-[10px]">
+          Select a contact above to continue
         </div>
       )}
 

@@ -552,13 +552,13 @@ export default function AdminSettingsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-8">
-        <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-          <Settings className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+      <div className="flex items-center gap-4 mb-10">
+        <div className="p-4 bg-clio-blue/10 dark:bg-clio-blue/20 rounded-2xl border border-clio-blue/20 shadow-sm">
+          <Settings className="w-8 h-8 text-clio-blue" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Admin Settings</h1>
-          <p className="text-gray-600 dark:text-gray-400">Configure global application settings</p>
+          <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">Admin Settings</h1>
+          <p className="text-sm text-clio-gray-600 dark:text-clio-gray-400 font-medium mt-1">Configure global application settings and business rules</p>
         </div>
       </div>
 
@@ -567,27 +567,29 @@ export default function AdminSettingsPage() {
         {sections.map((section) => {
           const IconComponent = section.icon;
           return (
-            <ModernCard key={section.id} className="overflow-hidden">
+            <ModernCard key={section.id} className="overflow-hidden border-clio-gray-200 dark:border-clio-gray-800 p-0">
               <button
                 onClick={() => toggleSection(section.id)}
-                className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                className="w-full p-6 text-left flex items-center justify-between hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 transition-colors group"
               >
-                <div className="flex items-center gap-3">
-                  <IconComponent className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex items-center gap-4">
+                  <div className={`p-2 rounded-lg transition-colors ${section.expanded ? 'bg-clio-blue/10 text-clio-blue' : 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-400 group-hover:text-clio-blue'}`}>
+                    <IconComponent className="w-5 h-5" />
+                  </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{section.title}</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{section.description}</p>
+                    <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">{section.title}</h3>
+                    <p className="text-sm text-clio-gray-500 dark:text-clio-gray-400 font-medium">{section.description}</p>
                   </div>
                 </div>
                 {section.expanded ? (
-                  <ChevronUp className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                  <ChevronUp className="w-5 h-5 text-clio-blue" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                  <ChevronDown className="w-5 h-5 text-clio-gray-400 dark:text-clio-gray-600 group-hover:text-clio-blue transition-colors" />
                 )}
               </button>
 
               {section.expanded && (
-                <div className="px-6 pb-6 border-t border-gray-100 dark:border-gray-700">
+                <div className="px-8 pb-8 pt-2 border-t border-clio-gray-100 dark:border-clio-gray-800 bg-white dark:bg-clio-gray-900/50">
                   <div className="pt-6">
                     {getSectionContent(section.id)}
                   </div>
