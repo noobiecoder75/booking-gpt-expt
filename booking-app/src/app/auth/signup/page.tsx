@@ -114,15 +114,15 @@ export default function SignUpPage() {
     <div className="flex items-center justify-center min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950 p-4">
       <Card className="w-full max-w-md bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center uppercase tracking-tight">Create Account</CardTitle>
-          <CardDescription className="text-center text-clio-gray-500 dark:text-clio-gray-400">
+          <CardTitle className="text-2xl font-black text-center uppercase tracking-tight text-clio-gray-900 dark:text-white">Create Account</CardTitle>
+          <CardDescription className="text-center text-[10px] font-black uppercase tracking-widest text-clio-gray-400 mt-2">
             Create your workspace as the admin
           </CardDescription>
-          <div className="mt-3 p-3 bg-clio-blue/10 border border-clio-blue/20 rounded-xl">
-            <p className="text-sm text-clio-blue font-bold">
-              First user? <span className="font-normal opacity-90">You'll become the admin automatically.</span>
+          <div className="mt-6 p-4 bg-clio-blue/5 dark:bg-clio-blue/10 border border-clio-blue/10 dark:border-clio-blue/20 rounded-2xl shadow-sm">
+            <p className="text-xs text-clio-blue font-black uppercase tracking-tight">
+              First user? <span className="font-bold opacity-80">You'll become the admin automatically.</span>
             </p>
-            <p className="text-xs text-clio-blue/70 mt-1">
+            <p className="text-[10px] text-clio-blue/60 mt-1.5 font-bold uppercase tracking-widest">
               Already have a workspace? Ask your admin for an invite link.
             </p>
           </div>
@@ -134,10 +134,10 @@ export default function SignUpPage() {
             </Alert>
           )}
 
-          <form onSubmit={handleSignUp} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={handleSignUp} className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="fullName" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Full Name</Label>
                 <Input
                   id="fullName"
                   type="text"
@@ -146,11 +146,12 @@ export default function SignUpPage() {
                   onChange={(e) => setFullName(e.target.value)}
                   required
                   disabled={loading}
+                  className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="companyName">Company</Label>
+                <Label htmlFor="companyName" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Company</Label>
                 <Input
                   id="companyName"
                   type="text"
@@ -158,12 +159,13 @@ export default function SignUpPage() {
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
                   disabled={loading}
+                  className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Work Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -172,47 +174,50 @@ export default function SignUpPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
+                className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" title="Security Key" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Create Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Minimum 6 characters"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
+                className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Label htmlFor="confirmPassword" className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 ml-1">Verify Password</Label>
               <Input
                 id="confirmPassword"
                 type="password"
-                placeholder="Confirm your password"
+                placeholder="Repeat password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={loading}
+                className="h-12 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-950 border-clio-gray-200 dark:border-clio-gray-800 font-bold"
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-clio-blue hover:bg-clio-blue-hover text-white"
+              className="w-full bg-clio-blue hover:bg-clio-blue/90 text-white font-black uppercase tracking-widest h-14 rounded-xl shadow-lg shadow-clio-blue/20"
               disabled={loading}
             >
               {loading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating account...
-                </>
+                <div className="flex items-center">
+                  <Loader2 className="mr-3 h-5 w-5 animate-spin" />
+                  Initializing...
+                </div>
               ) : (
-                'Sign Up'
+                'Create Workspace'
               )}
             </Button>
           </form>
@@ -221,9 +226,9 @@ export default function SignUpPage() {
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-clio-gray-100 dark:border-clio-gray-800" />
             </div>
-            <div className="relative flex justify-center text-[10px] font-bold uppercase tracking-widest">
-              <span className="bg-white dark:bg-clio-gray-900 px-3 text-clio-gray-400">
-                Or continue with
+            <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest">
+              <span className="bg-white dark:bg-clio-gray-900 px-4 text-clio-gray-400">
+                SSO Gateway
               </span>
             </div>
           </div>
@@ -233,7 +238,7 @@ export default function SignUpPage() {
               variant="outline"
               onClick={() => handleOAuthSignUp('google')}
               disabled={loading}
-              className="border-clio-gray-200 dark:border-clio-gray-700"
+              className="h-12 rounded-xl border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px]"
             >
               Google
             </Button>
@@ -241,17 +246,17 @@ export default function SignUpPage() {
               variant="outline"
               onClick={() => handleOAuthSignUp('github')}
               disabled={loading}
-              className="border-clio-gray-200 dark:border-clio-gray-700"
+              className="h-12 rounded-xl border-clio-gray-200 dark:border-clio-gray-800 font-bold uppercase tracking-tight text-[10px]"
             >
               GitHub
             </Button>
           </div>
         </CardContent>
-        <CardFooter>
-          <p className="text-center text-sm text-clio-gray-600 dark:text-clio-gray-400 w-full font-medium">
+        <CardFooter className="p-8 bg-clio-gray-50 dark:bg-clio-gray-800/20 border-t border-clio-gray-100 dark:border-clio-gray-800 text-center rounded-b-3xl">
+          <p className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 w-full">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-clio-blue hover:underline font-bold">
-              Sign in
+            <Link href="/auth/login" className="text-clio-blue hover:underline">
+              Secure Login
             </Link>
           </p>
         </CardFooter>

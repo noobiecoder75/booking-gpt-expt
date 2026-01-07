@@ -1202,8 +1202,4 @@ export function HotelBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate }:
       </div>
     </div>
   );
-        </div>
-      </div>
-    </div>
-  );
 }

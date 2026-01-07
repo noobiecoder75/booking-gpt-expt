@@ -215,9 +215,9 @@ export function Sidebar() {
         }}
       >
         {mobileMenuOpen ? (
-          <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          <X className="w-5 h-5 text-clio-gray-600 dark:text-clio-gray-400" />
         ) : (
-          <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          <Menu className="w-5 h-5 text-clio-gray-600 dark:text-clio-gray-400" />
         )}
       </button>
 
@@ -232,7 +232,7 @@ export function Sidebar() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">TravelFlow</span>
+                  <span className="text-lg font-bold text-clio-gray-900 dark:text-clio-gray-100">TravelFlow</span>
                 </div>
               </Link>
             )}
@@ -248,12 +248,12 @@ export function Sidebar() {
                 console.log('[Sidebar] Collapse toggled to:', !collapsed);
                 toggleCollapsed();
               }}
-              className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 transition-colors"
             >
               {collapsed ? (
-                <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                <ChevronRight className="w-4 h-4 text-clio-gray-600 dark:text-clio-gray-400" />
               ) : (
-                <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                <ChevronLeft className="w-4 h-4 text-clio-gray-600 dark:text-clio-gray-400" />
               )}
             </button>
           </div>
@@ -314,7 +314,7 @@ export function Sidebar() {
 
                   {/* Child Menu Items */}
                   {!collapsed && isExpanded && (
-                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-2">
+                    <div className="ml-4 mt-1 space-y-1 border-l-2 border-clio-gray-200 dark:border-clio-gray-800 pl-2">
                       {item.children.map((child: any) => (
                         <Link
                           key={child.href}
@@ -360,9 +360,9 @@ export function Sidebar() {
         </nav>
 
         {/* User Section */}
-        <div className="p-4 border-t border-gray-200 space-y-2">
+        <div className="p-4 border-t border-clio-gray-200 dark:border-clio-gray-800 space-y-2">
           {!collapsed && (
-            <div className="text-sm text-gray-600 dark:text-gray-400 mb-3 px-3">
+            <div className="text-sm text-clio-gray-600 dark:text-clio-gray-400 mb-3 px-3">
               {user?.email || profile?.email}
             </div>
           )}
@@ -372,7 +372,7 @@ export function Sidebar() {
             size={collapsed ? "icon" : "sm"}
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className={`text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 w-full ${collapsed ? 'justify-center' : 'justify-start'}`}
+            className={`text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 w-full ${collapsed ? 'justify-center' : 'justify-start'}`}
             title={collapsed ? 'Sign Out' : undefined}
           >
             <LogOut className={collapsed ? "w-6 h-6" : "w-4 h-4"} />
@@ -393,7 +393,7 @@ export function Sidebar() {
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">TravelFlow</span>
+                  <span className="text-lg font-bold text-clio-gray-900 dark:text-clio-gray-100">TravelFlow</span>
                 </div>
               </Link>
             </div>
@@ -432,8 +432,8 @@ export function Sidebar() {
                         className={`
                           w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 justify-between
                           ${item.active
-                            ? 'bg-gray-100 text-gray-900 font-medium shadow-sm'
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                            ? 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 font-bold shadow-sm'
+                            : 'text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800'
                           }
                         `}
                       >
@@ -449,7 +449,7 @@ export function Sidebar() {
 
                       {/* Child Menu Items */}
                       {isExpanded && (
-                        <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-2">
+                        <div className="ml-4 mt-1 space-y-1 border-l-2 border-clio-gray-200 dark:border-clio-gray-800 pl-2">
                           {item.children.map((child: any) => (
                             <Link
                               key={child.href}
@@ -458,8 +458,8 @@ export function Sidebar() {
                               className={`
                                 flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm
                                 ${child.active
-                                  ? 'bg-gray-100 text-gray-900 font-medium'
-                                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                  ? 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 font-bold'
+                                  : 'text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800'
                                 }
                               `}
                             >
@@ -482,8 +482,8 @@ export function Sidebar() {
                     className={`
                       flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200
                       ${item.active
-                        ? 'bg-gray-100 text-gray-900 font-medium shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 font-bold shadow-sm'
+                        : 'text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800'
                       }
                     `}
                   >
@@ -495,8 +495,8 @@ export function Sidebar() {
             </nav>
 
             {/* User Section */}
-            <div className="p-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
-              <div className="text-sm text-gray-600 dark:text-gray-400 mb-3 px-3">
+            <div className="p-4 border-t border-clio-gray-200 dark:border-clio-gray-800 space-y-2">
+              <div className="text-sm text-clio-gray-600 dark:text-clio-gray-400 mb-3 px-3">
                 {user?.email || profile?.email}
               </div>
               <ThemeToggle />
@@ -505,7 +505,7 @@ export function Sidebar() {
                 size="sm"
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 w-full justify-start"
+                className="text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white w-full justify-start"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 {isLoggingOut ? 'Signing Out...' : 'Sign Out'}

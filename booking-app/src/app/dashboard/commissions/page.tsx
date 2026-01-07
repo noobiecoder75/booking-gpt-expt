@@ -101,7 +101,7 @@ export default function CommissionsPage() {
       case 'disputed':
         return 'bg-red-100 text-red-800';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-700 dark:text-clio-gray-300';
     }
   };
 

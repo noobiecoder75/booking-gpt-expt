@@ -440,8 +440,4 @@ export function TransferBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
       </div>
     </div>
   );
-        </div>
-      </div>
-    </div>
-  );
 }

@@ -291,7 +291,7 @@ export default function ContactsPage() {
                 {acceptedQuotes.slice(0, 5).map((quote) => (
                   <div key={quote.id} className="flex items-center justify-between p-3 border border-clio-gray-100 dark:border-clio-gray-800 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 transition-colors">
                     <div>
-                      <div className="font-bold text-clio-gray-900 dark:text-gray-100">{quote.title}</div>
+                      <div className="font-bold text-clio-gray-900 dark:text-white">{quote.title}</div>
                       <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">
                         {new Date(quote.createdAt).toLocaleDateString()}
                       </div>
@@ -323,7 +323,7 @@ export default function ContactsPage() {
                 {paidInvoices.slice(0, 5).map((invoice) => (
                   <div key={invoice.id} className="flex items-center justify-between p-3 border border-clio-gray-100 dark:border-clio-gray-800 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 transition-colors">
                     <div>
-                      <div className="font-bold text-clio-gray-900 dark:text-gray-100">#{invoice.invoiceNumber}</div>
+                      <div className="font-bold text-clio-gray-900 dark:text-white">#{invoice.invoiceNumber}</div>
                       <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">
                         Paid: {new Date(invoice.payments[0]?.processedDate || invoice.updatedAt).toLocaleDateString()}
                       </div>

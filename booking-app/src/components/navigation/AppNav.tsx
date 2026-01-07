@@ -118,7 +118,7 @@ export function AppNav() {
             <div className="w-8 h-8 bg-clio-blue rounded-lg flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-clio-gray-900 dark:text-gray-100">TravelFlow</span>
+            <span className="text-xl font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">TravelFlow</span>
           </Link>
 
           {/* Desktop Navigation */}

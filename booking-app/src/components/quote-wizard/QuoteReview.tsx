@@ -4,9 +4,10 @@ import { useState, useMemo } from 'react';
 import { TravelQuote, Contact } from '@/types';
 import { useQuoteMutations } from '@/hooks/mutations/useQuoteMutations';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { formatCurrency, getContactDisplayName, formatDate, detectDestinationMismatches, DestinationMismatch, calculateQuoteTotal } from '@/lib/utils';
 import { generateClientQuoteLink } from '@/lib/client-links';
-import { Plane, Hotel, MapPin, Car, FileText, Send, AlertTriangle, X, Copy, Check } from 'lucide-react';
+import { Plane, Hotel, MapPin, Car, FileText, Send, AlertTriangle, X, Copy, Check, Calendar } from 'lucide-react';
 
 interface QuoteReviewProps {
   quote: TravelQuote;
@@ -131,7 +132,7 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
               <span className="text-xs font-bold uppercase tracking-widest opacity-70">For</span>
               <span className="text-sm font-bold uppercase tracking-tight">{getContactDisplayName(contact.firstName, contact.lastName)}</span>
             </div>
-            <div className="flex items-center gap-2 mt-4 bg-white/10 px-3 py-1.5 rounded-lg border border-white/10 w-fit">
+            <div className="flex items-center gap-2 mt-4 bg-clio-gray-100/20 dark:bg-clio-gray-900/30 px-3 py-1.5 rounded-lg border border-white/10 w-fit">
               <Calendar className="w-4 h-4 opacity-70" />
               <span className="text-xs font-bold uppercase tracking-widest">
                 {formatDate(quote.travelDates.start)} - {formatDate(quote.travelDates.end)}
@@ -323,16 +324,6 @@ export function QuoteReview({ quote, contact, onComplete }: QuoteReviewProps) {
         />
       )}
     </div>
-
-      {/* Destination Mismatch Modal */}
-      {showMismatchModal && (
-        <DestinationMismatchModal
-          mismatches={detectedMismatches}
-          onCancel={() => setShowMismatchModal(false)}
-          onOverride={() => proceedWithSend(true)}
-        />
-      )}
-    </div>
   );
 }
 
@@ -437,5 +428,4 @@ function DestinationMismatchModal({ mismatches, onCancel, onOverride }: Destinat
       </div>
     </div>
   );
-}
 }

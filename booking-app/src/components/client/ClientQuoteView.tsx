@@ -356,7 +356,7 @@ export function ClientQuoteView({
                           variant="ghost"
                           size="sm"
                           onClick={() => handleAddToGoogleCalendar(item)}
-                          className="text-[10px] font-black uppercase tracking-widest text-clio-blue hover:bg-clio-blue/10 w-full mt-auto bg-white/50 dark:bg-clio-gray-900/50"
+                          className="text-[10px] font-black uppercase tracking-widest text-clio-blue hover:bg-clio-blue/10 w-full mt-auto bg-clio-gray-50 dark:bg-clio-gray-800"
                         >
                           <CalendarPlus className="w-3.5 h-3.5 mr-2" />
                           Add to Calendar
@@ -411,7 +411,7 @@ export function ClientQuoteView({
               
               <Button 
                 onClick={handleAcceptQuote}
-                className="bg-transparent text-white border-2 border-white/30 hover:bg-white/10 font-black uppercase tracking-widest h-16 rounded-2xl"
+                className="bg-transparent text-white border-2 border-white/20 hover:bg-white/10 font-black uppercase tracking-widest h-16 rounded-2xl"
               >
                 <Check className="w-6 h-6 mr-3" />
                 Accept Quote
@@ -589,24 +589,6 @@ export function ClientQuoteView({
         agentName={agentName}
       />
 
-      <PaymentModal
-        quote={quote}
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        onSuccess={handlePaymentSuccess}
-      />
-    </div>
-  );
-
-      {/* Message Modal */}
-      <ClientMessageModal
-        isOpen={showMessageModal}
-        onClose={() => setShowMessageModal(false)}
-        onSend={handleSendMessage}
-        agentName={agentName}
-      />
-
-      {/* Payment Modal - Real Stripe Integration */}
       <PaymentModal
         quote={quote}
         isOpen={showPaymentModal}

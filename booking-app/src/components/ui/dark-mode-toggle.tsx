@@ -39,6 +39,7 @@ const DarkModeToggle = () => {
       size="sm"
       onClick={toggleDarkMode}
       aria-label="Toggle dark mode"
+      className="w-10 h-10 p-0 rounded-xl bg-clio-gray-50 dark:bg-clio-gray-900 border border-clio-gray-100 dark:border-clio-gray-800 text-clio-gray-500 hover:text-clio-blue dark:hover:text-white"
     >
       {isDark ? (
         <Sun className="h-4 w-4" />

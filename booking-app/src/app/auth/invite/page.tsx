@@ -113,22 +113,24 @@ function InvitePageContent() {
 
   if (!tokenValid && error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <Card className="w-full max-w-md">
+      <div className="flex items-center justify-center min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950 p-4">
+        <Card className="w-full max-w-md bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
           <CardHeader>
             <div className="flex justify-center mb-4">
-              <AlertCircle className="w-12 h-12 text-red-600" />
+              <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-2xl flex items-center justify-center border border-red-100 dark:border-red-900/30">
+                <AlertCircle className="w-8 h-8 text-red-600" />
+              </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Invalid Invite</CardTitle>
+            <CardTitle className="text-2xl font-black text-center uppercase tracking-tight">Invalid Invite</CardTitle>
           </CardHeader>
           <CardContent>
             <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
+              <AlertDescription className="font-medium">{error}</AlertDescription>
             </Alert>
           </CardContent>
           <CardFooter>
             <Link href="/auth/login" className="w-full">
-              <Button className="w-full" variant="outline">
+              <Button className="w-full border-clio-gray-200 dark:border-clio-gray-800" variant="outline">
                 Back to Login
               </Button>
             </Link>
@@ -140,23 +142,25 @@ function InvitePageContent() {
 
   if (success) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <Card className="w-full max-w-md">
+      <div className="flex items-center justify-center min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950 p-4">
+        <Card className="w-full max-w-md bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
           <CardHeader>
             <div className="flex justify-center mb-4">
-              <UserPlus className="w-12 h-12 text-green-600" />
+              <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-2xl flex items-center justify-center border border-emerald-100 dark:border-emerald-900/30">
+                <UserPlus className="w-8 h-8 text-emerald-600" />
+              </div>
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Welcome to the Team!</CardTitle>
+            <CardTitle className="text-2xl font-black text-center uppercase tracking-tight">Welcome to the Team!</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-center text-gray-600">
+            <p className="text-center text-clio-gray-600 dark:text-clio-gray-400 font-medium">
               Your account has been created successfully. Please check your email at{' '}
-              <strong>{inviteEmail}</strong> to verify your account.
+              <strong className="text-clio-gray-900 dark:text-white">{inviteEmail}</strong> to verify your account.
             </p>
           </CardContent>
           <CardFooter>
             <Link href="/auth/login" className="w-full">
-              <Button className="w-full">
+              <Button className="w-full bg-clio-blue hover:bg-clio-blue-hover text-white font-bold">
                 Continue to Login
               </Button>
             </Link>
@@ -167,12 +171,12 @@ function InvitePageContent() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-md">
+    <div className="flex items-center justify-center min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950 p-4">
+      <Card className="w-full max-w-md bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Accept Team Invite</CardTitle>
-          <CardDescription className="text-center">
-            You've been invited to join as {inviteRole}
+          <CardTitle className="text-2xl font-bold text-center uppercase tracking-tight">Accept Team Invite</CardTitle>
+          <CardDescription className="text-center text-clio-gray-500 dark:text-clio-gray-400">
+            You've been invited to join as <span className="text-clio-blue font-bold uppercase">{inviteRole}</span>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -190,7 +194,7 @@ function InvitePageContent() {
                 type="email"
                 value={inviteEmail}
                 disabled
-                className="bg-gray-100"
+                className="bg-clio-gray-50 dark:bg-clio-gray-800/50 border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-500"
               />
             </div>
 
@@ -235,7 +239,7 @@ function InvitePageContent() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full bg-clio-blue hover:bg-clio-blue-hover text-white font-bold"
               disabled={loading}
             >
               {loading ? (
@@ -250,9 +254,9 @@ function InvitePageContent() {
           </form>
         </CardContent>
         <CardFooter>
-          <p className="text-center text-sm text-gray-600 w-full">
+          <p className="text-center text-sm text-clio-gray-600 dark:text-clio-gray-400 w-full font-medium">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-primary hover:underline">
+            <Link href="/auth/login" className="text-clio-blue hover:underline font-bold">
               Sign in
             </Link>
           </p>
@@ -265,8 +269,8 @@ function InvitePageContent() {
 export default function InvitePage() {
   return (
     <Suspense fallback={
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      <div className="flex items-center justify-center min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950">
+        <Loader2 className="w-8 h-8 animate-spin text-clio-blue" />
       </div>
     }>
       <InvitePageContent />

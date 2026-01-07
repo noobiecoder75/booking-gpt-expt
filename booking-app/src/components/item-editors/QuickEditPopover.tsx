@@ -137,7 +137,7 @@ export function QuickEditPopover({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-clio-navy/20 backdrop-blur-[2px]"
+        className="fixed inset-0 z-40 bg-clio-navy/40"
         onClick={onCancel}
       />
 

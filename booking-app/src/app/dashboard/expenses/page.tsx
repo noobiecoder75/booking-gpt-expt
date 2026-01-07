@@ -113,7 +113,7 @@ export default function ExpensesPage() {
       marketing: 'bg-purple-100 text-purple-800',
       operational: 'bg-orange-100 text-orange-800',
       commission: 'bg-green-100 text-green-800',
-      office: 'bg-gray-100 text-gray-800',
+      office: 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-700 dark:text-clio-gray-300',
       travel: 'bg-indigo-100 text-indigo-800',
       technology: 'bg-cyan-100 text-cyan-800',
       other: 'bg-slate-100 text-slate-800',

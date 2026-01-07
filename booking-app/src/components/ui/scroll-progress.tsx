@@ -14,7 +14,7 @@ export function ScrollProgress({
   className = "",
   position = "top",
   height = "4px",
-  color = "rgb(59 130 246)", // blue-500
+  color = "#0056D2", // clio-blue
 }: ScrollProgressProps) {
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {

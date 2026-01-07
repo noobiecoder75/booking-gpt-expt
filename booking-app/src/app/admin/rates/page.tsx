@@ -283,7 +283,7 @@ Local Supplier,Beach Resort Cancun,BRCMX003,Ocean View Suite,2025-03-10,2025-03-
                 </div>
 
                 {/* Progress steps */}
-                <div className="bg-white/50 dark:bg-clio-gray-900/50 backdrop-blur-sm rounded-xl p-4 text-left space-y-2 text-sm border border-clio-gray-100 dark:border-clio-gray-800">
+                <div className="bg-clio-gray-50 dark:bg-clio-gray-900 rounded-xl p-4 text-left space-y-2 text-sm border border-clio-gray-100 dark:border-clio-gray-800">
                   <div className="flex items-center gap-2 text-green-700 dark:text-green-400 font-bold uppercase tracking-tight text-[10px]">
                     <div className="w-5 h-5 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
                       <CheckCircle className="w-3 h-3" />

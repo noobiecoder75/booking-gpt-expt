@@ -19,23 +19,23 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         <li>
           <Link
             href="/dashboard/quotes"
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-clio-gray-500 hover:text-clio-gray-700 dark:text-clio-gray-400 dark:hover:text-white transition-colors"
           >
             <Home className="w-4 h-4" />
           </Link>
         </li>
         {items.map((item, index) => (
           <li key={index} className="flex items-center">
-            <ChevronRight className="w-4 h-4 text-gray-400 mx-2" />
+            <ChevronRight className="w-4 h-4 text-clio-gray-400 dark:text-clio-gray-600 mx-2" />
             {item.href ? (
               <Link
                 href={item.href}
-                className="text-gray-500 hover:text-gray-700 transition-colors"
+                className="text-clio-gray-500 hover:text-clio-gray-700 dark:text-clio-gray-400 dark:hover:text-white transition-colors"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-gray-900 font-medium">{item.label}</span>
+              <span className="text-clio-gray-900 dark:text-white font-bold uppercase tracking-tight text-xs">{item.label}</span>
             )}
           </li>
         ))}

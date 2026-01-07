@@ -187,11 +187,11 @@ export function BookingDetailsModal({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium opacity-80">Payment Status:</span>
-                <Badge className="bg-white/20 hover:bg-white/30 text-white border-transparent text-[10px] uppercase font-bold tracking-tight">
+                <Badge className="bg-clio-blue/20 hover:bg-clio-blue/30 text-white border-transparent text-[10px] uppercase font-bold tracking-tight">
                   {paymentStatus.label}
                 </Badge>
               </div>
-              <Separator className="bg-white/10" />
+              <Separator className="bg-clio-gray-100/10" />
               <div className="flex justify-between items-end pt-2">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider opacity-80 block mb-1">Total Amount</span>
@@ -199,7 +199,7 @@ export function BookingDetailsModal({
                     {formatCurrency(booking.totalAmount)}
                   </div>
                 </div>
-                <div className="bg-white/10 rounded-xl p-3">
+                <div className="bg-clio-gray-100/10 rounded-xl p-3">
                   <DollarSign className="w-8 h-8 opacity-50" />
                 </div>
               </div>

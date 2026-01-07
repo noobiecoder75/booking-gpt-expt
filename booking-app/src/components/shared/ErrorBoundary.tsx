@@ -47,38 +47,45 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <div className="min-h-[400px] flex items-center justify-center p-8">
-          <div className="max-w-md w-full text-center space-y-4">
+        <div className="min-h-[400px] flex items-center justify-center p-8 bg-white dark:bg-clio-gray-950">
+          <div className="max-w-md w-full text-center space-y-6">
             <div className="flex justify-center">
-              <div className="p-3 bg-red-100 rounded-full">
-                <AlertTriangle className="w-8 h-8 text-red-600" />
+              <div className="p-4 bg-red-50 dark:bg-red-950/20 rounded-2xl border border-red-100 dark:border-red-900/30">
+                <AlertTriangle className="w-10 h-10 text-red-600 dark:text-red-400" />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <h2 className="text-xl font-semibold text-gray-900">
+            <div className="space-y-3">
+              <h2 className="text-2xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">
                 Something went wrong
               </h2>
-              <p className="text-gray-600">
-                We encountered an unexpected error. Please try again.
+              <p className="text-clio-gray-600 dark:text-clio-gray-400 font-medium">
+                We encountered an unexpected error. Please try again or contact support.
               </p>
               {this.state.error && (
-                <details className="mt-4 text-left">
-                  <summary className="text-sm text-gray-500 cursor-pointer">
+                <details className="mt-6 text-left group">
+                  <summary className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400 cursor-pointer hover:text-clio-gray-600 dark:hover:text-clio-gray-200 transition-colors">
                     Technical details
                   </summary>
-                  <pre className="mt-2 text-xs text-gray-700 bg-gray-100 p-3 rounded overflow-auto max-h-32">
+                  <pre className="mt-3 text-xs font-mono text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-950/30 p-4 rounded-xl border border-red-100 dark:border-red-900/20 overflow-auto max-h-40">
                     {this.state.error.message}
                   </pre>
                 </details>
               )}
             </div>
 
-            <div className="flex gap-3 justify-center">
-              <Button onClick={this.handleReset} variant="default">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Button 
+                onClick={this.handleReset} 
+                className="bg-clio-blue hover:bg-clio-blue-hover text-white font-black uppercase tracking-widest h-12 px-8 rounded-xl shadow-lg shadow-clio-blue/20"
+              >
                 Try Again
               </Button>
-              <Button onClick={() => window.location.href = '/dashboard'} variant="outline">
+              <Button 
+                onClick={() => window.location.href = '/dashboard/quotes'} 
+                variant="outline"
+                className="border-clio-gray-200 dark:border-clio-gray-800 text-clio-gray-900 dark:text-white font-black uppercase tracking-widest h-12 px-8 rounded-xl hover:bg-clio-gray-50 dark:hover:bg-clio-gray-900"
+              >
                 Go to Dashboard
               </Button>
             </div>

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { formatCurrency, getTravelItemColor, calculateQuoteTotal } from '@/lib/utils';
-import { Plane, Hotel, MapPin, Car, Calendar as CalendarIcon } from 'lucide-react';
+import { Plane, Hotel, MapPin, Car, Calendar as CalendarIcon, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
 import { FlightBuilder } from '@/components/item-builders/FlightBuilder';
 import { HotelBuilder } from '@/components/item-builders/HotelBuilder';
@@ -513,30 +513,30 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
       }
       
       return (
-        <span className="text-lg font-semibold text-gray-900">
+        <span className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
           {displayText}
         </span>
       );
     };
 
     return (
-      <div className="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg border">
+      <div className="flex items-center justify-between mb-4 p-3 bg-clio-gray-50 dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800">
         <div className="flex items-center space-x-2">
           <button
             onClick={goToBack}
-            className="px-3 py-1.5 bg-white border rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
+            className="px-3 py-1.5 bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700 transition-colors text-sm font-medium text-clio-gray-700 dark:text-clio-gray-300"
           >
             ←
           </button>
           <button
             onClick={goToCurrent}
-            className="px-3 py-1.5 bg-white border rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
+            className="px-3 py-1.5 bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700 transition-colors text-sm font-medium text-clio-gray-700 dark:text-clio-gray-300"
           >
             Today
           </button>
           <button
             onClick={goToNext}
-            className="px-3 py-1.5 bg-white border rounded-md hover:bg-gray-50 transition-colors text-sm font-medium"
+            className="px-3 py-1.5 bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700 transition-colors text-sm font-medium text-clio-gray-700 dark:text-clio-gray-300"
           >
             →
           </button>
@@ -774,7 +774,7 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
         <div className="fixed bottom-6 left-6 lg:left-[300px] right-6 bg-clio-navy dark:bg-clio-blue rounded-2xl shadow-2xl p-6 z-40 text-white animate-in slide-in-from-bottom-4 duration-300">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
             <div className="flex items-center space-x-4">
-              <div className="bg-white/20 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-white/10">
+              <div className="bg-clio-blue/20 text-white text-xs font-black px-4 py-1.5 rounded-full uppercase tracking-widest border border-white/10">
                 {quote.items.length} item{quote.items.length !== 1 ? 's' : ''}
               </div>
               <span className="text-white/80 font-bold text-sm uppercase tracking-tight">Summary of travel items</span>

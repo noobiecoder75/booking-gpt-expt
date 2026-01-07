@@ -426,8 +426,4 @@ export function ActivityBuilder({ onSubmit, onCancel, tripStartDate, tripEndDate
       </div>
     </div>
   );
-        </div>
-      </div>
-    </div>
-  );
 }

@@ -83,15 +83,15 @@
 }
 
 .rbc-off-range-bg {
-  @apply bg-gray-50 dark:bg-gray-800/50;
+  @apply bg-clio-gray-50 dark:bg-clio-gray-900;
 }
 
 .rbc-time-slot {
-  border-top: 1px solid rgb(243 244 246);
+  @apply border-t border-clio-gray-100 dark:border-clio-gray-800;
 }
 
 .rbc-time-header > .rbc-row {
-  border-bottom: 1px solid rgb(229 231 235);
+  @apply border-b border-clio-gray-200 dark:border-clio-gray-800;
 }
 
 .rbc-agenda-table {
@@ -100,7 +100,7 @@
 
 .rbc-agenda-table tbody > tr > td {
   padding: 0.75rem;
-  border-bottom: 1px solid rgb(243 244 246);
+  @apply border-b border-clio-gray-100 dark:border-clio-gray-800;
 }
 
 /* Modern Design System Utilities - Professional Enterprise Style (Clio-inspired) */

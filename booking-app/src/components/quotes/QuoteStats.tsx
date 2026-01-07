@@ -112,7 +112,7 @@ export function QuoteStats() {
       value: stats.draftQuotes.toLocaleString(),
       icon: FileText,
       color: 'text-gray-600',
-      bgColor: 'bg-gray-50',
+      bgColor: 'bg-clio-gray-50 dark:bg-clio-gray-900',
       borderColor: 'border-gray-200',
       description: 'Work in progress',
     },
@@ -159,7 +159,7 @@ export function QuoteStats() {
           >
             <div className="flex items-start justify-between">
               <div className={`p-3 rounded-xl ${
-                stat.isFinancial ? 'bg-white/10' : 'bg-clio-gray-50 dark:bg-clio-gray-800'
+                stat.isFinancial ? 'bg-clio-blue/20' : 'bg-clio-gray-50 dark:bg-clio-gray-800'
               }`}>
                 <stat.icon className={`w-6 h-6 ${
                   stat.isFinancial ? 'text-white' : 'text-clio-gray-600 dark:text-clio-gray-300'
