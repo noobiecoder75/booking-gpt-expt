@@ -150,6 +150,7 @@ export async function POST(request: NextRequest) {
       .from('expenses')
       .insert({
         user_id: userId,
+        title: `Stripe Fee - Payment ${paymentId}`,
         category: 'technology',
         subcategory: 'payment_processing',
         description: `Stripe processing fee for payment ${paymentId}`,
@@ -561,6 +562,7 @@ async function createSupplierExpenses(
         .from('expenses')
         .insert({
           user_id: userId,
+          title: `${supplier} - ${item.type}: ${item.name}`,
           category: 'supplier_payment',
           subcategory: item.type,
           description: `Supplier cost for ${item.type}: ${item.name}`,
