@@ -146,7 +146,7 @@ function splitItemsBySource(items: QuoteItem[]): {
 /**
  * Book an API item (calls appropriate API)
  */
-async function bookAPIItem(
+export async function bookAPIItem(
   item: QuoteItem,
   quote: Quote
 ): Promise<{ success: boolean; confirmationNumber?: string; error?: string }> {
