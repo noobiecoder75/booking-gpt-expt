@@ -13,9 +13,10 @@ import { X, ChevronDown, Loader2 } from 'lucide-react';
 interface ContactFormProps {
   contact?: Contact | null;
   onClose: () => void;
+  onSuccess?: (contactId: string) => void;
 }
 
-export function ContactForm({ contact, onClose }: ContactFormProps) {
+export function ContactForm({ contact, onClose, onSuccess }: ContactFormProps) {
   const { data: contacts = [] } = useContactsQuery();
   const { addContact, updateContact } = useContactMutations();
   const [loading, setLoading] = useState(false);
@@ -99,7 +100,10 @@ export function ContactForm({ contact, onClose }: ContactFormProps) {
         await updateContact.mutateAsync({ id: contact.id, updates: contactData });
       } else {
         // Add new contact
-        await addContact.mutateAsync(contactData);
+        const newContactId = await addContact.mutateAsync(contactData);
+        if (onSuccess) {
+          onSuccess(newContactId);
+        }
       }
 
       onClose();
@@ -350,8 +354,8 @@ export function ContactForm({ contact, onClose }: ContactFormProps) {
             <Button type="button" variant="outline" onClick={onClose} disabled={loading}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || syncStatus === 'syncing'}>
-              {loading || syncStatus === 'syncing' ? (
+            <Button type="submit" disabled={loading}>
+              {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Saving...

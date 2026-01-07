@@ -44,12 +44,13 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
     }
   };
 
-  const handleNewContactCreated = () => {
+  const handleNewContactCreated = (contactId: string) => {
     setShowNewContactForm(false);
-    // The newest contact will be at the end of the array
-    if (contacts.length > 0) {
-      const latestContact = contacts[contacts.length - 1];
-      onContactSelect(latestContact);
+    // Find the new contact in the list (it should be there now if React Query has updated, 
+    // but the mutation handles invalidation)
+    const newContact = contacts.find(c => c.id === contactId);
+    if (newContact) {
+      onContactSelect(newContact);
     }
   };
 
@@ -152,6 +153,7 @@ export function ContactSelection({ onContactSelect }: ContactSelectionProps) {
       {showNewContactForm && (
         <ContactForm
           onClose={() => setShowNewContactForm(false)}
+          onSuccess={handleNewContactCreated}
         />
       )}
     </div>
