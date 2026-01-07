@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { MessageSquare, Send, Edit, X } from 'lucide-react';
+import { MessageSquare, Send, Edit, X, Clock } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 
 interface ClientMessageModalProps {
