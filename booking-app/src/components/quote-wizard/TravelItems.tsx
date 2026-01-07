@@ -50,6 +50,14 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
   const [quickEditItem, setQuickEditItem] = useState<TravelItem | null>(null);
   const [quickEditPosition, setQuickEditPosition] = useState<{ x: number; y: number } | null>(null);
 
+  // If any modal/overlay is open, don't render the floating summary bar (it can steal clicks via z-index).
+  const isAnyOverlayOpen =
+    showFlightBuilder ||
+    showHotelBuilder ||
+    showActivityBuilder ||
+    showTransferBuilder ||
+    editingItem !== null;
+
   // Context menu state
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -762,8 +770,8 @@ export function TravelItems({ quote, onComplete, onQuoteChange }: TravelItemsPro
       </div>
 
       {/* Floating Summary Bar */}
-      {quote.items.length > 0 && (
-        <div className="fixed bottom-4 left-4 lg:left-[272px] right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-[60]">
+      {quote.items.length > 0 && !isAnyOverlayOpen && (
+        <div className="fixed bottom-4 left-4 lg:left-[272px] right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-3 z-40">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-1 rounded-full">
