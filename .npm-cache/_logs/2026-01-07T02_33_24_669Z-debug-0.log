@@ -1,0 +1,437 @@
+0 verbose cli /opt/homebrew/Cellar/node/23.6.0/bin/node /opt/homebrew/bin/npm
+1 info using npm@11.0.0
+2 info using node@v23.6.0
+3 silly config load:file:/opt/homebrew/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/.npmrc
+5 silly config load:file:/Users/tej/.npmrc
+6 silly config load:file:/opt/homebrew/etc/npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" "../.npm-cache" "--no-audit" "--no-fund"
+9 verbose logfile logs-max:10 dir:/Users/tej/Documents/VSCode/booking-gpt-expt/.npm-cache/_logs/2026-01-07T02_33_24_669Z-
+10 verbose logfile /Users/tej/Documents/VSCode/booking-gpt-expt/.npm-cache/_logs/2026-01-07T02_33_24_669Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 silly idealTree buildDeps
+14 silly fetch manifest next@15.5.7
+15 silly packumentCache full:https://registry.npmjs.org/next cache-miss
+16 http fetch GET 200 https://registry.npmjs.org/next 611ms (cache miss)
+17 silly packumentCache full:https://registry.npmjs.org/next set size:undefined disposed:false
+18 silly fetch manifest eslint-config-next@15.5.7
+19 silly packumentCache full:https://registry.npmjs.org/eslint-config-next cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/eslint-config-next 297ms (cache miss)
+21 silly packumentCache full:https://registry.npmjs.org/eslint-config-next set size:undefined disposed:false
+22 silly placeDep ROOT eslint-config-next@15.5.7 REPLACE for: booking-app@0.1.0 want: 15.5.7
+23 silly placeDep ROOT next@15.5.7 REPLACE for: booking-app@0.1.0 want: 15.5.7
+24 silly fetch manifest @next/eslint-plugin-next@15.5.7
+25 silly packumentCache full:https://registry.npmjs.org/@next%2feslint-plugin-next cache-miss
+26 silly fetch manifest @next/env@15.5.7
+27 silly packumentCache full:https://registry.npmjs.org/@next%2fenv cache-miss
+28 silly fetch manifest @next/swc-darwin-x64@15.5.7
+29 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-darwin-x64 cache-miss
+30 silly fetch manifest @next/swc-darwin-arm64@15.5.7
+31 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-darwin-arm64 cache-miss
+32 silly fetch manifest @next/swc-linux-x64-gnu@15.5.7
+33 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-x64-gnu cache-miss
+34 silly fetch manifest @next/swc-linux-x64-musl@15.5.7
+35 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-x64-musl cache-miss
+36 silly fetch manifest @next/swc-win32-x64-msvc@15.5.7
+37 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-win32-x64-msvc cache-miss
+38 silly fetch manifest @next/swc-linux-arm64-gnu@15.5.7
+39 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-arm64-gnu cache-miss
+40 silly fetch manifest @next/swc-linux-arm64-musl@15.5.7
+41 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-arm64-musl cache-miss
+42 silly fetch manifest @next/swc-win32-arm64-msvc@15.5.7
+43 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-win32-arm64-msvc cache-miss
+44 http fetch GET 200 https://registry.npmjs.org/@next%2feslint-plugin-next 286ms (cache miss)
+45 silly packumentCache full:https://registry.npmjs.org/@next%2feslint-plugin-next set size:undefined disposed:false
+46 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-darwin-x64 455ms (cache miss)
+47 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-darwin-x64 set size:undefined disposed:false
+48 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-linux-arm64-gnu 527ms (cache miss)
+49 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-arm64-gnu set size:undefined disposed:false
+50 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-linux-x64-musl 550ms (cache miss)
+51 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-x64-musl set size:undefined disposed:false
+52 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-linux-x64-gnu 568ms (cache miss)
+53 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-x64-gnu set size:undefined disposed:false
+54 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-darwin-arm64 592ms (cache miss)
+55 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-darwin-arm64 set size:undefined disposed:false
+56 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-win32-x64-msvc 607ms (cache miss)
+57 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-win32-x64-msvc set size:undefined disposed:false
+58 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-win32-arm64-msvc 635ms (cache miss)
+59 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-win32-arm64-msvc set size:undefined disposed:false
+60 http fetch GET 200 https://registry.npmjs.org/@next%2fswc-linux-arm64-musl 656ms (cache miss)
+61 silly packumentCache full:https://registry.npmjs.org/@next%2fswc-linux-arm64-musl set size:undefined disposed:false
+62 http fetch GET 200 https://registry.npmjs.org/@next%2fenv 678ms (cache miss)
+63 silly packumentCache full:https://registry.npmjs.org/@next%2fenv set size:undefined disposed:false
+64 silly placeDep ROOT @next/eslint-plugin-next@15.5.7 OK for: eslint-config-next@15.5.7 want: 15.5.7
+65 silly fetch manifest fast-glob@3.3.1
+66 silly packumentCache full:https://registry.npmjs.org/fast-glob cache-miss
+67 http fetch GET 200 https://registry.npmjs.org/fast-glob 36ms (cache miss)
+68 silly packumentCache full:https://registry.npmjs.org/fast-glob set size:undefined disposed:false
+69 silly placeDep ROOT fast-glob@3.3.1 OK for: @next/eslint-plugin-next@15.5.7 want: 3.3.1
+70 silly fetch manifest glob-parent@^5.1.2
+71 silly packumentCache full:https://registry.npmjs.org/glob-parent cache-miss
+72 http fetch GET 200 https://registry.npmjs.org/glob-parent 40ms (cache miss)
+73 silly packumentCache full:https://registry.npmjs.org/glob-parent set size:undefined disposed:false
+74 silly placeDep node_modules/fast-glob glob-parent@5.1.2 OK for: fast-glob@3.3.1 want: ^5.1.2
+75 silly placeDep ROOT @next/env@15.5.7 OK for: next@15.5.7 want: 15.5.7
+76 silly placeDep ROOT @next/swc-darwin-arm64@15.5.7 OK for: next@15.5.7 want: 15.5.7
+77 silly placeDep ROOT @next/swc-darwin-x64@15.5.7 OK for: next@15.5.7 want: 15.5.7
+78 silly placeDep ROOT @next/swc-linux-arm64-gnu@15.5.7 OK for: next@15.5.7 want: 15.5.7
+79 silly placeDep ROOT @next/swc-linux-arm64-musl@15.5.7 OK for: next@15.5.7 want: 15.5.7
+80 silly placeDep ROOT @next/swc-linux-x64-gnu@15.5.7 OK for: next@15.5.7 want: 15.5.7
+81 silly placeDep ROOT @next/swc-linux-x64-musl@15.5.7 OK for: next@15.5.7 want: 15.5.7
+82 silly placeDep ROOT @next/swc-win32-arm64-msvc@15.5.7 OK for: next@15.5.7 want: 15.5.7
+83 silly placeDep ROOT @next/swc-win32-x64-msvc@15.5.7 OK for: next@15.5.7 want: 15.5.7
+84 silly reify mark retired [
+84 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/env'
+84 silly reify ]
+85 silly reify mark retired [
+85 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/eslint-plugin-next'
+85 silly reify ]
+86 silly reify mark retired [
+86 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-darwin-arm64'
+86 silly reify ]
+87 silly reify mark retired [
+87 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/eslint-config-next'
+87 silly reify ]
+88 silly reify mark retired [
+88 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/next',
+88 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/.bin/next'
+88 silly reify ]
+89 silly reify moves {
+89 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/env': '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/.env-mOdmfjmj',
+89 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/eslint-plugin-next': '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/.eslint-plugin-next-uwDrcQ9G',
+89 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-darwin-arm64': '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/.swc-darwin-arm64-TeFr7Acu',
+89 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/eslint-config-next': '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/.eslint-config-next-jF632hqd',
+89 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/next': '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/.next-FqdzluDY',
+89 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/.bin/next': '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/.bin/.next-wSZsn8zL'
+89 silly reify }
+90 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-win32-x64-msvc
+91 silly reify mark deleted [
+91 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-win32-x64-msvc'
+91 silly reify ]
+92 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-win32-arm64-msvc
+93 silly reify mark deleted [
+93 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-win32-arm64-msvc'
+93 silly reify ]
+94 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-x64-musl
+95 silly reify mark deleted [
+95 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-x64-musl'
+95 silly reify ]
+96 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-x64-gnu
+97 silly reify mark deleted [
+97 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-x64-gnu'
+97 silly reify ]
+98 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-arm64-musl
+99 silly reify mark deleted [
+99 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-arm64-musl'
+99 silly reify ]
+100 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-arm64-gnu
+101 silly reify mark deleted [
+101 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-linux-arm64-gnu'
+101 silly reify ]
+102 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-darwin-x64
+103 silly reify mark deleted [
+103 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@next/swc-darwin-x64'
+103 silly reify ]
+104 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-win32-x64-msvc
+105 silly reify mark deleted [
+105 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-win32-x64-msvc'
+105 silly reify ]
+106 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-win32-ia32-msvc
+107 silly reify mark deleted [
+107 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-win32-ia32-msvc'
+107 silly reify ]
+108 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-win32-arm64-msvc
+109 silly reify mark deleted [
+109 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-win32-arm64-msvc'
+109 silly reify ]
+110 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-wasm32-wasi
+111 silly reify mark deleted [
+111 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-wasm32-wasi'
+111 silly reify ]
+112 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/wasm-runtime
+113 silly reify mark deleted [
+113 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/wasm-runtime'
+113 silly reify ]
+114 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@emnapi/core
+115 silly reify mark deleted [
+115 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@emnapi/core'
+115 silly reify ]
+116 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@tybys/wasm-util
+117 silly reify mark deleted [
+117 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@tybys/wasm-util'
+117 silly reify ]
+118 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@emnapi/wasi-threads
+119 silly reify mark deleted [
+119 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@emnapi/wasi-threads'
+119 silly reify ]
+120 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-x64-musl
+121 silly reify mark deleted [
+121 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-x64-musl'
+121 silly reify ]
+122 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-x64-gnu
+123 silly reify mark deleted [
+123 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-x64-gnu'
+123 silly reify ]
+124 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-s390x-gnu
+125 silly reify mark deleted [
+125 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-s390x-gnu'
+125 silly reify ]
+126 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-riscv64-musl
+127 silly reify mark deleted [
+127 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-riscv64-musl'
+127 silly reify ]
+128 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-riscv64-gnu
+129 silly reify mark deleted [
+129 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-riscv64-gnu'
+129 silly reify ]
+130 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-ppc64-gnu
+131 silly reify mark deleted [
+131 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-ppc64-gnu'
+131 silly reify ]
+132 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm64-musl
+133 silly reify mark deleted [
+133 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm64-musl'
+133 silly reify ]
+134 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm64-gnu
+135 silly reify mark deleted [
+135 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm64-gnu'
+135 silly reify ]
+136 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm-musleabihf
+137 silly reify mark deleted [
+137 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm-musleabihf'
+137 silly reify ]
+138 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm-gnueabihf
+139 silly reify mark deleted [
+139 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-linux-arm-gnueabihf'
+139 silly reify ]
+140 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-freebsd-x64
+141 silly reify mark deleted [
+141 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-freebsd-x64'
+141 silly reify ]
+142 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-darwin-x64
+143 silly reify mark deleted [
+143 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-darwin-x64'
+143 silly reify ]
+144 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-android-arm64
+145 silly reify mark deleted [
+145 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-android-arm64'
+145 silly reify ]
+146 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-android-arm-eabi
+147 silly reify mark deleted [
+147 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@unrs/resolver-binding-android-arm-eabi'
+147 silly reify ]
+148 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-win32-x64-msvc
+149 silly reify mark deleted [
+149 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-win32-x64-msvc'
+149 silly reify ]
+150 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-x64-musl
+151 silly reify mark deleted [
+151 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-x64-musl'
+151 silly reify ]
+152 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-x64-gnu
+153 silly reify mark deleted [
+153 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-x64-gnu'
+153 silly reify ]
+154 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-riscv64-gnu
+155 silly reify mark deleted [
+155 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-riscv64-gnu'
+155 silly reify ]
+156 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-arm64-musl
+157 silly reify mark deleted [
+157 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-arm64-musl'
+157 silly reify ]
+158 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-arm64-gnu
+159 silly reify mark deleted [
+159 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-arm64-gnu'
+159 silly reify ]
+160 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-arm-gnueabihf
+161 silly reify mark deleted [
+161 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-linux-arm-gnueabihf'
+161 silly reify ]
+162 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-darwin-x64
+163 silly reify mark deleted [
+163 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-darwin-x64'
+163 silly reify ]
+164 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-android-arm64
+165 silly reify mark deleted [
+165 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@napi-rs/canvas-android-arm64'
+165 silly reify ]
+166 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-win32-x64
+167 silly reify mark deleted [
+167 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-win32-x64'
+167 silly reify ]
+168 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-win32-ia32
+169 silly reify mark deleted [
+169 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-win32-ia32'
+169 silly reify ]
+170 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-win32-arm64
+171 silly reify mark deleted [
+171 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-win32-arm64'
+171 silly reify ]
+172 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-wasm32
+173 silly reify mark deleted [
+173 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-wasm32'
+173 silly reify ]
+174 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linuxmusl-x64
+175 silly reify mark deleted [
+175 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linuxmusl-x64'
+175 silly reify ]
+176 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linuxmusl-arm64
+177 silly reify mark deleted [
+177 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linuxmusl-arm64'
+177 silly reify ]
+178 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-x64
+179 silly reify mark deleted [
+179 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-x64'
+179 silly reify ]
+180 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-s390x
+181 silly reify mark deleted [
+181 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-s390x'
+181 silly reify ]
+182 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-ppc64
+183 silly reify mark deleted [
+183 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-ppc64'
+183 silly reify ]
+184 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-arm64
+185 silly reify mark deleted [
+185 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-arm64'
+185 silly reify ]
+186 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-arm
+187 silly reify mark deleted [
+187 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-linux-arm'
+187 silly reify ]
+188 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linuxmusl-x64
+189 silly reify mark deleted [
+189 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linuxmusl-x64'
+189 silly reify ]
+190 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linuxmusl-arm64
+191 silly reify mark deleted [
+191 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linuxmusl-arm64'
+191 silly reify ]
+192 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-x64
+193 silly reify mark deleted [
+193 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-x64'
+193 silly reify ]
+194 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-s390x
+195 silly reify mark deleted [
+195 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-s390x'
+195 silly reify ]
+196 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-ppc64
+197 silly reify mark deleted [
+197 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-ppc64'
+197 silly reify ]
+198 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-arm64
+199 silly reify mark deleted [
+199 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-arm64'
+199 silly reify ]
+200 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-arm
+201 silly reify mark deleted [
+201 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-linux-arm'
+201 silly reify ]
+202 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-darwin-x64
+203 silly reify mark deleted [
+203 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-libvips-darwin-x64'
+203 silly reify ]
+204 verbose reify failed optional dependency /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-darwin-x64
+205 silly reify mark deleted [
+205 silly reify   '/Users/tej/Documents/VSCode/booking-gpt-expt/booking-app/node_modules/@img/sharp-darwin-x64'
+205 silly reify ]
+206 http cache @tybys/wasm-util@https://registry.npmjs.org/@tybys/wasm-util/-/wasm-util-0.10.0.tgz 1ms (cache hit)
+207 http cache @napi-rs/wasm-runtime@https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz 0ms (cache hit)
+208 http cache @emnapi/core@https://registry.npmjs.org/@emnapi/core/-/core-1.5.0.tgz 0ms (cache hit)
+209 http cache @emnapi/wasi-threads@https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.1.0.tgz 0ms (cache hit)
+210 http cache next@https://registry.npmjs.org/next/-/next-15.5.7.tgz 0ms (cache hit)
+211 http cache eslint-config-next@https://registry.npmjs.org/eslint-config-next/-/eslint-config-next-15.5.7.tgz 0ms (cache hit)
+212 http cache @next/swc-darwin-arm64@https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.7.tgz 0ms (cache hit)
+213 http cache @next/env@https://registry.npmjs.org/@next/env/-/env-15.5.7.tgz 0ms (cache hit)
+214 silly tarball no local data for @tybys/wasm-util@https://registry.npmjs.org/@tybys/wasm-util/-/wasm-util-0.10.0.tgz. Extracting by manifest.
+215 silly tarball no local data for @napi-rs/wasm-runtime@https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz. Extracting by manifest.
+216 silly tarball no local data for @emnapi/core@https://registry.npmjs.org/@emnapi/core/-/core-1.5.0.tgz. Extracting by manifest.
+217 silly tarball no local data for @emnapi/wasi-threads@https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.1.0.tgz. Extracting by manifest.
+218 silly tarball no local data for next@https://registry.npmjs.org/next/-/next-15.5.7.tgz. Extracting by manifest.
+219 silly tarball no local data for eslint-config-next@https://registry.npmjs.org/eslint-config-next/-/eslint-config-next-15.5.7.tgz. Extracting by manifest.
+220 http cache @next/eslint-plugin-next@https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-15.5.7.tgz 0ms (cache hit)
+221 silly tarball no local data for @next/swc-darwin-arm64@https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.7.tgz. Extracting by manifest.
+222 silly tarball no local data for @next/env@https://registry.npmjs.org/@next/env/-/env-15.5.7.tgz. Extracting by manifest.
+223 silly tarball no local data for @next/eslint-plugin-next@https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-15.5.7.tgz. Extracting by manifest.
+224 http fetch GET 200 https://registry.npmjs.org/eslint-config-next/-/eslint-config-next-15.5.7.tgz 46ms (cache miss)
+225 http fetch GET 200 https://registry.npmjs.org/@next/env/-/env-15.5.7.tgz 59ms (cache miss)
+226 http fetch GET 200 https://registry.npmjs.org/@emnapi/wasi-threads/-/wasi-threads-1.1.0.tgz 92ms (cache miss)
+227 http fetch GET 200 https://registry.npmjs.org/@next/eslint-plugin-next/-/eslint-plugin-next-15.5.7.tgz 103ms (cache miss)
+228 http fetch GET 200 https://registry.npmjs.org/@emnapi/core/-/core-1.5.0.tgz 108ms (cache miss)
+229 http fetch GET 200 https://registry.npmjs.org/@tybys/wasm-util/-/wasm-util-0.10.0.tgz 110ms (cache miss)
+230 http fetch GET 200 https://registry.npmjs.org/@napi-rs/wasm-runtime/-/wasm-runtime-0.2.12.tgz 164ms (cache miss)
+231 http fetch GET 200 https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.7.tgz 3110ms (cache miss)
+232 http fetch GET 200 https://registry.npmjs.org/next/-/next-15.5.7.tgz 3232ms (cache miss)
+233 warn deprecated next@15.5.7: This version has a security vulnerability. Please upgrade to a patched version. See https://nextjs.org/blog/security-update-2025-12-11 for more details.
+234 silly ADD
+235 silly ADD
+236 silly ADD
+237 silly ADD
+238 silly ADD
+239 silly ADD
+240 silly ADD
+241 silly ADD
+242 silly ADD
+243 silly ADD
+244 silly ADD
+245 silly ADD
+246 silly ADD
+247 silly ADD
+248 silly ADD
+249 silly ADD
+250 silly ADD
+251 silly ADD
+252 silly ADD
+253 silly ADD
+254 silly ADD
+255 silly ADD
+256 silly ADD
+257 silly ADD
+258 silly ADD
+259 silly ADD
+260 silly ADD
+261 silly ADD
+262 silly ADD
+263 silly ADD
+264 silly ADD
+265 silly ADD
+266 silly ADD
+267 silly ADD
+268 silly ADD
+269 silly ADD
+270 silly ADD
+271 silly ADD
+272 silly ADD
+273 silly ADD
+274 silly ADD
+275 silly ADD
+276 silly ADD
+277 silly ADD
+278 silly ADD
+279 silly ADD
+280 silly ADD
+281 silly ADD
+282 silly ADD
+283 silly ADD
+284 silly ADD
+285 silly ADD
+286 silly ADD
+287 silly ADD
+288 silly ADD
+289 silly ADD
+290 silly ADD
+291 silly ADD
+292 silly CHANGE node_modules/next
+293 silly CHANGE node_modules/eslint-config-next
+294 silly CHANGE node_modules/@next/swc-darwin-arm64
+295 silly CHANGE node_modules/@next/eslint-plugin-next
+296 silly CHANGE node_modules/@next/env
+297 verbose cwd /Users/tej/Documents/VSCode/booking-gpt-expt/booking-app
+298 verbose os Darwin 24.3.0
+299 verbose node v23.6.0
+300 verbose npm  v11.0.0
+301 verbose exit 0
+302 info ok

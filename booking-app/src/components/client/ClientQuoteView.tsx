@@ -68,11 +68,11 @@ export function ClientQuoteView({
 
   const getItemTypeColor = (type: string) => {
     switch (type) {
-      case 'flight': return 'bg-blue-50 border-blue-200';
-      case 'hotel': return 'bg-green-50 border-green-200';
-      case 'activity': return 'bg-purple-50 border-purple-200';
-      case 'transfer': return 'bg-orange-50 border-orange-200';
-      default: return 'bg-gray-50 border-gray-200';
+      case 'flight': return 'bg-blue-50/50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
+      case 'hotel': return 'bg-emerald-50/50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800';
+      case 'activity': return 'bg-amber-50/50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800';
+      case 'transfer': return 'bg-violet-50/50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800';
+      default: return 'bg-clio-gray-50/50 dark:bg-clio-gray-800/50 border-clio-gray-200 dark:border-clio-gray-700';
     }
   };
 
@@ -199,19 +199,19 @@ export function ClientQuoteView({
   const isQuoteFinal = quoteStatus === 'accepted' || quoteStatus === 'rejected';
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
+    <div className="min-h-screen bg-clio-gray-50 dark:bg-clio-gray-950">
       {/* Header */}
-      <div className="glass-white border-glass shadow-soft">
+      <div className="bg-white dark:bg-clio-gray-900 border-b border-clio-gray-200 dark:border-clio-gray-800 shadow-sm sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 py-6">
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              <h1 className="text-2xl font-bold text-clio-gray-900 dark:text-white mb-2">
                 Your Travel Quote
               </h1>
-              <h2 className="text-xl text-gray-700 mb-1">
+              <h2 className="text-xl text-clio-gray-700 dark:text-clio-gray-300 mb-1">
                 {quote.title}
               </h2>
-              <div className="flex items-center text-sm text-gray-600 space-x-4">
+              <div className="flex items-center text-sm text-clio-gray-600 dark:text-clio-gray-400 space-x-4">
                 <div className="flex items-center">
                   <Calendar className="w-4 h-4 mr-1" />
                   {moment(quote.travelDates.start).format('MMM D')} - {moment(quote.travelDates.end).format('MMM D, YYYY')}
@@ -226,11 +226,11 @@ export function ClientQuoteView({
               <div className="flex flex-col items-end space-y-2">
                 <Badge
                   className={`${
-                    quoteStatus === 'sent' ? 'bg-blue-100 text-blue-800' :
-                    quoteStatus === 'confirmed' ? 'bg-green-100 text-green-800' :
-                    quoteStatus === 'accepted' ? 'bg-green-100 text-green-800' :
+                    quoteStatus === 'sent' ? 'bg-clio-blue/10 text-clio-blue border-clio-blue/20' :
+                    quoteStatus === 'confirmed' ? 'bg-emerald-100 text-emerald-800' :
+                    quoteStatus === 'accepted' ? 'bg-emerald-100 text-emerald-800' :
                     quoteStatus === 'rejected' ? 'bg-red-100 text-red-800' :
-                    'bg-gray-100 text-gray-800'
+                    'bg-clio-gray-100 text-clio-gray-800'
                   }`}
                 >
                   {quoteStatus === 'sent' ? 'Pending Response' :
@@ -250,12 +250,12 @@ export function ClientQuoteView({
               </div>
 
               <div className="text-right">
-                <div className="text-sm text-gray-600">Total Cost</div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-sm text-clio-gray-600 dark:text-clio-gray-400">Total Cost</div>
+                <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">
                   {formatCurrency(quote.totalCost)}
                 </div>
                 {paymentInfo && paymentInfo.remainingBalance > 0 && (
-                  <div className="text-xs text-orange-600 mt-1">
+                  <div className="text-xs text-orange-600 mt-1 font-medium">
                     Balance Due: {formatCurrency(paymentInfo.remainingBalance)}
                   </div>
                 )}
@@ -267,27 +267,27 @@ export function ClientQuoteView({
 
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Trip Overview */}
-        <div className="glass-card rounded-2xl shadow-medium border-glass mb-6 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Trip Overview</h3>
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm mb-6 p-6">
+          <h3 className="text-lg font-semibold text-clio-gray-900 dark:text-white mb-4">Trip Overview</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <Calendar className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-              <div className="text-sm font-medium text-gray-900">Duration</div>
-              <div className="text-sm text-gray-600">
+            <div className="text-center p-4 bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-lg">
+              <Calendar className="w-8 h-8 text-clio-gray-600 dark:text-clio-gray-400 mx-auto mb-2" />
+              <div className="text-sm font-medium text-clio-gray-900 dark:text-white">Duration</div>
+              <div className="text-sm text-clio-gray-600 dark:text-clio-gray-400">
                 {moment(quote.travelDates.end).diff(moment(quote.travelDates.start), 'days') + 1} days
               </div>
             </div>
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <FileText className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-              <div className="text-sm font-medium text-gray-900">Items Included</div>
-              <div className="text-sm text-gray-600">
+            <div className="text-center p-4 bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-lg">
+              <FileText className="w-8 h-8 text-clio-gray-600 dark:text-clio-gray-400 mx-auto mb-2" />
+              <div className="text-sm font-medium text-clio-gray-900 dark:text-white">Items Included</div>
+              <div className="text-sm text-clio-gray-600 dark:text-clio-gray-400">
                 {quote.items.length} item{quote.items.length !== 1 ? 's' : ''}
               </div>
             </div>
-            <div className="text-center p-4 bg-gray-50 rounded-lg">
-              <DollarSign className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-              <div className="text-sm font-medium text-gray-900">Total Value</div>
-              <div className="text-sm text-gray-600">
+            <div className="text-center p-4 bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-lg">
+              <DollarSign className="w-8 h-8 text-clio-gray-600 dark:text-clio-gray-400 mx-auto mb-2" />
+              <div className="text-sm font-medium text-clio-gray-900 dark:text-white">Total Value</div>
+              <div className="text-sm text-clio-gray-600 dark:text-clio-gray-400">
                 {formatCurrency(quote.totalCost)}
               </div>
             </div>
@@ -296,11 +296,11 @@ export function ClientQuoteView({
 
         {/* Travel Items by Category */}
         {Object.entries(groupedItems).map(([type, items]) => (
-          <div key={type} className="glass-card rounded-2xl shadow-medium border-glass mb-6">
-            <div className="px-6 py-4 border-b bg-gray-50 rounded-t-lg">
+          <div key={type} className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm mb-6">
+            <div className="px-6 py-4 border-b border-clio-gray-200 dark:border-clio-gray-800 bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-t-xl">
               <div className="flex items-center space-x-2">
                 {getItemIcon(type)}
-                <h3 className="text-lg font-semibold text-gray-900 capitalize">
+                <h3 className="text-lg font-semibold text-clio-gray-900 dark:text-white capitalize">
                   {type}s ({items.length})
                 </h3>
               </div>
@@ -310,12 +310,12 @@ export function ClientQuoteView({
                 {items.map((item) => (
                   <div 
                     key={item.id} 
-                    className={`border rounded-lg p-4 ${getItemTypeColor(item.type)}`}
+                    className={`border rounded-lg p-4 transition-colors ${getItemTypeColor(item.type)}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 mb-2">{item.name}</h4>
-                        <div className="space-y-1 text-sm text-gray-600">
+                        <h4 className="font-bold text-clio-gray-900 dark:text-white mb-2">{item.name}</h4>
+                        <div className="space-y-1 text-sm text-clio-gray-600 dark:text-clio-gray-400">
                           {formatItemDetails(item).map((detail, index) => (
                             <div key={index} className="flex items-center">
                               <Clock className="w-4 h-4 mr-1 flex-shrink-0" />
@@ -324,17 +324,17 @@ export function ClientQuoteView({
                           ))}
                         </div>
                         {item.quantity > 1 && (
-                          <div className="mt-2 text-sm text-gray-600">
+                          <div className="mt-2 text-sm text-clio-gray-600 dark:text-clio-gray-400">
                             Quantity: {item.quantity}
                           </div>
                         )}
                       </div>
                       <div className="text-right space-y-2">
-                        <div className="text-lg font-semibold text-gray-900">
+                        <div className="text-lg font-bold text-clio-gray-900 dark:text-white">
                           {formatCurrency(item.price * item.quantity)}
                         </div>
                         {item.quantity > 1 && (
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-clio-gray-600 dark:text-clio-gray-400">
                             {formatCurrency(item.price)} each
                           </div>
                         )}
@@ -342,7 +342,7 @@ export function ClientQuoteView({
                           variant="outline"
                           size="sm"
                           onClick={() => handleAddToGoogleCalendar(item)}
-                          className="text-xs"
+                          className="text-xs bg-white dark:bg-clio-gray-800"
                         >
                           <CalendarPlus className="w-3 h-3 mr-1" />
                           Add to Calendar
@@ -357,37 +357,37 @@ export function ClientQuoteView({
         ))}
 
         {/* Quote Summary */}
-        <div className="glass-card rounded-2xl shadow-medium border-glass mb-6 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quote Summary</h3>
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm mb-6 p-6">
+          <h3 className="text-lg font-semibold text-clio-gray-900 dark:text-white mb-4">Quote Summary</h3>
           <div className="space-y-3">
             {Object.entries(groupedItems).map(([type, items]) => {
               const typeTotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
               return (
                 <div key={type} className="flex justify-between items-center">
-                  <span className="text-gray-600 capitalize">
+                  <span className="text-clio-gray-600 dark:text-clio-gray-400 capitalize">
                     {type}s ({items.length} item{items.length !== 1 ? 's' : ''})
                   </span>
-                  <span className="font-medium">{formatCurrency(typeTotal)}</span>
+                  <span className="font-medium text-clio-gray-900 dark:text-white">{formatCurrency(typeTotal)}</span>
                 </div>
               );
             })}
-            <div className="border-t pt-3">
-              <div className="flex justify-between items-center text-lg font-bold">
+            <div className="border-t border-clio-gray-200 dark:border-clio-gray-800 pt-3">
+              <div className="flex justify-between items-center text-lg font-bold text-clio-gray-900 dark:text-white">
                 <span>Total</span>
-                <span>{formatCurrency(quote.totalCost)}</span>
+                <span className="text-clio-blue dark:text-clio-blue">{formatCurrency(quote.totalCost)}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Calendar Export */}
-        <div className="glass-card rounded-2xl shadow-medium border-glass p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Add to Your Calendar</h3>
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-clio-gray-900 dark:text-white mb-4">Add to Your Calendar</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button 
               onClick={handleDownloadCalendar}
               variant="outline"
-              className="flex items-center justify-center space-x-2 h-12"
+              className="flex items-center justify-center space-x-2 h-12 bg-white dark:bg-clio-gray-800"
             >
               <Download className="w-5 h-5" />
               <span>Download Calendar (.ics)</span>
@@ -396,7 +396,7 @@ export function ClientQuoteView({
             <Button 
               onClick={() => window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(quote.title)}&dates=${moment(quote.travelDates.start).format('YYYYMMDD')}/${moment(quote.travelDates.end).format('YYYYMMDD')}&details=${encodeURIComponent(`Travel itinerary for ${quote.title}. Total cost: ${formatCurrency(quote.totalCost)}`)}`, '_blank')}
               variant="outline"
-              className="flex items-center justify-center space-x-2 h-12 text-blue-600 border-blue-300 hover:bg-blue-50"
+              className="flex items-center justify-center space-x-2 h-12 text-clio-blue border-clio-blue/30 hover:bg-clio-blue/5 dark:bg-clio-gray-800"
             >
               <CalendarPlus className="w-5 h-5" />
               <span>Add Trip to Google Calendar</span>
@@ -406,12 +406,12 @@ export function ClientQuoteView({
 
         {/* Action Buttons */}
         {!isQuoteFinal && quoteStatus === 'sent' && (
-          <div className="glass-card rounded-2xl shadow-medium border-glass p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">What would you like to do?</h3>
+          <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-md p-6 mt-6">
+            <h3 className="text-lg font-semibold text-clio-gray-900 dark:text-white mb-4 text-center md:text-left">What would you like to do?</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <Button 
                 onClick={handleAcceptQuote}
-                className="flex items-center justify-center space-x-2 bg-green-600 hover:bg-green-700 text-white h-12"
+                className="flex items-center justify-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white h-12"
               >
                 <Check className="w-5 h-5" />
                 <span>Accept Quote</span>
@@ -419,7 +419,7 @@ export function ClientQuoteView({
               
               <Button 
                 onClick={() => setShowPaymentModal(true)}
-                className="flex items-center justify-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white h-12"
+                className="flex items-center justify-center space-x-2 bg-clio-blue hover:bg-clio-blue-hover text-white h-12"
               >
                 <CreditCard className="w-5 h-5" />
                 <span>Accept & Pay</span>
@@ -428,7 +428,7 @@ export function ClientQuoteView({
               <Button 
                 variant="outline"
                 onClick={() => setShowMessageModal(true)}
-                className="flex items-center justify-center space-x-2 h-12"
+                className="flex items-center justify-center space-x-2 h-12 bg-white dark:bg-clio-gray-800"
               >
                 <MessageSquare className="w-5 h-5" />
                 <span>Request Changes</span>
@@ -437,7 +437,7 @@ export function ClientQuoteView({
               <Button 
                 variant="outline"
                 onClick={handleRejectQuote}
-                className="flex items-center justify-center space-x-2 text-red-600 border-red-300 hover:bg-red-50 h-12"
+                className="flex items-center justify-center space-x-2 text-red-600 border-red-200 hover:bg-red-50 dark:bg-clio-gray-800 h-12"
               >
                 <X className="w-5 h-5" />
                 <span>Decline Quote</span>
@@ -448,9 +448,9 @@ export function ClientQuoteView({
 
         {/* Status Messages */}
         {isQuoteFinal && (
-          <div className="glass-card rounded-2xl shadow-medium border-glass p-6">
+          <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm p-6 mt-6">
             <div className={`flex items-center space-x-3 ${
-              quoteStatus === 'accepted' || quoteStatus === 'confirmed' ? 'text-green-600' : 'text-red-600'
+              quoteStatus === 'accepted' || quoteStatus === 'confirmed' ? 'text-emerald-600' : 'text-red-600'
             }`}>
               {quoteStatus === 'accepted' || quoteStatus === 'confirmed' ? (
                 <Check className="w-6 h-6" />
@@ -461,7 +461,7 @@ export function ClientQuoteView({
                 <h3 className="text-lg font-semibold">
                   Quote {quoteStatus === 'accepted' || quoteStatus === 'confirmed' ? 'Accepted' : 'Declined'}
                 </h3>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-clio-gray-600 dark:text-clio-gray-400">
                   {quoteStatus === 'accepted' || quoteStatus === 'confirmed'
                     ? 'Thank you for accepting this quote. Your travel agent will be in touch shortly with next steps.'
                     : 'You have declined this quote. Feel free to reach out if you\'d like to discuss alternatives.'
@@ -472,14 +472,14 @@ export function ClientQuoteView({
 
             {/* Payment Status Display */}
             {paymentInfo && (
-              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="mt-4 p-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg">
                 <div className="flex items-start space-x-3">
-                  <Check className="w-5 h-5 text-green-600 mt-0.5" />
+                  <Check className="w-5 h-5 text-emerald-600 mt-0.5" />
                   <div className="flex-1">
-                    <h4 className="font-medium text-green-800 mb-1">
+                    <h4 className="font-medium text-emerald-800 dark:text-emerald-400 mb-1">
                       {paymentInfo.paymentStatus === 'paid_in_full' ? 'Payment Complete!' : 'Deposit Received!'}
                     </h4>
-                    <div className="text-sm text-green-700 space-y-1">
+                    <div className="text-sm text-emerald-700 dark:text-emerald-500 space-y-1">
                       <p>
                         {paymentInfo.paymentStatus === 'paid_in_full'
                           ? `Your payment of ${formatCurrency(paymentInfo.totalPaid)} has been received and processed.`
@@ -496,7 +496,7 @@ export function ClientQuoteView({
                           href={paymentInfo.receiptUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center text-green-600 hover:text-green-700 underline mt-2"
+                          className="inline-flex items-center text-emerald-600 hover:text-emerald-700 underline mt-2"
                         >
                           View Receipt →
                         </a>
@@ -508,10 +508,10 @@ export function ClientQuoteView({
             )}
 
             {(quoteStatus === 'accepted' || quoteStatus === 'confirmed') && !paymentInfo && (
-              <div className="mt-4 pt-4 border-t">
+              <div className="mt-4 pt-4 border-t border-clio-gray-200 dark:border-clio-gray-800">
                 <Button
                   onClick={() => setShowPaymentModal(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-clio-blue hover:bg-clio-blue-hover text-white"
                 >
                   <CreditCard className="w-5 h-5 mr-2" />
                   Proceed to Payment
@@ -521,10 +521,10 @@ export function ClientQuoteView({
 
             {/* Show remaining balance payment option if deposit was paid */}
             {paymentInfo && paymentInfo.paymentStatus === 'deposit_paid' && paymentInfo.remainingBalance > 0 && (
-              <div className="mt-4 pt-4 border-t">
+              <div className="mt-4 pt-4 border-t border-clio-gray-200 dark:border-clio-gray-800">
                 <Button
                   onClick={() => setShowPaymentModal(true)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
+                  className="bg-clio-blue hover:bg-clio-blue-hover text-white"
                 >
                   <CreditCard className="w-5 h-5 mr-2" />
                   Pay Remaining Balance ({formatCurrency(paymentInfo.remainingBalance)})
@@ -535,12 +535,12 @@ export function ClientQuoteView({
         )}
 
         {/* Contact Information */}
-        <div className="glass-card rounded-2xl shadow-medium border-glass p-6 mt-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Need Help?</h3>
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm p-6 mt-6">
+          <h3 className="text-lg font-semibold text-clio-gray-900 dark:text-white mb-4">Need Help?</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Your Travel Agent</h4>
-              <div className="space-y-2 text-sm text-gray-600">
+              <h4 className="font-medium text-clio-gray-900 dark:text-white mb-2">Your Travel Agent</h4>
+              <div className="space-y-2 text-sm text-clio-gray-600 dark:text-clio-gray-400">
                 <div className="flex items-center">
                   <User className="w-4 h-4 mr-2" />
                   {agentName}
@@ -548,7 +548,7 @@ export function ClientQuoteView({
                 {agentEmail && (
                   <div className="flex items-center">
                     <Mail className="w-4 h-4 mr-2" />
-                    <a href={`mailto:${agentEmail}`} className="text-blue-600 hover:underline">
+                    <a href={`mailto:${agentEmail}`} className="text-clio-blue hover:underline">
                       {agentEmail}
                     </a>
                   </div>
@@ -556,11 +556,11 @@ export function ClientQuoteView({
               </div>
             </div>
             <div>
-              <h4 className="font-medium text-gray-900 mb-2">Have Questions?</h4>
+              <h4 className="font-medium text-clio-gray-900 dark:text-white mb-2">Have Questions?</h4>
               <Button 
                 variant="outline"
                 onClick={() => setShowMessageModal(true)}
-                className="w-full"
+                className="w-full bg-white dark:bg-clio-gray-800"
               >
                 <MessageSquare className="w-4 h-4 mr-2" />
                 Send Message

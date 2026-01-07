@@ -8,10 +8,10 @@ const ModernCard = React.forwardRef<
   }
 >(({ className, variant = "default", ...props }, ref) => {
   const variants = {
-    default: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm",
-    elevated: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-lg hover:shadow-xl transition-shadow duration-300",
-    outline: "border-2 border-gray-200 dark:border-gray-700 bg-transparent hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors duration-200",
-    ghost: "bg-gray-50 dark:bg-gray-800/50 border-0 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+    default: "bg-white dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm",
+    elevated: "bg-white dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 shadow-md",
+    outline: "border border-clio-gray-300 dark:border-clio-gray-700 bg-transparent hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50",
+    ghost: "bg-clio-gray-50 dark:bg-clio-gray-800/50 border-0 hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800"
   }
 
   return (

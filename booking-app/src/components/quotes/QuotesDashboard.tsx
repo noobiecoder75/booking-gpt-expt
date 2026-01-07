@@ -105,10 +105,10 @@ export function QuotesDashboard() {
   if (!isHydrated) {
     return (
       <div className="space-y-8">
-        <div className="glass-card rounded-2xl p-8 text-center">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-8 text-center shadow-sm">
           <div className="animate-pulse">
-            <div className="h-6 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/4 mx-auto mb-4"></div>
-            <div className="h-8 bg-gradient-to-r from-gray-200 to-gray-300 rounded w-1/2 mx-auto"></div>
+            <div className="h-6 bg-clio-gray-100 dark:bg-clio-gray-800 rounded w-1/4 mx-auto mb-4"></div>
+            <div className="h-8 bg-clio-gray-100 dark:bg-clio-gray-800 rounded w-1/2 mx-auto"></div>
           </div>
         </div>
       </div>
@@ -125,51 +125,51 @@ export function QuotesDashboard() {
     <div className="space-y-8">
       {/* Quick Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="glass-card rounded-2xl p-6 hover-lift transition-smooth">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Total Quotes</p>
-              <p className="text-3xl font-bold text-gray-900">{quotes.length}</p>
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mb-1">Total Quotes</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">{quotes.length}</p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-clio-blue/10 rounded-lg flex items-center justify-center border border-clio-blue/20">
+              <FileText className="w-6 h-6 text-clio-blue" />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-6 hover-lift transition-smooth">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Total Quote Value</p>
-              <p className="text-3xl font-bold text-gray-900">${totalQuoteValue.toLocaleString()}</p>
-              <p className="text-xs text-gray-500 mt-1">All quotes combined</p>
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mb-1">Total Value</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">${totalQuoteValue.toLocaleString()}</p>
+              <p className="text-[10px] text-clio-gray-400 mt-1 uppercase font-bold tracking-tight">All quotes combined</p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-              <DollarSign className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg flex items-center justify-center border border-emerald-100 dark:border-emerald-800">
+              <DollarSign className="w-6 h-6 text-emerald-600" />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-6 hover-lift transition-smooth">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Active Quotes</p>
-              <p className="text-3xl font-bold text-gray-900">{activeQuotes}</p>
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mb-1">Active Quotes</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">{activeQuotes}</p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-clio-navy/10 rounded-lg flex items-center justify-center border border-clio-navy/20">
+              <TrendingUp className="w-6 h-6 text-clio-navy dark:text-clio-gray-300" />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-6 hover-lift transition-smooth">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Conversion</p>
-              <p className="text-3xl font-bold text-gray-900">{conversionRate.toFixed(1)}%</p>
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mb-1">Conversion</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">{conversionRate.toFixed(1)}%</p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center">
-              <BarChart3 className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-amber-50 dark:bg-amber-900/20 rounded-lg flex items-center justify-center border border-amber-100 dark:border-amber-800">
+              <BarChart3 className="w-6 h-6 text-amber-600" />
             </div>
           </div>
         </div>
@@ -178,11 +178,11 @@ export function QuotesDashboard() {
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">All Quotes</h2>
-          <p className="text-gray-600">Manage and track your travel quotes with advanced filtering</p>
+          <h2 className="text-2xl font-bold text-clio-gray-900 dark:text-white mb-2">All Quotes</h2>
+          <p className="text-clio-gray-600 dark:text-clio-gray-400">Manage and track your travel quotes with advanced filtering</p>
         </div>
         <Link href="/dashboard/quote-wizard">
-          <Button size="lg" className="shadow-soft hover-lift">
+          <Button size="lg" className="bg-clio-blue hover:bg-clio-blue-hover text-white shadow-sm transition-all active:scale-[0.98]">
             <Plus className="w-5 h-5 mr-2" />
             Create New Quote
           </Button>
@@ -193,7 +193,7 @@ export function QuotesDashboard() {
       <QuoteStats />
 
       {/* Filters */}
-      <div className="glass-card rounded-2xl p-6">
+      <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm">
         <QuoteFilters
           onFilterChange={handleFilterChange}
           totalCount={quotes.length}
@@ -216,22 +216,22 @@ export function QuotesDashboard() {
         </div>
       ) : (
         <div className="text-center py-16">
-          <div className="glass-card rounded-2xl p-12 max-w-lg mx-auto">
+          <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-12 max-w-lg mx-auto shadow-sm">
             {error ? (
               // Error state
               <div>
-                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <FileText className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 bg-red-50 dark:bg-red-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-8 h-8 text-red-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white mb-2">
                   Failed to load quotes
                 </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                <p className="text-clio-gray-600 dark:text-clio-gray-400 mb-6 max-w-md mx-auto">
                   There was an error loading your quotes. Please try refreshing the page or contact support if the problem persists.
                 </p>
                 <Button
                   size="lg"
-                  className="shadow-soft hover-lift"
+                  className="bg-clio-blue hover:bg-clio-blue-hover text-white shadow-sm"
                   onClick={() => window.location.reload()}
                 >
                   Refresh Page
@@ -240,17 +240,17 @@ export function QuotesDashboard() {
             ) : quotes.length === 0 ? (
               // No quotes at all
               <div>
-                <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <FileText className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 bg-clio-blue/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-8 h-8 text-clio-blue" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white mb-2">
                   No quotes yet
                 </h3>
-                <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                <p className="text-clio-gray-600 dark:text-clio-gray-400 mb-6 max-w-md mx-auto">
                   Start creating travel quotes for your clients. Use the quote wizard to build detailed itineraries with flights, hotels, and activities.
                 </p>
                 <Link href="/dashboard/quote-wizard">
-                  <Button size="lg" className="shadow-soft hover-lift">
+                  <Button size="lg" className="bg-clio-blue hover:bg-clio-blue-hover text-white shadow-sm">
                     <Plus className="w-5 h-5 mr-2" />
                     Create Your First Quote
                   </Button>
@@ -259,19 +259,19 @@ export function QuotesDashboard() {
             ) : (
               // No quotes match current filters
               <div>
-                <div className="w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <FileText className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 bg-clio-gray-50 dark:bg-clio-gray-800 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <FileText className="w-8 h-8 text-clio-gray-400" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">
+                <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white mb-2">
                   No quotes match your filters
                 </h3>
-                <p className="text-gray-600 mb-6">
+                <p className="text-clio-gray-600 dark:text-clio-gray-400 mb-6">
                   Try adjusting your search criteria or clearing the active filters to see more quotes.
                 </p>
                 <Button
                   variant="outline"
                   size="lg"
-                  className="shadow-soft hover-lift"
+                  className="border-clio-gray-200 dark:border-clio-gray-700 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 shadow-sm"
                   onClick={() => setFilters({
                     searchQuery: '',
                     status: 'all',

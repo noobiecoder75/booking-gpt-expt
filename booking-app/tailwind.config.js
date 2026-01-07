@@ -18,14 +18,33 @@ module.exports = {
     extend: {
       colors: {
         // Standard Tailwind-compatible colors
+        // Professional Enterprise Colors
+        clio: {
+          blue: "#0056D2",
+          "blue-hover": "#0046B0",
+          navy: "#002D72",
+          gray: {
+            50: "#F9FAFB",
+            100: "#F3F4F6",
+            200: "#E5E7EB",
+            300: "#D1D5DB",
+            400: "#9CA3AF",
+            500: "#6B7280",
+            600: "#4B5563",
+            700: "#374151",
+            800: "#1F2937",
+            900: "#111827",
+            950: "#030712",
+          },
+        },
         border: "rgb(229 231 235)", // gray-200
         input: "rgb(229 231 235)", // gray-200
-        ring: "rgb(59 130 246)", // blue-500
+        ring: "#0056D2", // clio-blue
         background: "rgb(255 255 255)", // white
-        foreground: "rgb(17 24 39)", // gray-900
+        foreground: "#111827", // gray-900
 
         primary: {
-          DEFAULT: "rgb(59 130 246)", // blue-500
+          DEFAULT: "#0056D2", // clio-blue
           foreground: "rgb(255 255 255)", // white
         },
         secondary: {

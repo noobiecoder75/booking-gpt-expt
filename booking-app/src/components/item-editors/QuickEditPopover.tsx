@@ -200,15 +200,15 @@ export function QuickEditPopover({
             </div>
           ) : (
             <div
-              className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-smooth border border-transparent ${
+              className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-all duration-200 border border-transparent ${
                 isApiItem
-                  ? 'bg-gray-50 cursor-not-allowed'
-                  : 'cursor-pointer hover:bg-white/30 hover:border-glass'
+                  ? 'bg-clio-gray-50 dark:bg-clio-gray-800 cursor-not-allowed'
+                  : 'cursor-pointer hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 hover:border-clio-gray-200 dark:hover:border-clio-gray-700'
               }`}
               onClick={isApiItem ? undefined : () => setEditField('name')}
             >
-              <span className="text-sm truncate font-medium">{item.name}</span>
-              {!isApiItem && <Edit3 className="w-4 h-4 text-gray-400" />}
+              <span className="text-sm truncate font-medium text-clio-gray-900 dark:text-white">{item.name}</span>
+              {!isApiItem && <Edit3 className="w-4 h-4 text-clio-gray-400" />}
             </div>
           )}
         </div>
@@ -249,21 +249,21 @@ export function QuickEditPopover({
                 </ModernButton>
               </div>
             ) : (
-              <div
-                className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-smooth border border-transparent ${
+            <div
+                className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-all duration-200 border border-transparent ${
                   isApiItem
-                    ? 'bg-gray-50 cursor-not-allowed'
-                    : 'cursor-pointer hover:bg-white/30 hover:border-glass'
+                    ? 'bg-clio-gray-50 dark:bg-clio-gray-800 cursor-not-allowed'
+                    : 'cursor-pointer hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 hover:border-clio-gray-200 dark:hover:border-clio-gray-700'
                 }`}
                 onClick={isApiItem ? undefined : () => setEditField('date')}
               >
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-clio-gray-900 dark:text-white">
                   {moment(item.startDate).format('MMM DD')}
                   {item.endDate && moment(item.endDate).format('YYYY-MM-DD') !== moment(item.startDate).format('YYYY-MM-DD') &&
                     ` - ${moment(item.endDate).format('MMM DD')}`
                   }
                 </span>
-                {!isApiItem && <Edit3 className="w-4 h-4 text-gray-400" />}
+                {!isApiItem && <Edit3 className="w-4 h-4 text-clio-gray-400" />}
               </div>
             )}
           </div>
@@ -302,19 +302,19 @@ export function QuickEditPopover({
                 </ModernButton>
               </div>
             ) : (
-              <div
-                className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-smooth border border-transparent ${
+            <div
+                className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-all duration-200 border border-transparent ${
                   isApiItem
-                    ? 'bg-gray-50 cursor-not-allowed'
-                    : 'cursor-pointer hover:bg-white/30 hover:border-glass'
+                    ? 'bg-clio-gray-50 dark:bg-clio-gray-800 cursor-not-allowed'
+                    : 'cursor-pointer hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 hover:border-clio-gray-200 dark:hover:border-clio-gray-700'
                 }`}
                 onClick={isApiItem ? undefined : () => setEditField('time')}
               >
-                <span className="text-sm font-medium">
+                <span className="text-sm font-medium text-clio-gray-900 dark:text-white">
                   {moment(item.startDate).format('HH:mm')}
                   {item.endDate && ` - ${moment(item.endDate).format('HH:mm')}`}
                 </span>
-                {!isApiItem && <Edit3 className="w-4 h-4 text-gray-400" />}
+                {!isApiItem && <Edit3 className="w-4 h-4 text-clio-gray-400" />}
               </div>
             )}
           </div>
@@ -344,17 +344,17 @@ export function QuickEditPopover({
             </div>
           ) : (
             <div
-              className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-smooth border border-transparent ${
+              className={`flex-1 p-3 rounded-lg flex items-center justify-between transition-all duration-200 border border-transparent ${
                 isApiItem
-                  ? 'bg-gray-50 cursor-not-allowed'
-                  : 'cursor-pointer hover:bg-white/30 hover:border-glass'
+                  ? 'bg-clio-gray-50 dark:bg-clio-gray-800 cursor-not-allowed'
+                  : 'cursor-pointer hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 hover:border-clio-gray-200 dark:hover:border-clio-gray-700'
               }`}
               onClick={isApiItem ? undefined : () => setEditField('price')}
             >
-              <span className="text-sm font-semibold text-blue-700">
+              <span className="text-sm font-bold text-clio-blue">
                 {formatCurrency(item.price * item.quantity)}
               </span>
-              {!isApiItem && <Edit3 className="w-4 h-4 text-gray-400" />}
+              {!isApiItem && <Edit3 className="w-4 h-4 text-clio-gray-400" />}
             </div>
           )}
         </div>

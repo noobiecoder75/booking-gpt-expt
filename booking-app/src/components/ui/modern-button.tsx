@@ -13,10 +13,10 @@ const ModernButton = React.forwardRef<HTMLButtonElement, ModernButtonProps>(
     const Comp = asChild ? Slot : "button"
 
     const variants = {
-      primary: "bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-600 shadow-sm",
-      secondary: "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700",
-      outline: "border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900/50 bg-transparent",
-      ghost: "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 bg-transparent",
+      primary: "bg-clio-blue text-white hover:bg-clio-blue-hover shadow-sm",
+      secondary: "bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 hover:bg-clio-gray-200 dark:hover:bg-clio-gray-700 border border-clio-gray-200 dark:border-clio-gray-700",
+      outline: "border border-clio-gray-300 dark:border-clio-gray-600 text-clio-gray-700 dark:text-clio-gray-300 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 bg-transparent",
+      ghost: "text-clio-gray-700 dark:text-clio-gray-300 hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 bg-transparent",
       destructive: "bg-red-600 text-white hover:bg-red-700 shadow-sm"
     }
 

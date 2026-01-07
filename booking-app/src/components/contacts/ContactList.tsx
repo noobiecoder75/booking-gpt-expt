@@ -46,42 +46,42 @@ export function ContactList() {
     <div className="space-y-8">
       {/* Stats Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-card rounded-2xl p-6 hover-lift transition-smooth">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Total Contacts</p>
-              <p className="text-3xl font-bold text-gray-900">{contacts.length}</p>
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mb-1">Total Contacts</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">{contacts.length}</p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-clio-blue/10 rounded-lg flex items-center justify-center border border-clio-blue/20">
+              <Users className="w-6 h-6 text-clio-blue" />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-6 hover-lift transition-smooth">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">Active Quotes</p>
-              <p className="text-3xl font-bold text-gray-900">
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mb-1">Active Quotes</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">
                 {contacts.reduce((sum, contact) => sum + contact.quotes.length, 0)}
               </p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg flex items-center justify-center border border-emerald-100 dark:border-emerald-800">
+              <TrendingUp className="w-6 h-6 text-emerald-600" />
             </div>
           </div>
         </div>
 
-        <div className="glass-card rounded-2xl p-6 hover-lift transition-smooth">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">This Month</p>
-              <p className="text-3xl font-bold text-gray-900">
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mb-1">This Month</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">
                 {contacts.filter(c => new Date(c.createdAt).getMonth() === new Date().getMonth()).length}
               </p>
             </div>
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <Plus className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 bg-clio-blue/10 rounded-lg flex items-center justify-center border border-clio-blue/20">
+              <Plus className="w-6 h-6 text-clio-blue" />
             </div>
           </div>
         </div>
@@ -105,15 +105,15 @@ export function ContactList() {
 
       {/* Search */}
       <div className="relative max-w-md">
-        <div className="absolute inset-0 glass-card rounded-2xl"></div>
+        <div className="absolute inset-0 bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm"></div>
         <div className="relative">
-          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-5 h-5" />
           <Input
             type="text"
             placeholder="Search contacts by name or email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 pr-4 h-14 bg-transparent border-transparent rounded-2xl text-lg placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500/20 focus:border-transparent"
+            className="pl-12 pr-4 h-14 bg-transparent border-transparent rounded-xl text-lg placeholder:text-clio-gray-400 focus:ring-2 focus:ring-clio-blue/20 focus:border-transparent dark:text-white"
           />
         </div>
       </div>
@@ -132,14 +132,14 @@ export function ContactList() {
         </div>
       ) : (
         <div className="text-center py-16">
-          <div className="glass-card rounded-2xl p-12 max-w-md mx-auto">
-            <div className="w-16 h-16 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Users className="w-8 h-8 text-white" />
+          <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-12 max-w-md mx-auto shadow-sm">
+            <div className="w-16 h-16 bg-clio-blue/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <Users className="w-8 h-8 text-clio-blue" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
+            <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white mb-2">
               {searchQuery ? 'No contacts found' : 'No contacts yet'}
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-clio-gray-600 dark:text-clio-gray-400 mb-6">
               {searchQuery 
                 ? 'Try adjusting your search terms or add a new contact.' 
                 : 'Start building your client base by adding your first contact.'
@@ -148,7 +148,7 @@ export function ContactList() {
             {!searchQuery && (
               <Button 
                 onClick={() => setShowForm(true)}
-                className="shadow-soft hover-lift"
+                className="bg-clio-blue hover:bg-clio-blue-hover text-white shadow-sm"
                 size="lg"
               >
                 <Plus className="w-5 h-5 mr-2" />

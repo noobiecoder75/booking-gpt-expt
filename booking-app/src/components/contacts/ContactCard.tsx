@@ -16,21 +16,21 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
   const quotesCount = contact.quotes.length;
 
   return (
-    <div className="glass-card rounded-2xl p-6 hover-lift group transition-smooth border border-white/20 backdrop-blur-sm shadow-soft">
+    <div className="bg-white dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 group">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-clio-blue rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-lg">
                 {displayName.charAt(0).toUpperCase()}
               </span>
             </div>
             <div>
-              <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+              <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white group-hover:text-clio-blue transition-colors">
                 {displayName}
               </h3>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-clio-gray-500 dark:text-clio-gray-400">
                 Member since {formatDate(contact.createdAt)}
               </p>
             </div>
@@ -41,7 +41,7 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
             size="sm"
             variant="ghost"
             onClick={() => onEdit(contact)}
-            className="hover:bg-blue-50 hover:text-blue-600"
+            className="hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 text-clio-gray-600 dark:text-clio-gray-400"
           >
             <Edit className="w-4 h-4" />
           </Button>
@@ -49,7 +49,7 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
             size="sm"
             variant="ghost"
             onClick={() => onDelete(contact.id)}
-            className="hover:bg-red-50 hover:text-red-600"
+            className="hover:bg-red-50 dark:hover:bg-red-900/20 text-red-600"
           >
             <Trash2 className="w-4 h-4" />
           </Button>
@@ -59,30 +59,30 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
       {/* Contact Info */}
       <div className="space-y-3 mb-6">
         <div className="flex items-center space-x-3 text-sm">
-          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-            <Mail className="w-4 h-4 text-blue-600" />
+          <div className="w-8 h-8 bg-clio-gray-50 dark:bg-clio-gray-800 rounded flex items-center justify-center border border-clio-gray-100 dark:border-clio-gray-700">
+            <Mail className="w-4 h-4 text-clio-gray-500 dark:text-clio-gray-400" />
           </div>
-          <span className="text-gray-700 truncate font-medium">{contact.email}</span>
+          <span className="text-clio-gray-700 dark:text-clio-gray-300 truncate font-medium">{contact.email}</span>
         </div>
         {contact.phone && (
           <div className="flex items-center space-x-3 text-sm">
-            <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-              <Phone className="w-4 h-4 text-emerald-600" />
+            <div className="w-8 h-8 bg-clio-gray-50 dark:bg-clio-gray-800 rounded flex items-center justify-center border border-clio-gray-100 dark:border-clio-gray-700">
+              <Phone className="w-4 h-4 text-clio-gray-500 dark:text-clio-gray-400" />
             </div>
-            <span className="text-gray-700 font-medium">{contact.phone}</span>
+            <span className="text-clio-gray-700 dark:text-clio-gray-300 font-medium">{contact.phone}</span>
           </div>
         )}
       </div>
 
       {/* Stats & Action */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100/50">
+      <div className="flex items-center justify-between pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
         <div className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-            <Calendar className="w-4 h-4 text-purple-600" />
+          <div className="w-8 h-8 bg-clio-blue/10 rounded flex items-center justify-center border border-clio-blue/20">
+            <Calendar className="w-4 h-4 text-clio-blue" />
           </div>
           <div>
-            <div className="text-lg font-bold text-gray-900">{quotesCount}</div>
-            <div className="text-xs text-gray-500">
+            <div className="text-lg font-bold text-clio-gray-900 dark:text-white leading-none">{quotesCount}</div>
+            <div className="text-[10px] uppercase tracking-wider font-bold text-clio-gray-400 mt-1">
               {quotesCount === 1 ? 'Quote' : 'Quotes'}
             </div>
           </div>
@@ -91,11 +91,9 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
           size="sm"
           variant="outline"
           onClick={() => {
-            // Navigate to contact's quotes/timeline view
-            // This will be implemented when we add routing
             console.log('View quotes for:', contact.id);
           }}
-          className="group-hover:bg-gradient-primary group-hover:text-white group-hover:border-transparent"
+          className="bg-white dark:bg-clio-gray-800 border-clio-gray-200 dark:border-clio-gray-700 hover:border-clio-blue hover:text-clio-blue dark:hover:text-clio-blue transition-all"
         >
           View Quotes
         </Button>
