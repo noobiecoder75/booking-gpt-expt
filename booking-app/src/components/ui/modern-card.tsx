@@ -43,7 +43,7 @@ const ModernCardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-xl font-semibold text-gray-900 dark:text-gray-100 leading-tight",
+      "text-xl font-bold text-clio-gray-900 dark:text-gray-100 leading-tight uppercase tracking-tight",
       className
     )}
     {...props}
@@ -55,7 +55,7 @@ const ModernCardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("text-gray-600 dark:text-gray-300", className)} {...props} />
+  <div ref={ref} className={cn("text-clio-gray-600 dark:text-clio-gray-300 font-medium", className)} {...props} />
 ))
 ModernCardContent.displayName = "ModernCardContent"
 

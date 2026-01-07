@@ -197,43 +197,55 @@ Local Supplier,Beach Resort Cancun,BRCMX003,Ocean View Suite,2025-03-10,2025-03-
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Rate Management</h1>
-          <p className="text-gray-600 mt-2">
+          <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white">Rate Management</h1>
+          <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2 font-medium">
             Upload and manage offline negotiated rates for hotels, flights, and activities
           </p>
         </div>
 
         {/* GPT Info Banner */}
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-          <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-purple-800">
-            <p className="font-semibold mb-1">✨ AI-Powered Rate Extraction</p>
-            <ul className="list-disc list-inside space-y-1 text-purple-700">
-              <li>Upload CSV, Excel, PDF, or even screenshots</li>
-              <li>GPT-4 automatically extracts and structures your rates</li>
-              <li>Preview extracted rates before saving</li>
-              <li>Handles unstructured data - paste emails, supplier quotes, anything!</li>
+        <div className="bg-clio-blue/10 dark:bg-clio-blue/20 border border-clio-blue/20 rounded-xl p-6 mb-6 flex items-start gap-4 shadow-sm">
+          <Sparkles className="w-6 h-6 text-clio-blue flex-shrink-0 mt-0.5" />
+          <div className="text-sm">
+            <p className="font-bold text-clio-blue uppercase tracking-tight mb-2">✨ AI-Powered Rate Extraction</p>
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-clio-gray-600 dark:text-clio-gray-300 font-medium">
+              <li className="flex items-center gap-2">
+                <div className="w-1 h-1 bg-clio-blue rounded-full"></div>
+                Upload CSV, Excel, PDF, or screenshots
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1 h-1 bg-clio-blue rounded-full"></div>
+                GPT-4 automatically extracts rates
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1 h-1 bg-clio-blue rounded-full"></div>
+                Preview extracted rates before saving
+              </li>
+              <li className="flex items-center gap-2">
+                <div className="w-1 h-1 bg-clio-blue rounded-full"></div>
+                Handles unstructured emails and quotes
+              </li>
             </ul>
           </div>
         </div>
 
         {/* Download Template */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <div className="bg-white dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800 rounded-xl p-6 mb-6 shadow-sm">
           <div className="flex items-start justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-gray-900 mb-2">
+              <h2 className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight mb-1">
                 Download CSV Template
               </h2>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-clio-gray-600 dark:text-clio-gray-400 font-medium">
                 Use this template to format your rates correctly before uploading
               </p>
             </div>
             <button
               onClick={downloadTemplate}
-              className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center gap-2"
+              className="px-4 py-2 bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-700 dark:text-clio-gray-300 rounded-lg hover:bg-clio-gray-200 dark:hover:bg-clio-gray-700 flex items-center gap-2 transition-colors font-bold uppercase tracking-tight text-[10px]"
             >
               <Download className="w-4 h-4" />
-              Download Template
+              Template
             </button>
           </div>
         </div>

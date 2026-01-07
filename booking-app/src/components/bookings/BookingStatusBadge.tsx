@@ -10,26 +10,26 @@ export function BookingStatusBadge({ status, className }: BookingStatusBadgeProp
   const statusConfig = {
     pending: {
       label: 'Pending',
-      className: 'bg-orange-100 text-orange-800 hover:bg-orange-100'
+      className: 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-900/30'
     },
     confirmed: {
       label: 'Confirmed',
-      className: 'bg-green-100 text-green-800 hover:bg-green-100'
+      className: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30'
     },
     cancelled: {
       label: 'Cancelled',
-      className: 'bg-red-100 text-red-800 hover:bg-red-100'
+      className: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/30'
     },
     completed: {
       label: 'Completed',
-      className: 'bg-blue-100 text-blue-800 hover:bg-blue-100'
+      className: 'bg-clio-blue/10 dark:bg-clio-blue/20 text-clio-blue dark:text-blue-400 border-clio-blue/20 dark:border-blue-900/30'
     }
   };
 
   const config = statusConfig[status];
 
   return (
-    <Badge className={cn(config.className, className)}>
+    <Badge className={cn("text-[10px] uppercase font-bold tracking-tight px-2 py-0.5", config.className, className)}>
       {config.label}
     </Badge>
   );

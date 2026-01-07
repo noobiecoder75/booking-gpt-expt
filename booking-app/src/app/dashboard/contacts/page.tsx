@@ -158,34 +158,34 @@ export default function ContactsPage() {
     return (
       <div className="space-y-6">
         {/* Customer Header */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              <div className="w-16 h-16 bg-clio-blue rounded-full flex items-center justify-center text-white text-2xl font-bold">
                 {contact.firstName[0]}{contact.lastName[0]}
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                <h2 className="text-2xl font-bold text-clio-gray-900 dark:text-white">
                   {contact.firstName} {contact.lastName}
                 </h2>
                 <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center text-gray-600 dark:text-gray-400">
-                    <Mail className="w-4 h-4 mr-1" />
+                  <div className="flex items-center text-clio-gray-600 dark:text-clio-gray-400">
+                    <Mail className="w-4 h-4 mr-1 text-clio-blue" />
                     {contact.email}
                   </div>
                   {contact.phone && (
-                    <div className="flex items-center text-gray-600 dark:text-gray-400">
-                      <Phone className="w-4 h-4 mr-1" />
+                    <div className="flex items-center text-clio-gray-600 dark:text-clio-gray-400">
+                      <Phone className="w-4 h-4 mr-1 text-clio-blue" />
                       {contact.phone}
                     </div>
                   )}
                 </div>
                 <div className="flex items-center gap-2 mt-3">
-                  <Badge className={`${tierInfo.color} bg-white border flex items-center gap-1`}>
+                  <Badge className={`${tierInfo.color} bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 flex items-center gap-1 shadow-sm`}>
                     <tierInfo.icon className="w-3 h-3" />
                     {tierInfo.tier} Customer
                   </Badge>
-                  <Badge variant="secondary">
+                  <Badge variant="secondary" className="bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-700 dark:text-clio-gray-300">
                     {totalBookings} Bookings
                   </Badge>
                 </div>
@@ -287,16 +287,16 @@ export default function ContactsPage() {
             <CardContent>
               <div className="space-y-3">
                 {acceptedQuotes.slice(0, 5).map((quote) => (
-                  <div key={quote.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={quote.id} className="flex items-center justify-between p-3 border border-clio-gray-100 dark:border-clio-gray-800 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 transition-colors">
                     <div>
-                      <div className="font-medium dark:text-gray-100">{quote.title}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="font-bold text-clio-gray-900 dark:text-gray-100">{quote.title}</div>
+                      <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">
                         {new Date(quote.createdAt).toLocaleDateString()}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold">{formatCurrency(quote.totalCost)}</div>
-                      <Badge variant="outline" className="text-xs">
+                      <div className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(quote.totalCost)}</div>
+                      <Badge variant="outline" className="text-[10px] uppercase font-bold tracking-tight border-clio-gray-200 dark:border-clio-gray-700">
                         {quote.status}
                       </Badge>
                     </div>
@@ -319,16 +319,16 @@ export default function ContactsPage() {
             <CardContent>
               <div className="space-y-3">
                 {paidInvoices.slice(0, 5).map((invoice) => (
-                  <div key={invoice.id} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div key={invoice.id} className="flex items-center justify-between p-3 border border-clio-gray-100 dark:border-clio-gray-800 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 transition-colors">
                     <div>
-                      <div className="font-medium dark:text-gray-100">#{invoice.invoiceNumber}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                      <div className="font-bold text-clio-gray-900 dark:text-gray-100">#{invoice.invoiceNumber}</div>
+                      <div className="text-xs font-medium text-clio-gray-500 dark:text-clio-gray-400">
                         Paid: {new Date(invoice.payments[0]?.processedDate || invoice.updatedAt).toLocaleDateString()}
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-semibold text-green-600">{formatCurrency(invoice.total)}</div>
-                      <Badge className="bg-green-100 text-green-800 text-xs">
+                      <div className="font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(invoice.total)}</div>
+                      <Badge className="bg-emerald-100 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-300 text-[10px] uppercase font-bold tracking-tight">
                         Paid
                       </Badge>
                     </div>
@@ -355,16 +355,16 @@ export default function ContactsPage() {
                 <CardContent>
                   <div className="space-y-3">
                     {pendingQuotes.map((quote) => (
-                      <div key={quote.id} className="flex items-center justify-between p-3 border border-orange-200 rounded-lg bg-orange-50">
+                      <div key={quote.id} className="flex items-center justify-between p-3 border border-amber-200 dark:border-amber-900/50 rounded-lg bg-amber-50 dark:bg-amber-900/20">
                         <div>
-                          <div className="font-medium dark:text-gray-900">{quote.title}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-700">
+                          <div className="font-bold text-amber-900 dark:text-amber-100">{quote.title}</div>
+                          <div className="text-xs font-medium text-amber-700 dark:text-amber-400">
                             Sent: {new Date(quote.createdAt).toLocaleDateString()}
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-semibold">{formatCurrency(quote.totalCost)}</div>
-                          <Button size="sm" variant="outline" className="mt-1">
+                          <div className="font-bold text-amber-900 dark:text-white">{formatCurrency(quote.totalCost)}</div>
+                          <Button size="sm" variant="outline" className="mt-1 h-7 text-[10px] border-amber-300 dark:border-amber-800 text-amber-700 dark:text-amber-300 hover:bg-amber-100 dark:hover:bg-amber-900/30">
                             Follow Up
                           </Button>
                         </div>
@@ -383,16 +383,16 @@ export default function ContactsPage() {
                 <CardContent>
                   <div className="space-y-3">
                     {outstandingInvoices.map((invoice) => (
-                      <div key={invoice.id} className="flex items-center justify-between p-3 border border-red-200 rounded-lg bg-red-50">
+                      <div key={invoice.id} className="flex items-center justify-between p-3 border border-red-200 dark:border-red-900/50 rounded-lg bg-red-50 dark:bg-red-900/20">
                         <div>
-                          <div className="font-medium dark:text-gray-900">#{invoice.invoiceNumber}</div>
-                          <div className="text-sm text-gray-600 dark:text-gray-700">
+                          <div className="font-bold text-red-900 dark:text-red-100">#{invoice.invoiceNumber}</div>
+                          <div className="text-xs font-medium text-red-700 dark:text-red-400">
                             Due: {new Date(invoice.dueDate).toLocaleDateString()}
                           </div>
                         </div>
                         <div className="text-right">
-                          <div className="font-semibold text-red-600">{formatCurrency(invoice.remainingAmount)}</div>
-                          <Button size="sm" variant="outline" className="mt-1">
+                          <div className="font-bold text-red-600 dark:text-red-400">{formatCurrency(invoice.remainingAmount)}</div>
+                          <Button size="sm" variant="outline" className="mt-1 h-7 text-[10px] border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/30">
                             Send Reminder
                           </Button>
                         </div>
@@ -596,8 +596,8 @@ export default function ContactsPage() {
                                 </div>
                               </div>
 
-                              <div className="flex items-center justify-between mt-4">
-                                <Badge className={`${tierInfo.color} bg-white border flex items-center gap-1`}>
+                              <div className="flex items-center justify-between mt-4 pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
+                                <Badge className={`${tierInfo.color} bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 flex items-center gap-1 shadow-sm text-[10px] uppercase font-bold tracking-tight`}>
                                   <tierInfo.icon className="w-3 h-3" />
                                   {tierInfo.tier}
                                 </Badge>

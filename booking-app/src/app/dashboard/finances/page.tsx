@@ -324,8 +324,8 @@ export default function FinancesPage() {
           {/* Header */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Financial Dashboard</h1>
-              <p className="text-gray-600 mt-2">
+              <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white">Financial Dashboard</h1>
+              <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2 font-medium">
                 Overview of your business financial performance
               </p>
             </div>
@@ -532,23 +532,23 @@ export default function FinancesPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="text-center p-4 border border-clio-gray-100 dark:border-clio-gray-800 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
                     <div className="text-lg font-bold text-green-600">
                       {formatCurrency(totalRevenue)}
                     </div>
-                    <div className="text-sm text-gray-600">Cash Inflow</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 mt-1">Cash Inflow</div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="text-center p-4 border border-clio-gray-100 dark:border-clio-gray-800 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
                     <div className="text-lg font-bold text-red-600">
                       {formatCurrency(totalExpenses + totalCommissionsPaid)}
                     </div>
-                    <div className="text-sm text-gray-600">Cash Outflow</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 mt-1">Cash Outflow</div>
                   </div>
-                  <div className="text-center p-4 border rounded-lg">
+                  <div className="text-center p-4 border border-clio-gray-100 dark:border-clio-gray-800 rounded-xl bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
                     <div className={`text-lg font-bold ${netProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {formatCurrency(netProfit)}
                     </div>
-                    <div className="text-sm text-gray-600">Net Cash Flow</div>
+                    <div className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 mt-1">Net Cash Flow</div>
                   </div>
                 </div>
               </CardContent>

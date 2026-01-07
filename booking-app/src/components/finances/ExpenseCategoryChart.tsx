@@ -101,6 +101,8 @@ export function ExpenseCategoryChart({ expenses }: ExpenseCategoryChartProps) {
             </Pie>
             <Tooltip
               formatter={(value: number) => `$${value.toFixed(2)}`}
+              contentStyle={{ backgroundColor: 'var(--tooltip-bg, #fff)', borderColor: 'var(--tooltip-border, #e5e7eb)' }}
+              itemStyle={{ color: 'var(--tooltip-text, #000)' }}
             />
             <Legend
               verticalAlign="bottom"

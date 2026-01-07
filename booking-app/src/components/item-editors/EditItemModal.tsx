@@ -128,17 +128,17 @@ export function EditItemModal({ item, onSave, onDelete, onCancel }: EditItemModa
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 overflow-y-auto">
-      <ModernCard variant="elevated" className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-6 z-10 rounded-t-2xl">
+    <div className="fixed inset-0 bg-clio-navy/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
+      <ModernCard variant="elevated" className="w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800">
+        <div className="sticky top-0 bg-white dark:bg-clio-gray-900 border-b border-clio-gray-100 dark:border-clio-gray-800 p-6 z-10 rounded-t-2xl">
           <div className="flex items-center justify-between">
-            <h3 className="text-xl font-semibold flex items-center space-x-2 text-gray-900 dark:text-gray-100">
+            <h3 className="text-xl font-bold flex items-center space-x-2 text-clio-gray-900 dark:text-gray-100">
               <div style={{ color: getTravelItemColor(item.type) }}>
                 {getItemIcon()}
               </div>
-              <span>Edit {item.type.charAt(0).toUpperCase() + item.type.slice(1)}</span>
+              <span className="uppercase tracking-tight">Edit {item.type.charAt(0).toUpperCase() + item.type.slice(1)}</span>
             </h3>
-            <ModernButton variant="ghost" size="sm" onClick={onCancel}>
+            <ModernButton variant="ghost" size="sm" onClick={onCancel} className="text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white">
               <X className="w-4 h-4" />
             </ModernButton>
           </div>
@@ -146,8 +146,8 @@ export function EditItemModal({ item, onSave, onDelete, onCancel }: EditItemModa
 
         <div className="p-6 space-y-6">
           {/* Basic Information */}
-          <ModernCard variant="default" className="p-6 space-y-4">
-            <h4 className="font-semibold text-gray-900 dark:text-gray-100">Basic Information</h4>
+          <ModernCard variant="default" className="p-6 space-y-4 bg-clio-gray-50/50 dark:bg-clio-gray-800/30 border-clio-gray-100 dark:border-clio-gray-800">
+            <h4 className="font-bold text-clio-gray-900 dark:text-gray-100 uppercase text-xs tracking-widest">Basic Information</h4>
             
             <div>
               <Label htmlFor="name">Name</Label>
@@ -282,8 +282,8 @@ export function EditItemModal({ item, onSave, onDelete, onCancel }: EditItemModa
           </ModernCard>
 
           {/* Type-specific Details */}
-          <ModernCard variant="default" className="p-6 space-y-4">
-            <h4 className="font-semibold text-gray-900 dark:text-gray-100">{item.type.charAt(0).toUpperCase() + item.type.slice(1)} Details</h4>
+          <ModernCard variant="default" className="p-6 space-y-4 bg-clio-gray-50/50 dark:bg-clio-gray-800/30 border-clio-gray-100 dark:border-clio-gray-800">
+            <h4 className="font-bold text-clio-gray-900 dark:text-gray-100 uppercase text-xs tracking-widest">{item.type.charAt(0).toUpperCase() + item.type.slice(1)} Details</h4>
 
             {item.type === 'flight' && (
               <div className="space-y-4">

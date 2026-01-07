@@ -55,11 +55,11 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
   
   const getStatusColor = (status: TravelQuote['status']) => {
     switch (status) {
-      case 'draft': return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700';
+      case 'draft': return 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-700 dark:text-clio-gray-300 hover:bg-clio-gray-200 dark:hover:bg-clio-gray-700';
       case 'sent': return 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/30';
       case 'accepted': return 'bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/30';
       case 'rejected': return 'bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/30';
-      default: return 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
+      default: return 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-700 dark:text-clio-gray-300';
     }
   };
 
@@ -130,13 +130,13 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
               <FileText className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+              <h3 className="text-xl font-bold text-clio-gray-900 dark:text-gray-100 truncate group-hover:text-clio-blue dark:group-hover:text-clio-blue transition-colors">
                 {quote.title}
               </h3>
               {contact && (
-                <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  <div className="w-6 h-6 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mr-2">
-                    <User className="w-3 h-3 text-gray-600 dark:text-gray-400" />
+                <div className="flex items-center text-sm text-clio-gray-600 dark:text-clio-gray-400 mt-1">
+                  <div className="w-6 h-6 bg-clio-gray-100 dark:bg-clio-gray-800 rounded-lg flex items-center justify-center mr-2">
+                    <User className="w-3 h-3 text-clio-gray-600 dark:text-clio-gray-400" />
                   </div>
                   <span className="truncate font-medium">
                     {getContactDisplayName(contact.firstName, contact.lastName)}
@@ -158,7 +158,7 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
                 <MoreHorizontal className="w-4 h-4" />
               </ModernButton>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+            <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
                 <Link href={`/dashboard/quote-wizard?edit=${quote.id}`} className="flex items-center">
                   <Edit className="w-4 h-4 mr-2" />
@@ -185,7 +185,7 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={handleDelete}
-                className="text-red-600 hover:text-red-700"
+                className="text-red-600 hover:text-red-700 dark:hover:bg-red-900/20"
               >
                 <Trash2 className="w-4 h-4 mr-2" />
                 Delete
@@ -214,27 +214,27 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
       {quote.items.length > 0 && (
         <div className="flex items-center gap-2 mb-6 flex-wrap">
           {Object.entries(itemTypeCounts).map(([type, count]) => (
-            <div key={type} className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full px-3 py-1 text-xs">
+            <div key={type} className="flex items-center bg-clio-gray-100 dark:bg-clio-gray-800 rounded-full px-3 py-1 text-xs">
               <div className="mr-2">
                 {getItemIcon(type)}
               </div>
-              <span className="font-medium text-gray-700 dark:text-gray-300">{count} {type}</span>
+              <span className="font-bold text-clio-gray-700 dark:text-clio-gray-300 uppercase tracking-tight">{count} {type}</span>
             </div>
           ))}
         </div>
       )}
 
       {/* Footer */}
-      <div className="flex items-center justify-between pt-4 border-t border-gray-100 dark:border-gray-700">
+      <div className="flex items-center justify-between pt-4 border-t border-clio-gray-100 dark:border-clio-gray-700">
         <div className="flex items-center">
           <div className="w-8 h-8 bg-emerald-100 dark:bg-emerald-900/20 rounded-lg flex items-center justify-center mr-3">
             <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-gray-100">
               {formatCurrency(quote.totalCost)}
             </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-xs text-clio-gray-400 dark:text-clio-gray-500 uppercase font-bold tracking-tight">
               Total Cost
             </div>
           </div>
@@ -242,10 +242,10 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
         
         <div className="flex items-center space-x-2">
           <Select value={quote.status} onValueChange={handleStatusChange}>
-            <SelectTrigger className="w-auto h-9 text-sm rounded-lg border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600">
+            <SelectTrigger className="w-auto h-9 text-sm rounded-lg border-clio-gray-200 dark:border-clio-gray-700 hover:border-clio-gray-300 dark:hover:border-clio-gray-600">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+            <SelectContent>
               <SelectItem value="draft">Draft</SelectItem>
               <SelectItem value="sent">Sent</SelectItem>
               <SelectItem value="accepted">Accepted</SelectItem>
@@ -255,11 +255,11 @@ export function QuoteCard({ quote, onDelete, onDuplicate, onStatusChange }: Quot
         </div>
       </div>
 
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100 dark:border-gray-700">
-        <div className="text-xs text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between mt-4 pt-3 border-t border-clio-gray-100 dark:border-clio-gray-700">
+        <div className="text-xs text-clio-gray-400 dark:text-clio-gray-500 uppercase font-bold tracking-tight">
           Created {moment(quote.createdAt).format('MMM D, YYYY')}
         </div>
-        <div className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="text-xs text-clio-gray-400 dark:text-clio-gray-500 uppercase font-bold tracking-tight">
           {quote.items.length} item{quote.items.length !== 1 ? 's' : ''}
         </div>
       </div>

@@ -202,37 +202,37 @@ function TasksContent() {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-600 dark:text-gray-400">Pending</div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{summary.pending}</div>
+          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Pending</div>
+            <div className="text-2xl font-bold text-clio-gray-900 dark:text-white">{summary.pending}</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-600 dark:text-gray-400">In Progress</div>
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{summary.inProgress}</div>
+          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">In Progress</div>
+            <div className="text-2xl font-bold text-clio-blue">{summary.inProgress}</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-600 dark:text-gray-400">Overdue</div>
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{summary.overdue}</div>
+          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Overdue</div>
+            <div className="text-2xl font-bold text-red-600">{summary.overdue}</div>
           </div>
-          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="text-sm text-gray-600 dark:text-gray-400">Completed</div>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{summary.completed}</div>
+          <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800">
+            <div className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Completed</div>
+            <div className="text-2xl font-bold text-emerald-600">{summary.completed}</div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-6">
+        <div className="bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800 mb-6">
           <div className="flex flex-wrap gap-4">
             {/* Search */}
             <div className="flex-1 min-w-[200px]">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-5 h-5" />
                 <input
                   type="text"
                   placeholder="Search tasks..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-clio-gray-200 dark:border-clio-gray-700 bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all"
                 />
               </div>
             </div>
@@ -241,7 +241,7 @@ function TasksContent() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as TaskStatus | 'all')}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-clio-gray-200 dark:border-clio-gray-700 bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-[10px]"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending</option>
@@ -255,7 +255,7 @@ function TasksContent() {
             <select
               value={priorityFilter}
               onChange={(e) => setPriorityFilter(e.target.value as TaskPriority | 'all')}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="px-4 py-2 border border-clio-gray-200 dark:border-clio-gray-700 bg-clio-gray-50 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-white rounded-lg focus:ring-2 focus:ring-clio-blue/20 focus:border-clio-blue transition-all font-bold uppercase tracking-tight text-[10px]"
             >
               <option value="all">All Priorities</option>
               <option value="urgent">Urgent</option>
@@ -269,14 +269,14 @@ function TasksContent() {
         {/* Task List */}
         <div className="space-y-3">
           {filteredTasks.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 p-12 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 text-center">
-              <p className="text-gray-500 dark:text-gray-400">No tasks found</p>
+            <div className="bg-white dark:bg-clio-gray-900 p-12 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800 text-center">
+              <p className="text-clio-gray-500 dark:text-clio-gray-400 font-medium">No tasks found</p>
             </div>
           ) : (
             filteredTasks.map((task) => (
               <div
                 key={task.id}
-                className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
+                className="bg-white dark:bg-clio-gray-900 p-5 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800 hover:shadow-md transition-all"
               >
                 <div className="flex items-start gap-4">
                   {/* Status Icon */}
@@ -300,9 +300,9 @@ function TasksContent() {
 
                       {/* Priority Badge */}
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-semibold border ${getPriorityColor(
+                        className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tight border ${getPriorityColor(
                           task.priority
-                        )}`}
+                        ).replace('bg-', 'bg-').replace('100', '50 dark:bg-opacity-20').replace('text-', 'dark:text-').replace('800', '400')}`}
                       >
                         {task.priority.toUpperCase()}
                       </span>

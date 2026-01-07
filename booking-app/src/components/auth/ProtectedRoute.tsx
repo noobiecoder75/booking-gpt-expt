@@ -47,7 +47,7 @@ export function ProtectedRoute({
           console.log('🔐 ProtectedRoute: Redirecting to login from:', returnUrl);
           router.replace(`/auth/login?redirectTo=${encodeURIComponent(returnUrl)}`);
         }
-      }, 300); // 300ms delay to allow middleware to complete
+      }, 50); // 50ms delay to allow middleware to complete
       return;
     }
 

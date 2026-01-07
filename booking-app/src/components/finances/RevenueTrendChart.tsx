@@ -78,7 +78,8 @@ export function RevenueTrendChart({ invoices, expenses }: RevenueTrendChartProps
             />
             <Tooltip
               formatter={(value: number) => [`$${value.toFixed(2)}`, '']}
-              labelStyle={{ color: '#000' }}
+              contentStyle={{ backgroundColor: 'var(--tooltip-bg, #fff)', borderColor: 'var(--tooltip-border, #e5e7eb)' }}
+              itemStyle={{ color: 'var(--tooltip-text, #000)' }}
             />
             <Legend />
             <Area

@@ -30,30 +30,30 @@ export function BookingMetricsCards({ bookings }: BookingMetricsCardsProps) {
       title: 'Total Bookings',
       value: totalBookings.toString(),
       icon: CalendarCheck,
-      iconColor: 'text-blue-600',
-      bgColor: 'bg-blue-100'
+      iconColor: 'text-clio-blue',
+      bgColor: 'bg-clio-blue/10'
     },
     {
       title: 'Active Bookings',
       value: activeBookings.toString(),
       icon: CheckCircle2,
-      iconColor: 'text-green-600',
-      bgColor: 'bg-green-100',
+      iconColor: 'text-emerald-600',
+      bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
       subtitle: `${bookings.filter(b => b.status === 'confirmed').length} confirmed`
     },
     {
       title: 'Total Value',
       value: formatCurrency(totalValue),
       icon: DollarSign,
-      iconColor: 'text-emerald-600',
-      bgColor: 'bg-emerald-100'
+      iconColor: 'text-clio-blue',
+      bgColor: 'bg-clio-blue/10'
     },
     {
       title: 'Pending',
       value: pendingConfirmations.toString(),
       icon: Clock,
       iconColor: 'text-orange-600',
-      bgColor: 'bg-orange-100',
+      bgColor: 'bg-orange-50 dark:bg-orange-900/20',
       subtitle: 'Awaiting confirmation'
     }
   ];
@@ -63,17 +63,17 @@ export function BookingMetricsCards({ bookings }: BookingMetricsCardsProps) {
       {metrics.map((metric, index) => {
         const Icon = metric.icon;
         return (
-          <Card key={index}>
+          <Card key={index} className="hover:shadow-md transition-all duration-200 border-clio-gray-100 dark:border-clio-gray-800">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
-              <div className={`p-2 rounded-lg ${metric.bgColor}`}>
+              <CardTitle className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">{metric.title}</CardTitle>
+              <div className={`p-2 rounded-xl ${metric.bgColor}`}>
                 <Icon className={`h-4 w-4 ${metric.iconColor}`} />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{metric.value}</div>
+              <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">{metric.value}</div>
               {metric.subtitle && (
-                <p className="text-xs text-gray-500 mt-1">{metric.subtitle}</p>
+                <p className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 mt-1">{metric.subtitle}</p>
               )}
             </CardContent>
           </Card>

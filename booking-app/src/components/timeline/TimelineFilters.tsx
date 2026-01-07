@@ -63,20 +63,20 @@ export function TimelineFilters({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm mb-6">
+    <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm mb-6">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-clio-gray-100 dark:border-clio-gray-800">
         <div className="flex items-center space-x-3">
-          <Filter className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Filters</h3>
+          <Filter className="w-5 h-5 text-clio-blue" />
+          <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white">Filters</h3>
           {hasActiveFilters && (
-            <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full">
+            <span className="px-2 py-0.5 bg-clio-blue/10 text-clio-blue text-[10px] font-bold uppercase tracking-tight rounded-full">
               {[selectedContactId ? 1 : 0, 4 - selectedStatuses.length].filter(n => n > 0).reduce((a, b) => a + b, 0)} active
             </span>
           )}
           {itemCount !== undefined && (
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              • Showing {itemCount} {itemCount === 1 ? 'item' : 'items'}
+            <span className="text-xs font-bold uppercase tracking-tight text-clio-gray-500 dark:text-clio-gray-400">
+              • {itemCount} {itemCount === 1 ? 'item' : 'items'}
             </span>
           )}
         </div>
@@ -153,7 +153,7 @@ export function TimelineFilters({
               {QUOTE_STATUSES.map((status) => (
                 <div
                   key={status.value}
-                  className="flex items-center space-x-2 p-2 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center space-x-2 p-3 rounded-xl hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800/50 cursor-pointer border border-transparent hover:border-clio-gray-100 dark:hover:border-clio-gray-800 transition-all"
                   onClick={() => handleStatusToggle(status.value)}
                 >
                   <Checkbox
@@ -165,7 +165,7 @@ export function TimelineFilters({
                     htmlFor={`status-${status.value}`}
                     className="flex-1 cursor-pointer"
                   >
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${status.color}`}>
+                    <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase tracking-tight ${status.color.replace('text-', 'dark:text-').replace('bg-', 'bg-').replace('100', '100 dark:bg-opacity-20')}`}>
                       {status.label}
                     </span>
                   </Label>
@@ -176,22 +176,22 @@ export function TimelineFilters({
 
           {/* Active Filters Display */}
           {hasActiveFilters && (
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
               <div className="flex items-center space-x-2 flex-wrap gap-2">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Active:</span>
+                <span className="text-xs font-bold uppercase tracking-tight text-clio-gray-500 dark:text-clio-gray-400">Active:</span>
                 {selectedContact && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-md text-sm">
+                  <div className="flex items-center space-x-1 px-2 py-1 bg-clio-blue/10 text-clio-blue rounded-md text-xs font-bold">
                     <span>{getContactDisplayName(selectedContact.firstName, selectedContact.lastName)}</span>
                     <button
                       onClick={() => onContactChange(null)}
-                      className="hover:text-blue-900 dark:hover:text-blue-100"
+                      className="hover:text-clio-navy dark:hover:text-blue-100"
                     >
                       <X className="w-3 h-3" />
                     </button>
                   </div>
                 )}
                 {selectedStatuses.length < 4 && (
-                  <div className="flex items-center space-x-1 px-2 py-1 bg-purple-50 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-md text-sm">
+                  <div className="flex items-center space-x-1 px-2 py-1 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-md text-xs font-bold">
                     <span>{selectedStatuses.length} {selectedStatuses.length === 1 ? 'status' : 'statuses'}</span>
                     <button
                       onClick={() => onStatusChange(['draft', 'sent', 'accepted', 'rejected'])}

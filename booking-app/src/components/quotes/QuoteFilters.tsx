@@ -60,7 +60,7 @@ export function QuoteFilters({ onFilterChange, totalCount, filteredCount }: Quot
     filters.dateRange !== 'all';
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-4">
+    <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 space-y-4 shadow-sm">
       {/* Search and Quick Filters */}
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search */}
@@ -122,10 +122,10 @@ export function QuoteFilters({ onFilterChange, totalCount, filteredCount }: Quot
 
       {/* Advanced Filters */}
       {showAdvanced && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-gray-100">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
           {/* Date Range Filter */}
           <div>
-            <Label htmlFor="dateRange" className="text-sm font-medium text-gray-700">
+            <Label htmlFor="dateRange" className="text-sm font-bold text-clio-gray-700 dark:text-clio-gray-300">
               Created Date Range
             </Label>
             <Select 
@@ -160,14 +160,14 @@ export function QuoteFilters({ onFilterChange, totalCount, filteredCount }: Quot
       )}
 
       {/* Results Summary */}
-      <div className="flex items-center justify-between text-sm text-gray-600 border-t border-gray-100 pt-3">
+      <div className="flex items-center justify-between text-sm text-clio-gray-500 dark:text-clio-gray-400 border-t border-clio-gray-100 dark:border-clio-gray-800 pt-4 font-medium">
         <span>
-          Showing {filteredCount.toLocaleString()} of {totalCount.toLocaleString()} quotes
+          Showing <span className="text-clio-gray-900 dark:text-white font-bold">{filteredCount.toLocaleString()}</span> of <span className="text-clio-gray-900 dark:text-white font-bold">{totalCount.toLocaleString()}</span> quotes
         </span>
         
         {hasActiveFilters && (
           <div className="flex items-center space-x-2">
-            <span className="text-blue-600 font-medium">Filters active</span>
+            <span className="text-clio-blue font-bold uppercase tracking-tight text-[10px]">Filters active</span>
             <Button
               variant="ghost"
               size="sm"

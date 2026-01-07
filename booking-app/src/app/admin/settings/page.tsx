@@ -599,7 +599,7 @@ export default function AdminSettingsPage() {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex items-center justify-between sticky bottom-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between sticky bottom-6 bg-white dark:bg-clio-gray-900 p-4 rounded-xl shadow-strong border border-clio-gray-200 dark:border-clio-gray-800 z-10">
         <ModernButton
           variant="outline"
           onClick={handleReset}

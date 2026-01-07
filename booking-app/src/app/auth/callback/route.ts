@@ -15,7 +15,7 @@ export async function GET(request: Request) {
       // No need for manual insertion here
 
       // Redirect to dashboard
-      return NextResponse.redirect(`${origin}/quotes`);
+      return NextResponse.redirect(`${origin}/dashboard/quotes`);
     }
 
     // Log authentication error for debugging

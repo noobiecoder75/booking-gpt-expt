@@ -120,7 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
 
     // Small delay to ensure cookies are properly set after redirect
-    const initTimer = setTimeout(() => initAuth(0), 100);
+    const initTimer = setTimeout(() => initAuth(0), 10);
 
     return () => clearTimeout(initTimer);
   }, []); // Empty deps - runs once on mount

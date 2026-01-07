@@ -42,12 +42,9 @@ export default function LoginPage() {
 
       console.log('🔀 Redirecting to:', redirectTo);
 
-      // Wait for session to sync before redirecting
-      // This ensures cookies are set and middleware can verify auth
-      await new Promise(resolve => setTimeout(resolve, 500));
-
-      // Use window.location for reliable navigation after auth
-      window.location.href = redirectTo;
+      // Use router for seamless navigation
+      router.push(redirectTo);
+      router.refresh();
 
       // Keep loading state active during redirect
       // (will unmount when navigation completes)

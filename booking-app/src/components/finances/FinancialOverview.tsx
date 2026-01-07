@@ -222,16 +222,16 @@ export function FinancialOverview() {
 
       {/* Overdue Warning Banner */}
       {overdueTotal > 0 && (
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-900/20">
           <CardHeader>
-            <CardTitle className="text-red-900">⚠️ Overdue Invoices Alert</CardTitle>
-            <CardDescription className="text-red-700">
+            <CardTitle className="text-red-900 dark:text-red-100">⚠️ Overdue Invoices Alert</CardTitle>
+            <CardDescription className="text-red-700 dark:text-red-400">
               {overdueCount} invoice{overdueCount !== 1 ? 's' : ''} past due date
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-red-900">${overdueTotal.toFixed(2)}</div>
-            <p className="text-sm text-red-700 mt-2">
+            <div className="text-3xl font-bold text-red-900 dark:text-red-100">${overdueTotal.toFixed(2)}</div>
+            <p className="text-sm text-red-700 dark:text-red-400 mt-2 font-medium">
               Immediate action required - follow up with customers for payment
             </p>
           </CardContent>

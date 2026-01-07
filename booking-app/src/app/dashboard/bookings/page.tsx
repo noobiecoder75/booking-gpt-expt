@@ -94,8 +94,8 @@ export default function BookingsPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Bookings</h1>
-            <p className="text-gray-600 mt-2">
+            <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white">Bookings</h1>
+            <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2 font-medium">
               Manage and track all your travel bookings
             </p>
           </div>
@@ -168,7 +168,7 @@ export default function BookingsPage() {
                   {filteredBookings.map((booking) => (
                     <TableRow
                       key={booking.id}
-                      className="cursor-pointer hover:bg-gray-50"
+                      className="cursor-pointer dark:hover:bg-clio-gray-900/50"
                       onClick={() => handleViewDetails(booking)}
                     >
                       <TableCell className="font-mono text-sm font-semibold">
@@ -197,7 +197,7 @@ export default function BookingsPage() {
                         />
                       </TableCell>
                       <TableCell className="text-right">
-                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 text-sm font-semibold">
+                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-clio-blue/10 text-clio-blue text-xs font-bold">
                           {booking.items.length}
                         </span>
                       </TableCell>

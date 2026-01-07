@@ -294,8 +294,8 @@ export function Sidebar() {
                     className={`
                       w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200
                       ${item.active
-                        ? 'bg-gray-100 text-gray-900 font-medium shadow-sm'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                        ? 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 font-bold shadow-sm'
+                        : 'text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800'
                       }
                       ${collapsed ? 'justify-center' : 'justify-between'}
                     `}
@@ -322,8 +322,8 @@ export function Sidebar() {
                           className={`
                             flex items-center gap-3 px-3 py-2 rounded-lg transition-all duration-200 text-sm
                             ${child.active
-                              ? 'bg-gray-100 text-gray-900 font-medium'
-                              : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                              ? 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 font-bold'
+                              : 'text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800'
                             }
                           `}
                         >
@@ -339,14 +339,14 @@ export function Sidebar() {
 
             // Regular menu item (no children)
             return (
-              <Link
+            <Link
                 key={item.href}
                 href={item.href}
                 className={`
                   flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200
                   ${item.active
-                    ? 'bg-gray-100 text-gray-900 font-medium shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                    ? 'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-900 dark:text-clio-gray-100 font-bold shadow-sm'
+                    : 'text-clio-gray-600 dark:text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800'
                   }
                   ${collapsed ? 'justify-center' : ''}
                 `}
@@ -384,8 +384,8 @@ export function Sidebar() {
       {/* Mobile Sidebar Overlay */}
       {mobileMenuOpen && (
         <div className="lg:hidden fixed inset-0 z-40">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)} />
-          <aside className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+          <aside className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-clio-gray-900 border-r border-clio-gray-200 dark:border-clio-gray-800">
             {/* Header */}
             <div className="p-4 border-b border-clio-gray-100 dark:border-clio-gray-800">
               <Link href="/dashboard/quotes" className="flex items-center space-x-3">

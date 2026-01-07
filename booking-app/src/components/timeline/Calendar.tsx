@@ -218,39 +218,39 @@ export function TimelineCalendar({
 
     return (
       <div className="space-y-4">
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-clio-gray-50 dark:bg-clio-gray-900 rounded-xl border border-clio-gray-100 dark:border-clio-gray-800">
           <div className="flex items-center space-x-2">
             <button
               onClick={goToBack}
-              className="px-3 py-1 bg-white border rounded-md hover:bg-gray-50"
+              className="px-3 py-1 bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700 transition-colors"
             >
-              ←
+              <span className="dark:text-gray-100">←</span>
             </button>
             <button
               onClick={goToCurrent}
-              className="px-3 py-1 bg-white border rounded-md hover:bg-gray-50"
+              className="px-3 py-1 bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700 text-sm font-bold uppercase tracking-tight dark:text-gray-100 transition-colors"
             >
               Today
             </button>
             <button
               onClick={goToNext}
-              className="px-3 py-1 bg-white border rounded-md hover:bg-gray-50"
+              className="px-3 py-1 bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 rounded-lg hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700 transition-colors"
             >
-              →
+              <span className="dark:text-gray-100">→</span>
             </button>
           </div>
 
-          <div>{label()}</div>
+          <div className="text-lg font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">{label()}</div>
 
           <div className="flex items-center space-x-1">
             {['month', 'week', 'day', 'agenda'].map((viewName) => (
               <button
                 key={viewName}
                 onClick={() => toolbar.onView(viewName)}
-                className={`px-3 py-1 rounded-md text-sm capitalize ${
+                className={`px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tight transition-all ${
                   toolbar.view === viewName
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white border hover:bg-gray-50'
+                    ? 'bg-clio-blue text-white shadow-sm'
+                    : 'bg-white dark:bg-clio-gray-800 border border-clio-gray-200 dark:border-clio-gray-700 text-clio-gray-600 dark:text-clio-gray-300 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-700'
                 }`}
               >
                 {viewName}
@@ -259,28 +259,28 @@ export function TimelineCalendar({
           </div>
         </div>
         
-        <div className="flex items-center justify-between p-4 bg-blue-50 rounded-lg">
-          <div className="text-sm text-blue-800">
-            Export your travel calendar to use with Google Calendar, Apple Calendar, or Outlook
+        <div className="flex items-center justify-between p-4 bg-clio-blue/10 dark:bg-clio-blue/20 rounded-xl border border-clio-blue/20">
+          <div className="text-sm font-bold text-clio-blue uppercase tracking-tight">
+            Export travel calendar to external apps
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               size="sm"
               onClick={handleExportAll}
-              className="text-blue-600 border-blue-300 hover:bg-blue-100"
+              className="bg-white dark:bg-clio-gray-900 text-clio-blue border-clio-blue/30 hover:bg-clio-blue/10 font-bold uppercase tracking-tight text-[10px]"
             >
-              <Download className="w-4 h-4 mr-1" />
-              Export All (.ics)
+              <Download className="w-3 h-3 mr-1" />
+              Export .ics
             </Button>
             <Button
               variant="outline"  
               size="sm"
               onClick={() => window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Travel Schedule')}&details=${encodeURIComponent('Your travel bookings and itinerary')}`, '_blank')}
-              className="text-blue-600 border-blue-300 hover:bg-blue-100"
+              className="bg-white dark:bg-clio-gray-900 text-clio-blue border-clio-blue/30 hover:bg-clio-blue/10 font-bold uppercase tracking-tight text-[10px]"
             >
-              <CalendarPlus className="w-4 h-4 mr-1" />
-              Add to Google Calendar
+              <CalendarPlus className="w-3 h-3 mr-1" />
+              Google Calendar
             </Button>
           </div>
         </div>
@@ -318,7 +318,7 @@ export function TimelineCalendar({
           step={60}
           showMultiDayTimes
           defaultView="week"
-          className="bg-white rounded-lg shadow-sm"
+          className="bg-white dark:bg-clio-gray-900 rounded-xl shadow-sm border border-clio-gray-100 dark:border-clio-gray-800"
         />
       )}
     </div>

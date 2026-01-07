@@ -12,11 +12,11 @@ const buttonVariants = cva(
         destructive:
           "bg-red-600 text-white hover:bg-red-700 hover:shadow-lg",
         outline:
-          "border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 text-gray-700 dark:text-gray-300",
+          "border border-clio-gray-200 dark:border-clio-gray-700 bg-white dark:bg-clio-gray-900 hover:bg-clio-gray-50 dark:hover:bg-clio-gray-800 hover:border-clio-gray-300 dark:hover:border-clio-gray-600 text-clio-gray-700 dark:text-clio-gray-300 shadow-sm",
         secondary:
-          "bg-purple-600 text-white hover:bg-purple-700 hover:shadow-lg",
-        ghost: "hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 text-gray-700 dark:text-gray-300",
-        link: "text-blue-600 underline-offset-4 hover:underline",
+          "bg-clio-navy dark:bg-clio-blue text-white hover:bg-clio-navy/90 dark:hover:bg-clio-blue/90 shadow-sm",
+        ghost: "hover:bg-clio-gray-100 dark:hover:bg-clio-gray-800 hover:text-clio-gray-900 dark:hover:text-clio-gray-100 text-clio-gray-700 dark:text-clio-gray-300",
+        link: "text-clio-blue underline-offset-4 hover:underline",
       },
       size: {
         default: "h-11 px-6 py-3",

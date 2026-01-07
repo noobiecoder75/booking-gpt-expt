@@ -137,14 +137,14 @@ export function QuickEditPopover({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-40 bg-black/10"
+        className="fixed inset-0 z-40 bg-clio-navy/20 backdrop-blur-[2px]"
         onClick={onCancel}
       />
 
       {/* Popover */}
       <div
         ref={popoverRef}
-        className="fixed bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 min-w-[320px] z-50"
+        className="fixed bg-white dark:bg-clio-gray-900 rounded-2xl shadow-strong border border-clio-gray-200 dark:border-clio-gray-800 p-6 min-w-[320px] z-50"
         style={{
           left: safePosition.left,
           top: safePosition.top,
@@ -153,16 +153,16 @@ export function QuickEditPopover({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
-          <h4 className="font-semibold text-gray-900">
+          <h4 className="font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">
             {isApiItem ? 'Hotel Details' : 'Quick Edit'}
           </h4>
           {isApiItem && (
-            <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded uppercase font-medium">
+            <span className="text-[10px] bg-clio-blue/10 text-clio-blue px-2 py-0.5 rounded-full uppercase font-bold tracking-wider">
               {apiProvider || 'API'}
             </span>
           )}
         </div>
-        <ModernButton variant="ghost" size="sm" onClick={onCancel}>
+        <ModernButton variant="ghost" size="sm" onClick={onCancel} className="text-clio-gray-400 hover:text-clio-gray-900 dark:hover:text-white">
           <X className="w-4 h-4" />
         </ModernButton>
       </div>
@@ -361,9 +361,9 @@ export function QuickEditPopover({
       </div>
 
       {/* Actions */}
-      <div className="flex space-x-3 mt-6 pt-4 border-t border-gray-200">
+      <div className="flex space-x-3 mt-6 pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
         {!isApiItem && (
-          <ModernButton size="sm" variant="outline" onClick={onFullEdit} className="flex-1 hover-lift transition-smooth">
+          <ModernButton size="sm" variant="outline" onClick={onFullEdit} className="flex-1 transition-smooth">
             <Edit3 className="w-4 h-4 mr-2" />
             Full Edit
           </ModernButton>
@@ -371,7 +371,7 @@ export function QuickEditPopover({
         <ModernButton
           size="sm"
           onClick={onCancel}
-          className={`${isApiItem ? 'w-full' : 'flex-1'} bg-blue-600 hover:bg-blue-700 hover-lift transition-smooth`}
+          className={`${isApiItem ? 'w-full' : 'flex-1'} bg-clio-blue hover:bg-clio-blue-hover transition-smooth`}
         >
           {isApiItem ? 'Close' : 'Done'}
         </ModernButton>
