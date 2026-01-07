@@ -273,7 +273,7 @@ export default function AdminSettingsPage() {
         <select
           value={localSettings.currency}
           onChange={(e) => handleInputChange('currency', e.target.value)}
-          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
+          className="flex h-12 w-full rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 bg-clio-gray-50 dark:bg-clio-gray-900 px-4 py-3 text-sm font-medium text-clio-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clio-blue/20 focus-visible:border-clio-blue dark:focus-visible:border-clio-blue/50 hover:border-clio-gray-300 dark:hover:border-clio-gray-700 shadow-sm"
         >
           <option value="USD">USD - US Dollar</option>
           <option value="EUR">EUR - Euro</option>
@@ -475,7 +475,7 @@ export default function AdminSettingsPage() {
         <select
           value={localSettings.timezone}
           onChange={(e) => handleInputChange('timezone', e.target.value)}
-          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
+          className="flex h-12 w-full rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 bg-clio-gray-50 dark:bg-clio-gray-900 px-4 py-3 text-sm font-medium text-clio-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clio-blue/20 focus-visible:border-clio-blue dark:focus-visible:border-clio-blue/50 hover:border-clio-gray-300 dark:hover:border-clio-gray-700 shadow-sm"
         >
           <option value="America/New_York">Eastern Time</option>
           <option value="America/Chicago">Central Time</option>
@@ -490,7 +490,7 @@ export default function AdminSettingsPage() {
         <select
           value={localSettings.dateFormat}
           onChange={(e) => handleInputChange('dateFormat', e.target.value)}
-          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
+          className="flex h-12 w-full rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 bg-clio-gray-50 dark:bg-clio-gray-900 px-4 py-3 text-sm font-medium text-clio-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clio-blue/20 focus-visible:border-clio-blue dark:focus-visible:border-clio-blue/50 hover:border-clio-gray-300 dark:hover:border-clio-gray-700 shadow-sm"
         >
           <option value="MM/DD/YYYY">MM/DD/YYYY</option>
           <option value="DD/MM/YYYY">DD/MM/YYYY</option>
@@ -503,7 +503,7 @@ export default function AdminSettingsPage() {
         <select
           value={localSettings.backupFrequency}
           onChange={(e) => handleInputChange('backupFrequency', e.target.value as 'daily' | 'weekly' | 'monthly')}
-          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
+          className="flex h-12 w-full rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 bg-clio-gray-50 dark:bg-clio-gray-900 px-4 py-3 text-sm font-medium text-clio-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clio-blue/20 focus-visible:border-clio-blue dark:focus-visible:border-clio-blue/50 hover:border-clio-gray-300 dark:hover:border-clio-gray-700 shadow-sm"
         >
           <option value="daily">Daily</option>
           <option value="weekly">Weekly</option>
@@ -527,7 +527,7 @@ export default function AdminSettingsPage() {
         <select
           value={localSettings.auditLogLevel}
           onChange={(e) => handleInputChange('auditLogLevel', e.target.value as 'basic' | 'detailed' | 'verbose')}
-          className="flex h-12 w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm px-4 py-3 text-sm font-medium text-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/20 focus-visible:border-blue-500 dark:focus-visible:border-blue-400 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-white/80 dark:hover:bg-gray-800/80"
+          className="flex h-12 w-full rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 bg-clio-gray-50 dark:bg-clio-gray-900 px-4 py-3 text-sm font-medium text-clio-gray-900 dark:text-gray-100 transition-smooth focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-clio-blue/20 focus-visible:border-clio-blue dark:focus-visible:border-clio-blue/50 hover:border-clio-gray-300 dark:hover:border-clio-gray-700 shadow-sm"
         >
           <option value="basic">Basic</option>
           <option value="detailed">Detailed</option>

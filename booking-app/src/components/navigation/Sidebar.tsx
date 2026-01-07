@@ -208,7 +208,7 @@ export function Sidebar() {
     <>
       {/* Mobile Menu Button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-gray-800 shadow-md border border-gray-200 dark:border-gray-700"
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-lg bg-white dark:bg-clio-gray-900 shadow-sm border border-clio-gray-200 dark:border-clio-gray-800"
         onClick={() => {
           console.log('[Sidebar] Mobile menu toggled to:', !mobileMenuOpen);
           setMobileMenuOpen(!mobileMenuOpen);
@@ -222,13 +222,13 @@ export function Sidebar() {
       </button>
 
       {/* Desktop Sidebar */}
-      <aside className={`hidden lg:flex flex-col fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 z-40 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
+      <aside className={`hidden lg:flex flex-col fixed left-0 top-0 h-full bg-white dark:bg-clio-gray-900 border-r border-clio-gray-200 dark:border-clio-gray-800 z-40 transition-all duration-300 ${collapsed ? 'w-20' : 'w-64'}`}>
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+        <div className="p-4 border-b border-clio-gray-100 dark:border-clio-gray-800">
           <div className="flex items-center justify-between">
             {!collapsed && (
               <Link href="/dashboard/quotes" className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-clio-blue rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -238,7 +238,7 @@ export function Sidebar() {
             )}
             {collapsed && (
               <Link href="/dashboard/quotes" className="flex justify-center">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-clio-blue rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
               </Link>
@@ -265,10 +265,10 @@ export function Sidebar() {
           <Link
             href={createQuoteItem.href}
             className={`
-              flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 font-medium
+              flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 font-bold
               ${createQuoteItem.active
-                ? 'bg-blue-100 text-blue-700 shadow-sm'
-                : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg hover:-translate-y-0.5'
+                ? 'bg-clio-gray-100 text-clio-blue shadow-sm'
+                : 'bg-clio-blue text-white hover:bg-clio-blue-hover shadow-sm'
               }
               ${collapsed ? 'justify-center' : ''}
             `}
@@ -387,9 +387,9 @@ export function Sidebar() {
           <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setMobileMenuOpen(false)} />
           <aside className="absolute left-0 top-0 h-full w-64 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
             {/* Header */}
-            <div className="p-4 border-b border-gray-200 dark:border-gray-800">
+            <div className="p-4 border-b border-clio-gray-100 dark:border-clio-gray-800">
               <Link href="/dashboard/quotes" className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-clio-blue rounded-lg flex items-center justify-center">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -405,10 +405,10 @@ export function Sidebar() {
                 href={createQuoteItem.href}
                 onClick={() => setMobileMenuOpen(false)}
                 className={`
-                  flex items-center gap-3 px-2 py-3 rounded-xl transition-all duration-200 font-medium
+                  flex items-center gap-3 px-2 py-3 rounded-xl transition-all duration-200 font-bold
                   ${createQuoteItem.active
-                    ? 'bg-blue-100 text-blue-700 shadow-sm'
-                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md'
+                    ? 'bg-clio-gray-100 text-clio-blue shadow-sm'
+                    : 'bg-clio-blue text-white hover:bg-clio-blue-hover shadow-sm'
                   }
                 `}
               >

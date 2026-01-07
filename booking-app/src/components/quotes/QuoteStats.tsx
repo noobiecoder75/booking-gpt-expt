@@ -130,17 +130,17 @@ export function QuoteStats() {
         {quoteStatusCards.map((stat) => (
           <div
             key={stat.title}
-            className={`bg-white rounded-xl p-6 border-2 ${stat.borderColor} hover:shadow-lg hover:-translate-y-1 transition-all duration-200`}
+            className={`bg-white dark:bg-clio-gray-900 rounded-xl p-6 border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm hover:shadow-md transition-all duration-200`}
           >
             <div className="flex items-start justify-between">
-              <div className={`p-3 rounded-xl ${stat.bgColor}`}>
-                <stat.icon className={`w-6 h-6 ${stat.color}`} />
+              <div className={`p-3 rounded-xl ${stat.bgColor.replace('bg-', 'bg-').replace('50', '100').replace('blue-100', 'clio-blue/10')}`}>
+                <stat.icon className={`w-6 h-6 ${stat.color.replace('text-blue-600', 'text-clio-blue')}`} />
               </div>
             </div>
             <div className="mt-4">
-              <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
-              <p className="text-sm font-semibold text-gray-700 mt-1">{stat.title}</p>
-              <p className="text-xs text-gray-500 mt-1">{stat.description}</p>
+              <p className="text-3xl font-bold text-clio-gray-900 dark:text-white">{stat.value}</p>
+              <p className="text-sm font-bold text-clio-gray-500 uppercase tracking-wider mt-1">{stat.title}</p>
+              <p className="text-xs text-clio-gray-400 mt-1 uppercase font-bold tracking-tight">{stat.description}</p>
             </div>
           </div>
         ))}
@@ -153,28 +153,28 @@ export function QuoteStats() {
             key={stat.title}
             className={`${
               stat.isFinancial
-                ? `bg-gradient-to-br ${stat.gradient} text-white`
-                : `bg-white border-2 ${stat.borderColor}`
-            } rounded-xl p-6 hover:shadow-lg hover:-translate-y-1 transition-all duration-200`}
+                ? `bg-clio-navy dark:bg-clio-blue text-white`
+                : `bg-white dark:bg-clio-gray-900 border border-clio-gray-200 dark:border-clio-gray-800`
+            } rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200`}
           >
             <div className="flex items-start justify-between">
               <div className={`p-3 rounded-xl ${
-                stat.isFinancial ? 'bg-white/20' : stat.bgColor
+                stat.isFinancial ? 'bg-white/10' : 'bg-clio-gray-50 dark:bg-clio-gray-800'
               }`}>
                 <stat.icon className={`w-6 h-6 ${
-                  stat.isFinancial ? 'text-white' : stat.color
+                  stat.isFinancial ? 'text-white' : 'text-clio-gray-600 dark:text-clio-gray-300'
                 }`} />
               </div>
             </div>
             <div className="mt-4">
               <p className={`text-3xl font-bold ${
-                stat.isFinancial ? 'text-white' : 'text-gray-900'
+                stat.isFinancial ? 'text-white' : 'text-clio-gray-900 dark:text-white'
               }`}>{stat.value}</p>
-              <p className={`text-sm font-semibold mt-1 ${
-                stat.isFinancial ? 'text-white/90' : 'text-gray-700'
+              <p className={`text-sm font-bold uppercase tracking-wider mt-1 ${
+                stat.isFinancial ? 'text-white/90' : 'text-clio-gray-500'
               }`}>{stat.title}</p>
-              <p className={`text-xs mt-1 ${
-                stat.isFinancial ? 'text-white/70' : 'text-gray-500'
+              <p className={`text-xs uppercase font-bold tracking-tight mt-1 ${
+                stat.isFinancial ? 'text-white/60' : 'text-clio-gray-400'
               }`}>{stat.description}</p>
             </div>
           </div>
@@ -183,53 +183,53 @@ export function QuoteStats() {
 
       {/* Additional Insights */}
       {stats.totalQuotes > 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Insights</h3>
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-6 shadow-sm">
+          <h3 className="text-lg font-bold text-clio-gray-900 dark:text-white mb-4">Quick Insights</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             
             {/* Conversion Rate */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+            <div className="bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-lg p-4 border border-clio-gray-100 dark:border-clio-gray-800">
               <div className="flex items-center space-x-2">
-                <TrendingUp className="w-5 h-5 text-blue-600" />
-                <span className="font-semibold text-blue-900">Conversion Rate</span>
+                <TrendingUp className="w-5 h-5 text-clio-blue" />
+                <span className="font-bold text-clio-gray-900 dark:text-white">Conversion Rate</span>
               </div>
               <div className="mt-2">
-                <span className="text-2xl font-bold text-blue-800">
+                <span className="text-2xl font-bold text-clio-blue">
                   {conversionRate.toFixed(1)}%
                 </span>
-                <p className="text-sm text-blue-600 mt-1">
+                <p className="text-xs font-bold text-clio-gray-500 uppercase tracking-tight mt-1">
                   {stats.acceptedQuotes} of {stats.sentQuotes + stats.acceptedQuotes + stats.rejectedQuotes} sent quotes
                 </p>
               </div>
             </div>
 
             {/* Pipeline Status */}
-            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg p-4 border border-amber-100">
+            <div className="bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-lg p-4 border border-clio-gray-100 dark:border-clio-gray-800">
               <div className="flex items-center space-x-2">
                 <FileText className="w-5 h-5 text-amber-600" />
-                <span className="font-semibold text-amber-900">Pipeline</span>
+                <span className="font-bold text-clio-gray-900 dark:text-white">Pipeline</span>
               </div>
               <div className="mt-2">
-                <span className="text-2xl font-bold text-amber-800">
+                <span className="text-2xl font-bold text-amber-600">
                   {stats.draftQuotes + stats.sentQuotes}
                 </span>
-                <p className="text-sm text-amber-600 mt-1">
+                <p className="text-xs font-bold text-clio-gray-500 uppercase tracking-tight mt-1">
                   Active quotes in pipeline
                 </p>
               </div>
             </div>
 
             {/* Success Ratio */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-100">
+            <div className="bg-clio-gray-50 dark:bg-clio-gray-800/50 rounded-lg p-4 border border-clio-gray-100 dark:border-clio-gray-800">
               <div className="flex items-center space-x-2">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-                <span className="font-semibold text-green-900">Success Rate</span>
+                <CheckCircle className="w-5 h-5 text-emerald-600" />
+                <span className="font-bold text-clio-gray-900 dark:text-white">Success Rate</span>
               </div>
               <div className="mt-2">
-                <span className="text-2xl font-bold text-green-800">
+                <span className="text-2xl font-bold text-emerald-600">
                   {stats.totalQuotes > 0 ? ((stats.acceptedQuotes / stats.totalQuotes) * 100).toFixed(1) : 0}%
                 </span>
-                <p className="text-sm text-green-600 mt-1">
+                <p className="text-xs font-bold text-clio-gray-500 uppercase tracking-tight mt-1">
                   Overall acceptance rate
                 </p>
               </div>
@@ -240,11 +240,11 @@ export function QuoteStats() {
 
       {/* Empty State */}
       {stats.totalQuotes === 0 && (
-        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">No quotes yet</h3>
-          <p className="text-gray-600 mb-4">
-            Create your first quote to start tracking your business metrics.
+        <div className="bg-white dark:bg-clio-gray-900 rounded-xl border border-clio-gray-200 dark:border-clio-gray-800 p-12 text-center shadow-sm">
+          <FileText className="w-12 h-12 text-clio-gray-400 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-clio-gray-900 dark:text-white mb-2">No quotes yet</h3>
+          <p className="text-clio-gray-600 dark:text-clio-gray-400 max-w-sm mx-auto">
+            Create your first quote to start tracking your business metrics and insights.
           </p>
         </div>
       )}
