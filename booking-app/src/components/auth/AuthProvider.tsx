@@ -64,58 +64,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initAuth = async (retryCount = 0) => {
       console.log('🔷 AuthProvider: Initializing...', retryCount > 0 ? `(Retry ${retryCount})` : '');
       try {
-        // Get initial session
         const { data: { session }, error } = await supabase.auth.getSession();
 
         if (error && retryCount < 2) {
           console.log('⚠️ AuthProvider: Session retrieval failed, retrying in 500ms...');
           setTimeout(() => initAuth(retryCount + 1), 500);
-          return;
+          return; // Don't run finally on retry
         }
 
-        console.log('🔷 AuthProvider: Session retrieved:', session ? 'Found' : 'Not found');
-
-        // Check if session needs refresh
         if (session) {
-          const expiresAt = session.expires_at ? new Date(session.expires_at * 1000) : null;
-          const now = new Date();
-
-          // If session is expired or expires within 5 minutes, refresh it
-          if (expiresAt && expiresAt < new Date(now.getTime() + 5 * 60 * 1000)) {
-            console.log('🔄 AuthProvider: Session expiring soon, refreshing...');
-            const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
-
-            if (refreshedSession) {
-              setSession(refreshedSession);
-              setUser(refreshedSession.user ?? null);
-
-              if (refreshedSession.user) {
-                const profileData = await fetchProfile(refreshedSession.user.id);
-                setProfile(profileData);
-              }
-            }
-          } else {
-            setSession(session);
-            setUser(session.user ?? null);
-
-            if (session.user) {
-              const profileData = await fetchProfile(session.user.id);
-              setProfile(profileData);
-            }
+          setSession(session);
+          setUser(session.user ?? null);
+          if (session.user) {
+            const profileData = await fetchProfile(session.user.id);
+            setProfile(profileData);
           }
-        } else {
-          setSession(null);
-          setUser(null);
-          setProfile(null);
         }
+        setLoading(false);
       } catch (error) {
         console.error('❌ AuthProvider: Error initializing auth:', error);
         if (retryCount < 2) {
           setTimeout(() => initAuth(retryCount + 1), 1000);
-          return;
+        } else {
+          setLoading(false);
         }
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -137,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setProfile(null);
         setLoading(false);
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
         setSession(newSession);
         setUser(newSession?.user ?? null);
 
@@ -145,6 +117,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const profileData = await fetchProfile(newSession.user.id);
           setProfile(profileData);
         }
+        setLoading(false);
+      } else {
         setLoading(false);
       }
     });

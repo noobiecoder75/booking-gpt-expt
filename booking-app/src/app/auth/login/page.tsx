@@ -42,9 +42,9 @@ export default function LoginPage() {
 
       console.log('🔀 Redirecting to:', redirectTo);
 
-      // Use router for seamless navigation
-      router.push(redirectTo);
-      router.refresh();
+      // Use window.location for reliable navigation after auth
+      // This ensures cookies are fully settled and prevents redirect loops
+      window.location.href = redirectTo;
 
       // Keep loading state active during redirect
       // (will unmount when navigation completes)

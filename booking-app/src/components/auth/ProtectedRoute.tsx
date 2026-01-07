@@ -22,7 +22,7 @@ export function ProtectedRoute({
   const pathname = usePathname();
   const { user, profile, loading } = useAuth();
   const hasRedirected = useRef(false);
-  const redirectTimer = useRef<NodeJS.Timeout>();
+  const redirectTimer = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     // Clear any existing redirect timer
@@ -47,7 +47,7 @@ export function ProtectedRoute({
           console.log('🔐 ProtectedRoute: Redirecting to login from:', returnUrl);
           router.replace(`/auth/login?redirectTo=${encodeURIComponent(returnUrl)}`);
         }
-      }, 50); // 50ms delay to allow middleware to complete
+      }, 250); // 250ms delay is safer for session synchronization
       return;
     }
 
