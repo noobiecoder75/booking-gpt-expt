@@ -71,10 +71,16 @@ export function BookingDetailsModal({
                   <Hash className="w-4 h-4" />
                   <span className="font-mono font-bold tracking-tight">{booking.bookingReference}</span>
                 </div>
-                <BookingStatusBadge status={booking.status} />
-                <Badge className={cn("text-[10px] uppercase font-bold tracking-tight px-2 py-0.5", paymentStatus.className)}>
-                  {paymentStatus.label}
-                </Badge>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Booking:</span>
+                  <BookingStatusBadge status={booking.status} />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Payment:</span>
+                  <Badge className={cn("text-[10px] uppercase font-bold tracking-tight px-2 py-0.5", paymentStatus.className)}>
+                    {paymentStatus.label}
+                  </Badge>
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
@@ -112,10 +118,10 @@ export function BookingDetailsModal({
             <h3 className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400 mb-6">Booking Workflow</h3>
             <WorkflowVisualizer
               hasQuote={!!booking.quoteId}
-              hasBooking={true}
-              hasInvoice={false} // TODO: Check if invoice exists
-              hasCommission={false} // TODO: Check if commission exists
-              isPaid={booking.paymentStatus === 'paid'}
+              hasBooking={booking.status === 'confirmed' || booking.status === 'booked' || booking.status === 'completed'}
+              hasInvoice={booking.paymentStatus === 'paid' || booking.paymentStatus === 'booked' || booking.paymentStatus === 'partial'}
+              hasCommission={false} // TODO: Link to commissions table
+              isPaid={booking.paymentStatus === 'paid' || booking.paymentStatus === 'booked'}
             />
           </div>
 

@@ -43,6 +43,7 @@ export default function ContactsPage() {
   const { addContact, updateContact, deleteContact } = useContactMutations();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeTab, setActiveTab] = useState<'customers' | 'suppliers'>('customers');
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'detail'>('list');
   const [showContactForm, setShowContactForm] = useState(false);
@@ -52,19 +53,29 @@ export default function ContactsPage() {
   const { data: contactQuotes = [] } = useQuotesByContactQuery(selectedContact?.id);
   const { data: contactInvoices = [] } = useInvoicesByCustomerQuery(selectedContact?.id);
 
-  // Filter contacts based on search query
+  // Filter contacts based on search query and active tab
   const filteredContacts = useMemo(() => {
-    if (!searchQuery.trim()) return contacts;
+    // 1. Filter by contact type (customer vs supplier)
+    let filtered = contacts.filter(contact => {
+      if (activeTab === 'customers') {
+        return contact.type !== 'supplier'; // default to customer if type is missing
+      } else {
+        return contact.type === 'supplier';
+      }
+    });
+
+    // 2. Filter by search query
+    if (!searchQuery.trim()) return filtered;
 
     const query = searchQuery.toLowerCase();
-    return contacts.filter(contact =>
+    return filtered.filter(contact =>
       contact.name.toLowerCase().includes(query) ||
       contact.email.toLowerCase().includes(query) ||
       contact.phone?.toLowerCase().includes(query) ||
       contact.company?.toLowerCase().includes(query) ||
       contact.tags?.some(tag => tag.toLowerCase().includes(query))
     );
-  }, [contacts, searchQuery]);
+  }, [contacts, searchQuery, activeTab]);
 
   useEffect(() => {
     console.log('[ContactsPage] Contacts loaded:', {
@@ -429,9 +440,12 @@ export default function ContactsPage() {
               {/* Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
                 <div>
-                  <h1 className="text-3xl font-bold text-clio-gray-900 dark:text-white">Customer Relationship Management</h1>
-                  <p className="text-clio-gray-600 dark:text-clio-gray-400 mt-2 font-medium">
-                    Manage your travel clients and build lasting relationships
+                  <h1 className="text-3xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tighter">
+                    {activeTab === 'customers' ? 'Relationship' : 'Supplier'} <span className="text-clio-blue">Center</span>
+                  </h1>
+                  <p className="text-clio-gray-500 dark:text-clio-gray-400 mt-2 font-bold uppercase text-[10px] tracking-[0.2em] flex items-center gap-2">
+                    <Users className="w-3 h-3" />
+                    {activeTab === 'customers' ? 'Manage your travel clients and build lasting relationships' : 'Manage your travel suppliers and vendor partnerships'}
                   </p>
                 </div>
 
@@ -449,47 +463,60 @@ export default function ContactsPage() {
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
                 <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Total Contacts</CardTitle>
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">
+                      Total {activeTab === 'customers' ? 'Contacts' : 'Suppliers'}
+                    </CardTitle>
                     <div className="p-2 rounded-xl bg-clio-blue/10">
                       <Users className="h-4 w-4 text-clio-blue" />
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">{contacts.length}</div>
+                    <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">
+                      {activeTab === 'customers' ? contacts.filter(c => c.type !== 'supplier').length : contacts.filter(c => c.type === 'supplier').length}
+                    </div>
                   </CardContent>
                 </Card>
 
                 <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Active Customers</CardTitle>
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">
+                      {activeTab === 'customers' ? 'Active Customers' : 'Active Partnerships'}
+                    </CardTitle>
                     <div className="p-2 rounded-xl bg-clio-navy/10">
                       <TrendingUp className="h-4 w-4 text-clio-navy dark:text-clio-gray-300" />
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">
-                      {contacts.filter(c => getCustomerBookings(c.id) > 0).length}
+                      {contacts.filter(c => {
+                        const isCorrectType = activeTab === 'customers' ? c.type !== 'supplier' : c.type === 'supplier';
+                        return isCorrectType && getCustomerBookings(c.id) > 0;
+                      }).length}
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Total Revenue</CardTitle>
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">
+                      {activeTab === 'customers' ? 'Total Revenue' : 'Total Settlement'}
+                    </CardTitle>
                     <div className="p-2 rounded-xl bg-emerald-50 dark:bg-emerald-900/20">
                       <DollarSign className="h-4 w-4 text-emerald-600" />
                     </div>
                   </CardHeader>
                   <CardContent>
                     <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
-                      {formatCurrency(contacts.reduce((sum, c) => sum + getCustomerValue(c.id), 0))}
+                      {formatCurrency(contacts.filter(c => activeTab === 'customers' ? c.type !== 'supplier' : c.type === 'supplier').reduce((sum, c) => sum + getCustomerValue(c.id), 0))}
                     </div>
                   </CardContent>
                 </Card>
 
                 <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">Avg Customer Value</CardTitle>
+                    <CardTitle className="text-[10px] font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400">
+                      {activeTab === 'customers' ? 'Avg Customer Value' : 'Avg Supplier Volume'}
+                    </CardTitle>
                     <div className="p-2 rounded-xl bg-amber-50 dark:bg-amber-900/20">
                       <Award className="h-4 w-4 text-amber-600" />
                     </div>
@@ -497,8 +524,8 @@ export default function ContactsPage() {
                   <CardContent>
                     <div className="text-3xl font-bold text-clio-gray-900 dark:text-white">
                       {formatCurrency(
-                        contacts.length > 0
-                          ? contacts.reduce((sum, c) => sum + getCustomerValue(c.id), 0) / contacts.length
+                        contacts.filter(c => activeTab === 'customers' ? c.type !== 'supplier' : c.type === 'supplier').length > 0
+                          ? contacts.filter(c => activeTab === 'customers' ? c.type !== 'supplier' : c.type === 'supplier').reduce((sum, c) => sum + getCustomerValue(c.id), 0) / contacts.filter(c => activeTab === 'customers' ? c.type !== 'supplier' : c.type === 'supplier').length
                           : 0
                       )}
                     </div>
@@ -528,14 +555,37 @@ export default function ContactsPage() {
               )}
 
               {/* Search and Filters */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-4 h-4" />
+              <div className="flex flex-col sm:flex-row items-center gap-6 mb-8">
+                <div className="flex bg-clio-gray-100/80 dark:bg-clio-gray-900/50 p-1 rounded-xl w-full sm:w-auto border border-clio-gray-200 dark:border-clio-gray-800 shadow-sm">
+                  <button 
+                    onClick={() => setActiveTab('customers')}
+                    className={`flex-1 sm:flex-none px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200 ${
+                      activeTab === 'customers' 
+                      ? "bg-white dark:bg-clio-gray-800 text-clio-blue shadow-sm" 
+                      : "text-clio-gray-500 hover:text-clio-gray-700 dark:hover:text-clio-gray-300"
+                    }`}
+                  >
+                    Customers
+                  </button>
+                  <button 
+                    onClick={() => setActiveTab('suppliers')}
+                    className={`flex-1 sm:flex-none px-6 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-200 ${
+                      activeTab === 'suppliers' 
+                      ? "bg-white dark:bg-clio-gray-800 text-clio-blue shadow-sm" 
+                      : "text-clio-gray-500 hover:text-clio-gray-700 dark:hover:text-clio-gray-300"
+                    }`}
+                  >
+                    Suppliers
+                  </button>
+                </div>
+
+                <div className="relative flex-1 w-full">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-clio-gray-400 w-4 h-4" />
                   <Input
-                    placeholder="Search contacts by name, email..."
+                    placeholder={activeTab === 'customers' ? "Search customers by name, email..." : "Search suppliers by name, company..."}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
+                    className="pl-12 h-12 bg-white dark:bg-clio-gray-900 border-clio-gray-200 dark:border-clio-gray-800 rounded-xl font-bold text-sm shadow-sm"
                     disabled={isLoading}
                   />
                 </div>
@@ -544,7 +594,9 @@ export default function ContactsPage() {
               {/* Contacts List */}
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
-                  <h2 className="text-xl font-bold text-clio-gray-900 dark:text-white">Contacts ({filteredContacts.length})</h2>
+                  <h2 className="text-xl font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">
+                    {activeTab === 'customers' ? 'Active Customers' : 'Global Suppliers'} ({filteredContacts.length})
+                  </h2>
                 </div>
                 
                 {!isLoading && filteredContacts.length === 0 ? (
@@ -596,17 +648,25 @@ export default function ContactsPage() {
                             <div className="p-6 space-y-4">
                               <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1">
-                                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Value</span>
-                                  <div className="font-bold text-emerald-600 dark:text-emerald-400 text-lg leading-none">{formatCurrency(totalValue)}</div>
+                                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">
+                                    {activeTab === 'customers' ? 'Value' : 'Settlement'}
+                                  </span>
+                                  <div className="font-bold text-emerald-600 dark:text-emerald-400 text-lg leading-none">
+                                    {formatCurrency(totalValue)}
+                                  </div>
                                 </div>
                                 <div className="space-y-1">
-                                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Bookings</span>
+                                  <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">
+                                    {activeTab === 'customers' ? 'Bookings' : 'Orders'}
+                                  </span>
                                   <div className="font-bold text-clio-gray-900 dark:text-white text-lg leading-none">{totalBookings}</div>
                                 </div>
                               </div>
                               
                               <div className="pt-3 border-t border-clio-gray-50 dark:border-clio-gray-800/50 flex justify-between items-center">
-                                <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">Last Booking</span>
+                                <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400">
+                                  {activeTab === 'customers' ? 'Last Booking' : 'Last Fulfilled'}
+                                </span>
                                 <span className="text-xs font-bold text-clio-gray-700 dark:text-clio-gray-300">{lastBooking ? new Date(lastBooking).toLocaleDateString() : 'Never'}</span>
                               </div>
                             </div>

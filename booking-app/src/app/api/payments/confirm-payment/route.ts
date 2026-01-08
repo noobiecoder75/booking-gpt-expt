@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getStripeInstance, calculateStripeFee } from '@/lib/stripe/config';
 import { PaymentType } from '@/types/payment';
-import { processHybridBooking } from '@/lib/booking/processor';
 import { TravelQuote, Payment } from '@/types';
 import { RateSource } from '@/types/rate';
 import { createClient } from '@supabase/supabase-js';

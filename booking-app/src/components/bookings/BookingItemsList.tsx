@@ -142,22 +142,22 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
                     )}
 
                     {/* Profit Tracking (if available) */}
-                    {showPricing && (item.supplierCost || item.clientPrice) && (
+                    {showPricing && (item.supplierCost !== null || item.clientPrice !== null) && (
                       <div className="md:col-span-2 pt-4 border-t border-clio-gray-100 dark:border-clio-gray-800">
                         <div className="grid grid-cols-3 gap-4">
-                          {item.supplierCost && (
+                          {item.supplierCost !== null && (
                             <div>
                               <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 block mb-1">Supplier Cost</span>
                               <div className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(item.supplierCost)}</div>
                             </div>
                           )}
-                          {item.clientPrice && (
+                          {item.clientPrice !== null && (
                             <div>
                               <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 block mb-1">Client Price</span>
                               <div className="font-bold text-clio-gray-900 dark:text-white">{formatCurrency(item.clientPrice)}</div>
                             </div>
                           )}
-                          {item.supplierCost && item.clientPrice && (
+                          {item.supplierCost !== null && item.clientPrice !== null && (
                             <div>
                               <span className="text-[10px] font-bold uppercase tracking-tight text-clio-gray-400 block mb-1">Profit</span>
                               <div className="font-bold text-emerald-600 dark:text-emerald-400">
