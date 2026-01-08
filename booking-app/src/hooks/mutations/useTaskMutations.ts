@@ -109,6 +109,15 @@ export function useTaskMutations() {
     mutationFn: async ({ id, status, notes }: { id: string; status: TaskStatus; notes?: string }) => {
       if (!user?.id) throw new Error('User not authenticated');
 
+      // 1. Fetch task details for synchronization
+      const { data: task, error: fetchError } = await supabase
+        .from('tasks')
+        .select('quote_id, quote_item_id')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
       const updateData: any = {
         status,
         updated_at: new Date().toISOString(),
@@ -120,16 +129,40 @@ export function useTaskMutations() {
         updateData.completed_at = new Date().toISOString();
       }
 
-      const { error } = await supabase
+      const { error: taskUpdateError } = await supabase
         .from('tasks')
         .update(updateData)
         .eq('id', id)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (taskUpdateError) throw taskUpdateError;
+
+      // 2. Sync with Quote Item if marking as completed
+      if (status === 'completed' && task.quote_id && task.quote_item_id) {
+        const { data: quote, error: quoteFetchError } = await supabase
+          .from('quotes')
+          .select('items')
+          .eq('id', task.quote_id)
+          .single();
+
+        if (quote && !quoteFetchError) {
+          const items = (quote.items || []) as TravelItem[];
+          const updatedItems = items.map((item: TravelItem) => 
+            item.id === task.quote_item_id 
+              ? { ...item, bookingStatus: 'confirmed', confirmedAt: new Date().toISOString() }
+              : item
+          );
+
+          await supabase
+            .from('quotes')
+            .update({ items: updatedItems })
+            .eq('id', task.quote_id);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['quotes', user?.id] });
     },
   });
 
@@ -158,6 +191,16 @@ export function useTaskMutations() {
     mutationFn: async ({ id, completionNotes }: { id: string; completionNotes?: string }) => {
       if (!user?.id) throw new Error('User not authenticated');
 
+      // 1. Fetch the task to get quote/item details
+      const { data: task, error: fetchError } = await supabase
+        .from('tasks')
+        .select('quote_id, quote_item_id')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // 2. Mark task as completed
       const updateData: any = {
         status: 'completed',
         completed_at: new Date().toISOString(),
@@ -168,16 +211,40 @@ export function useTaskMutations() {
         updateData.notes = completionNotes;
       }
 
-      const { error } = await supabase
+      const { error: taskUpdateError } = await supabase
         .from('tasks')
         .update(updateData)
         .eq('id', id)
         .eq('user_id', user.id);
 
-      if (error) throw error;
+      if (taskUpdateError) throw taskUpdateError;
+
+      // 3. Sync with Quote Item if applicable
+      if (task.quote_id && task.quote_item_id) {
+        const { data: quote, error: quoteFetchError } = await supabase
+          .from('quotes')
+          .select('items')
+          .eq('id', task.quote_id)
+          .single();
+
+        if (quote && !quoteFetchError) {
+          const items = (quote.items || []) as TravelItem[];
+          const updatedItems = items.map((item: TravelItem) => 
+            item.id === task.quote_item_id 
+              ? { ...item, bookingStatus: 'confirmed', confirmedAt: new Date().toISOString() }
+              : item
+          );
+
+          await supabase
+            .from('quotes')
+            .update({ items: updatedItems })
+            .eq('id', task.quote_id);
+        }
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tasks', user?.id] });
+      queryClient.invalidateQueries({ queryKey: ['quotes', user?.id] });
     },
   });
 
