@@ -116,7 +116,17 @@ export class HotelService {
   }
 
   private getCacheKey(request: APISearchRequest): string {
-    return `${request.destination}-${request.checkIn}-${request.checkOut}-${request.adults || 2}-${request.children || 0}-${request.rooms || 1}`;
+    const adults = request.passengers?.adults ?? request.adults ?? 2;
+    const children = request.passengers?.children ?? request.children ?? 0;
+    const infants = request.passengers?.infants ?? 0;
+    const rooms = request.rooms ?? 1;
+    
+    // Include filters in cache key as they affect the returned data
+    const minPrice = request.filters?.priceRange?.min ?? 0;
+    const maxPrice = request.filters?.priceRange?.max ?? 'inf';
+    const rating = request.filters?.hotelRating ?? 0;
+
+    return `${request.destination}-${request.checkIn}-${request.checkOut}-${adults}-${children}-${infants}-${rooms}-${minPrice}-${maxPrice}-${rating}`;
   }
 
   private getCachedSearch(cacheKey: string): APISearchResponse<EnhancedHotelDetails> | null {

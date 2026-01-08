@@ -109,14 +109,7 @@ export function useTaskMutations() {
     mutationFn: async ({ id, status, notes }: { id: string; status: TaskStatus; notes?: string }) => {
       if (!user?.id) throw new Error('User not authenticated');
 
-      // 1. Fetch task details for synchronization
-      const { data: task, error: fetchError } = await supabase
-        .from('tasks')
-        .select('quote_id, quote_item_id')
-        .eq('id', id)
-        .single();
-
-      if (fetchError) throw fetchError;
+      console.log(`[updateTaskStatus] Updating task ${id} to ${status}`);
 
       const updateData: any = {
         status,
@@ -129,34 +122,65 @@ export function useTaskMutations() {
         updateData.completed_at = new Date().toISOString();
       }
 
+      // 1. Update task status first to ensure it happens
       const { error: taskUpdateError } = await supabase
         .from('tasks')
         .update(updateData)
         .eq('id', id)
         .eq('user_id', user.id);
 
-      if (taskUpdateError) throw taskUpdateError;
+      if (taskUpdateError) {
+        console.error('[updateTaskStatus] Task update error:', taskUpdateError);
+        throw taskUpdateError;
+      }
 
-      // 2. Sync with Quote Item if marking as completed
-      if (status === 'completed' && task.quote_id && task.quote_item_id) {
-        const { data: quote, error: quoteFetchError } = await supabase
-          .from('quotes')
-          .select('items')
-          .eq('id', task.quote_id)
-          .single();
+      console.log(`[updateTaskStatus] Task ${id} updated successfully`);
 
-        if (quote && !quoteFetchError) {
-          const items = (quote.items || []) as TravelItem[];
-          const updatedItems = items.map((item: TravelItem) => 
-            item.id === task.quote_item_id 
-              ? { ...item, bookingStatus: 'booked', confirmedAt: new Date().toISOString() }
-              : item
-          );
+      // 2. Safely attempt synchronization if completing
+      if (status === 'completed') {
+        try {
+          const { data: task, error: fetchError } = await supabase
+            .from('tasks')
+            .select('*')
+            .eq('id', id)
+            .single();
 
-          await supabase
-            .from('quotes')
-            .update({ items: updatedItems })
-            .eq('id', task.quote_id);
+          if (fetchError || !task) {
+            console.warn('[updateTaskStatus] Could not fetch task for sync:', fetchError);
+            return;
+          }
+
+          // Use safe access for potential missing columns
+          const quoteId = task.quote_id || (task.attachments as any)?.quoteId;
+          const quoteItemId = task.quote_item_id || (task.attachments as any)?.quoteItemId;
+
+          if (quoteId && quoteItemId) {
+            console.log(`[updateTaskStatus] Syncing with quote ${quoteId}, item ${quoteItemId}`);
+            const { data: quote, error: quoteFetchError } = await supabase
+              .from('quotes')
+              .select('items')
+              .eq('id', quoteId)
+              .single();
+
+            if (quote && !quoteFetchError) {
+              const items = (quote.items || []) as TravelItem[];
+              const updatedItems = items.map((item: TravelItem) => 
+                item.id === quoteItemId 
+                  ? { ...item, bookingStatus: 'booked', confirmedAt: new Date().toISOString() }
+                  : item
+              );
+
+              await supabase
+                .from('quotes')
+                .update({ items: updatedItems })
+                .eq('id', quoteId);
+              
+              console.log('[updateTaskStatus] Quote item synced successfully');
+            }
+          }
+        } catch (syncError) {
+          console.error('[updateTaskStatus] Sync logic failed:', syncError);
+          // Don't throw here, the task was already updated
         }
       }
     },
@@ -191,16 +215,9 @@ export function useTaskMutations() {
     mutationFn: async ({ id, completionNotes }: { id: string; completionNotes?: string }) => {
       if (!user?.id) throw new Error('User not authenticated');
 
-      // 1. Fetch the task to get quote/item details
-      const { data: task, error: fetchError } = await supabase
-        .from('tasks')
-        .select('quote_id, quote_item_id')
-        .eq('id', id)
-        .single();
+      console.log(`[completeTask] Completing task ${id}`);
 
-      if (fetchError) throw fetchError;
-
-      // 2. Mark task as completed
+      // 1. Mark task as completed first
       const updateData: any = {
         status: 'completed',
         completed_at: new Date().toISOString(),
@@ -217,29 +234,55 @@ export function useTaskMutations() {
         .eq('id', id)
         .eq('user_id', user.id);
 
-      if (taskUpdateError) throw taskUpdateError;
+      if (taskUpdateError) {
+        console.error('[completeTask] Task update error:', taskUpdateError);
+        throw taskUpdateError;
+      }
 
-      // 3. Sync with Quote Item if applicable
-      if (task.quote_id && task.quote_item_id) {
-        const { data: quote, error: quoteFetchError } = await supabase
-          .from('quotes')
-          .select('items')
-          .eq('id', task.quote_id)
+      console.log(`[completeTask] Task ${id} marked complete`);
+
+      // 2. Safely attempt sync with Quote Item
+      try {
+        const { data: task, error: fetchError } = await supabase
+          .from('tasks')
+          .select('*')
+          .eq('id', id)
           .single();
 
-        if (quote && !quoteFetchError) {
-          const items = (quote.items || []) as TravelItem[];
-          const updatedItems = items.map((item: TravelItem) => 
-            item.id === task.quote_item_id 
-              ? { ...item, bookingStatus: 'booked', confirmedAt: new Date().toISOString() }
-              : item
-          );
-
-          await supabase
-            .from('quotes')
-            .update({ items: updatedItems })
-            .eq('id', task.quote_id);
+        if (fetchError || !task) {
+          console.warn('[completeTask] Could not fetch task for sync:', fetchError);
+          return;
         }
+
+        const quoteId = task.quote_id || (task.attachments as any)?.quoteId;
+        const quoteItemId = task.quote_item_id || (task.attachments as any)?.quoteItemId;
+
+        if (quoteId && quoteItemId) {
+          console.log(`[completeTask] Syncing with quote ${quoteId}, item ${quoteItemId}`);
+          const { data: quote, error: quoteFetchError } = await supabase
+            .from('quotes')
+            .select('items')
+            .eq('id', quoteId)
+            .single();
+
+          if (quote && !quoteFetchError) {
+            const items = (quote.items || []) as TravelItem[];
+            const updatedItems = items.map((item: TravelItem) => 
+              item.id === quoteItemId 
+                ? { ...item, bookingStatus: 'booked', confirmedAt: new Date().toISOString() }
+                : item
+            );
+
+            await supabase
+              .from('quotes')
+              .update({ items: updatedItems })
+              .eq('id', quoteId);
+            
+            console.log('[completeTask] Quote item synced successfully');
+          }
+        }
+      } catch (syncError) {
+        console.error('[completeTask] Sync logic failed:', syncError);
       }
     },
     onSuccess: () => {

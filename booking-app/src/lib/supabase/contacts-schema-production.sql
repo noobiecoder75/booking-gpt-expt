@@ -465,6 +465,18 @@ CREATE POLICY "Admins and owners can create payments" ON public.payments
 CREATE POLICY "Users can view their own commissions" ON public.commissions
   FOR SELECT USING (auth.uid() = user_id);
 
+CREATE POLICY "Admins and owners can create commissions" ON public.commissions
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
+
+CREATE POLICY "Admins and owners can update commissions" ON public.commissions
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin')
+    OR auth.uid() = user_id
+  );
+
 CREATE POLICY "Admins can manage all commissions" ON public.commissions
   FOR ALL USING (
     EXISTS (
