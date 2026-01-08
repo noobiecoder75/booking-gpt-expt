@@ -197,6 +197,10 @@ export async function POST(request: NextRequest) {
 
     console.log('📄 [Confirm Payment] Invoice generated:', invoiceId);
 
+    // Create a pending booking record so it shows up in the dashboard immediately
+    const bookingId = await createBookingRecord(quote, quoteId, userId, paymentType, paymentAmount);
+    console.log('📅 [Confirm Payment] Booking record created:', bookingId);
+
     // Calculate payment status and update quote
     const { data: currentQuote } = await supabase
       .from('quotes')
@@ -205,10 +209,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     const newTotalPaid = (currentQuote?.total_paid || 0) + paymentAmount;
-    const remainingBalance = quote.totalCost - newTotalPaid;
+    const remainingBalance = (quote.totalCost || currentQuote?.total_amount || 0) - newTotalPaid;
     
     let newPaymentStatus: 'unpaid' | 'deposit_paid' | 'partially_paid' | 'paid_in_full' = 'unpaid';
-    if (newTotalPaid >= quote.totalCost) {
+    if (newTotalPaid >= (quote.totalCost || currentQuote?.total_amount || 0)) {
       newPaymentStatus = 'paid_in_full';
     } else if (newTotalPaid > 0) {
       newPaymentStatus = paymentType === 'deposit' ? 'deposit_paid' : 'partially_paid';
@@ -242,6 +246,14 @@ export async function POST(request: NextRequest) {
           updated_at: new Date().toISOString()
         })
         .eq('id', invoiceId);
+    }
+
+    // Update booking with invoice ID if we have one
+    if (bookingId && invoiceId) {
+      await supabase
+        .from('bookings')
+        .update({ quote_id: quoteId }) // Already set but ensures linkage
+        .eq('id', bookingId);
     }
 
     // Generate commission for agent (linked to invoice)
@@ -411,6 +423,9 @@ async function generateInvoiceForPayment(
   try {
     const supabase = getSupabaseClient();
 
+    // Generate a unique invoice number (Fixes the null constraint error)
+    const invoiceNumber = `INV-${Date.now().toString(36).toUpperCase()}`;
+
     // Get customer details from contact
     const { data: contact } = await supabase
       .from('contacts')
@@ -430,11 +445,13 @@ async function generateInvoiceForPayment(
         quote_id: quoteId,
         user_id: userId,
         contact_id: quote.contactId,
+        invoice_number: invoiceNumber,
         total: total, // Use 'total' instead of 'amount' (generated column)
         paid_amount: paidAmount,
         remaining_amount: remainingAmount,
         currency: 'USD',
         status: paymentType === 'full' ? 'paid' : 'partially_paid',
+        issue_date: new Date().toISOString().split('T')[0],
         due_date: new Date().toISOString().split('T')[0],
         items: quote.items, // Add items from quote
         customer_name: contact?.name || quote.customerName,
@@ -459,6 +476,77 @@ async function generateInvoiceForPayment(
     return invoiceId;
   } catch (error) {
     console.error('❌ [Invoice] Generation failed:', error);
+    return null;
+  }
+}
+
+/**
+ * Create a booking record immediately upon payment
+ */
+async function createBookingRecord(
+  quote: TravelQuote,
+  quoteId: string,
+  userId: string,
+  paymentType: PaymentType,
+  paidAmount: number
+): Promise<string | null> {
+  try {
+    const supabase = getSupabaseClient();
+    const bookingReference = `BKG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+    console.log('📅 [Booking] Creating booking record for quote:', quoteId);
+
+    // Create booking record
+    const { data: booking, error: bookingError } = await supabase
+      .from('bookings')
+      .insert({
+        user_id: userId,
+        quote_id: quoteId,
+        contact_id: quote.contactId,
+        booking_reference: bookingReference,
+        status: 'pending',
+        total_amount: quote.totalCost,
+        currency: 'USD',
+        payment_status: paidAmount >= quote.totalCost ? 'paid' : 'partial',
+        notes: `Automatically created from quote ${quoteId} after payment.`
+      })
+      .select()
+      .single();
+
+    if (bookingError) throw bookingError;
+
+    // Create booking items from quote items
+    if (quote.items && quote.items.length > 0) {
+      const bookingItems = quote.items.map(item => ({
+        booking_id: booking.id,
+        type: item.type,
+        name: item.name,
+        start_date: item.startDate,
+        end_date: item.endDate || item.startDate,
+        price: item.price,
+        quantity: item.quantity || 1,
+        details: item.details || {},
+        supplier: item.supplier,
+        supplier_source: item.supplierSource,
+        supplier_cost: item.supplierCost,
+        client_price: item.clientPrice || item.price,
+        booking_status: 'pending'
+      }));
+
+      const { error: itemsError } = await supabase
+        .from('booking_items')
+        .insert(bookingItems);
+
+      if (itemsError) {
+        console.error('❌ [Booking] Failed to create booking items:', itemsError);
+      } else {
+        console.log(`✅ [Booking] Created ${bookingItems.length} booking items`);
+      }
+    }
+
+    return booking.id;
+  } catch (error) {
+    console.error('❌ [Booking] Creation failed:', error);
     return null;
   }
 }
