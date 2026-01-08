@@ -30,11 +30,13 @@ export function BookingItemsList({ items, showPricing = true }: BookingItemsList
       not_booked: { label: 'Not Booked', className: 'bg-clio-gray-100 text-clio-gray-700 dark:bg-clio-gray-800 dark:text-clio-gray-400 border-clio-gray-200 dark:border-clio-gray-700' },
       pending: { label: 'Pending', className: 'bg-orange-50 dark:bg-orange-900/20 text-orange-700 dark:text-orange-400 border-orange-100 dark:border-orange-800' },
       confirmed: { label: 'Confirmed', className: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800' },
+      booked: { label: 'Booked', className: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800' },
       failed: { label: 'Failed', className: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800' },
       cancelled: { label: 'Cancelled', className: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-800' }
     };
 
-    const { label, className } = config[status];
+    const statusConfig = config[status] || { label: status, className: 'bg-clio-gray-100 text-clio-gray-700' };
+    const { label, className } = statusConfig;
     return <Badge className={cn("text-[10px] uppercase font-bold tracking-tight px-2 py-0.5", className)}>{label}</Badge>;
   };
 

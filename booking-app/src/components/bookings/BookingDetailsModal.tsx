@@ -53,10 +53,11 @@ export function BookingDetailsModal({
     pending: { label: 'Pending', className: 'bg-orange-100 text-orange-800' },
     partial: { label: 'Partially Paid', className: 'bg-blue-100 text-blue-800' },
     paid: { label: 'Paid', className: 'bg-green-100 text-green-800' },
+    booked: { label: 'Booked', className: 'bg-green-100 text-green-800' },
     refunded: { label: 'Refunded', className: 'bg-purple-100 text-purple-800' }
   };
 
-  const paymentStatus = paymentStatusConfig[booking.paymentStatus];
+  const paymentStatus = paymentStatusConfig[booking.paymentStatus as keyof typeof paymentStatusConfig] || { label: booking.paymentStatus, className: 'bg-clio-gray-100 text-clio-gray-800' };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

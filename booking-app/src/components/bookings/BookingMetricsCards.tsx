@@ -18,7 +18,7 @@ export function BookingMetricsCards({ bookings }: BookingMetricsCardsProps) {
   const totalBookings = bookings.length;
 
   const activeBookings = bookings.filter(
-    b => b.status === 'confirmed' || b.status === 'pending'
+    b => b.status === 'confirmed' || b.status === 'pending' || b.status === 'booked'
   ).length;
 
   const totalValue = bookings.reduce((sum, booking) => sum + booking.totalAmount, 0);
@@ -39,7 +39,7 @@ export function BookingMetricsCards({ bookings }: BookingMetricsCardsProps) {
       icon: CheckCircle2,
       iconColor: 'text-emerald-600',
       bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
-      subtitle: `${bookings.filter(b => b.status === 'confirmed').length} confirmed`
+      subtitle: `${bookings.filter(b => b.status === 'confirmed' || b.status === 'booked').length} confirmed/booked`
     },
     {
       title: 'Total Value',

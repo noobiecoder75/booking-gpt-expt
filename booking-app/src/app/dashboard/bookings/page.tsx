@@ -130,6 +130,7 @@ export default function BookingsPage() {
                 <SelectItem value="all">All Bookings</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="confirmed">Confirmed</SelectItem>
+                <SelectItem value="booked">Booked</SelectItem>
                 <SelectItem value="cancelled">Cancelled</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
               </SelectContent>

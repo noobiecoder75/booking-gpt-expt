@@ -2,7 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 interface BookingStatusBadgeProps {
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  status: 'pending' | 'confirmed' | 'booked' | 'cancelled' | 'completed';
   className?: string;
 }
 
@@ -16,6 +16,10 @@ export function BookingStatusBadge({ status, className }: BookingStatusBadgeProp
       label: 'Confirmed',
       className: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30'
     },
+    booked: {
+      label: 'Booked',
+      className: 'bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-900/30'
+    },
     cancelled: {
       label: 'Cancelled',
       className: 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 border-red-100 dark:border-red-900/30'
@@ -26,7 +30,7 @@ export function BookingStatusBadge({ status, className }: BookingStatusBadgeProp
     }
   };
 
-  const config = statusConfig[status];
+  const config = statusConfig[status as keyof typeof statusConfig] || { label: status, className: 'bg-clio-gray-100 text-clio-gray-700' };
 
   return (
     <Badge className={cn("text-[10px] uppercase font-bold tracking-tight px-2 py-0.5", config.className, className)}>

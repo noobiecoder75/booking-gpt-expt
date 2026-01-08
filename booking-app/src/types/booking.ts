@@ -259,7 +259,7 @@ export interface BookingItem {
   clientPrice: number | null;
   platformFee: number | null;
   agentMarkup: number | null;
-  bookingStatus: 'not_booked' | 'pending' | 'confirmed' | 'failed' | 'cancelled';
+  bookingStatus: 'not_booked' | 'pending' | 'confirmed' | 'booked' | 'failed' | 'cancelled';
   confirmationNumber: string | null;
   confirmedAt: string | null;
   cancellationPolicy: Record<string, any> | null;
@@ -277,10 +277,10 @@ export interface Booking {
   quoteId: string | null;
   contactId: string;
   bookingReference: string;
-  status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+  status: 'pending' | 'confirmed' | 'booked' | 'cancelled' | 'completed';
   totalAmount: number;
   currency: string;
-  paymentStatus: 'pending' | 'partial' | 'paid' | 'refunded';
+  paymentStatus: 'pending' | 'partial' | 'paid' | 'refunded' | 'booked';
   notes: string | null;
   createdAt: string;
   updatedAt: string;
