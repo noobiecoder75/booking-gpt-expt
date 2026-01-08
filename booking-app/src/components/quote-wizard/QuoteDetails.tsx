@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { FormField } from '@/components/shared/FormField';
-import { getContactDisplayName } from '@/lib/utils';
+import { cn, getContactDisplayName } from '@/lib/utils';
 import { useSettingsStore } from '@/store/settings-store';
 import { Percent, ChevronDown, ChevronUp, Settings, Info, Loader2 } from 'lucide-react';
 

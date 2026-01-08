@@ -1,6 +1,7 @@
 import { BookingItem } from '@/types/booking';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 import { Plane, Hotel, Sparkles, Car, Calendar, DollarSign, Building2, CheckCircle2 } from 'lucide-react';
 import { format } from 'date-fns';
 
