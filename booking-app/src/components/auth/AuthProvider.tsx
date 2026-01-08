@@ -62,10 +62,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Initialize auth once on mount with consolidated logic
   useEffect(() => {
     let mounted = true;
+    let timeoutId: NodeJS.Timeout;
 
     const initAuth = async () => {
       console.log('🔷 AuthProvider: Initializing auth state...');
       try {
+        // Small delay to allow browser to settle cookies after redirect
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
         // First try to get existing session
         const { data: { session: initialSession }, error } = await supabase.auth.getSession();
 
@@ -76,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
 
         if (initialSession) {
-          console.log('✅ AuthProvider: Found initial session');
+          console.log('✅ AuthProvider: Found initial session for user:', initialSession.user.email);
           setSession(initialSession);
           setUser(initialSession.user ?? null);
           
@@ -91,12 +95,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('❌ AuthProvider: Unexpected error during auth init:', error);
       } finally {
         if (mounted) {
+          console.log('🔷 AuthProvider: Loading finished, setting loading=false');
           setLoading(false);
         }
       }
     };
 
-    initAuth();
+    // Set a safety timeout to ensure loading never gets stuck
+    timeoutId = setTimeout(() => {
+      if (mounted && loading) {
+        console.warn('⚠️ AuthProvider: Timeout reached, forcing loading=false');
+        setLoading(false);
+      }
+    }, 5000); // 5 second safety timeout
 
     // Listen for auth state changes
     const {
@@ -111,7 +122,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUser(null);
         setProfile(null);
         setLoading(false);
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+        console.log('✅ AuthProvider: User authenticated via', event);
         setSession(newSession);
         setUser(newSession?.user ?? null);
 
@@ -125,6 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else if (event === 'INITIAL_SESSION') {
         // Handled by getSession call above, but update if we have a session now
         if (newSession) {
+          console.log('✅ AuthProvider: Initial session detected');
           setSession(newSession);
           setUser(newSession.user ?? null);
           const profileData = await fetchProfile(newSession.user.id);
@@ -136,8 +149,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
+    initAuth();
+
     return () => {
       mounted = false;
+      clearTimeout(timeoutId);
       subscription.unsubscribe();
     };
   }, []); // Run once on mount

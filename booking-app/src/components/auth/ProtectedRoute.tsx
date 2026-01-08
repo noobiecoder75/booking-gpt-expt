@@ -79,8 +79,17 @@ export function ProtectedRoute({
     );
   }
 
+  // If we are not loading but have no user, show the spinner while we wait for the redirect
+  // This prevents a "flash" of empty content or being "stuck" on a blank screen
   if (requireAuth && !user) {
-    return null; // Will redirect in useEffect
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-clio-gray-950">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-clio-blue mx-auto mb-6"></div>
+          <p className="text-[10px] font-black uppercase tracking-widest text-clio-gray-400">Redirecting to Login...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
