@@ -54,7 +54,14 @@ export function ClientQuoteView({
   const [showMessageModal, setShowMessageModal] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [quoteStatus, setQuoteStatus] = useState(quote.status);
-  const [paymentInfo, setPaymentInfo] = useState<PaymentConfirmationData | null>(null);
+  const [paymentInfo, setPaymentInfo] = useState<PaymentConfirmationData | null>(
+    quote.paymentStatus ? {
+      paymentId: '',
+      paymentStatus: quote.paymentStatus as any,
+      totalPaid: quote.totalPaid || 0,
+      remainingBalance: quote.remainingBalance || 0,
+    } : null
+  );
 
   const getItemIcon = (type: string) => {
     switch (type) {
@@ -167,7 +174,7 @@ export function ClientQuoteView({
       setPaymentInfo(paymentData);
       // Update quote status based on payment status
       if (paymentData.paymentStatus === 'paid_in_full') {
-        setQuoteStatus('confirmed');
+        setQuoteStatus('booked');
       } else if (paymentData.paymentStatus === 'deposit_paid') {
         setQuoteStatus('accepted');
       }
@@ -196,7 +203,7 @@ export function ClientQuoteView({
     return acc;
   }, {} as Record<string, TravelItem[]>);
 
-  const isQuoteFinal = quoteStatus === 'accepted' || quoteStatus === 'rejected';
+  const isQuoteFinal = quoteStatus === 'accepted' || quoteStatus === 'rejected' || quoteStatus === 'booked' || quoteStatus === 'cancelled';
 
   return (
     <div className="min-h-screen bg-white dark:bg-clio-gray-950">
@@ -234,16 +241,18 @@ export function ClientQuoteView({
                 <Badge
                   className={`${
                     quoteStatus === 'sent' ? 'bg-clio-blue/10 text-clio-blue border-clio-blue/20' :
-                    quoteStatus === 'confirmed' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' :
+                    quoteStatus === 'booked' || quoteStatus === 'confirmed' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' :
                     quoteStatus === 'accepted' ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' :
-                    quoteStatus === 'rejected' ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400' :
+                    quoteStatus === 'rejected' || quoteStatus === 'cancelled' ? 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400' :
                     'bg-clio-gray-100 dark:bg-clio-gray-800 text-clio-gray-600'
                   } border-none shadow-none text-[10px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full`}
                 >
                   {quoteStatus === 'sent' ? 'Pending Response' :
+                   quoteStatus === 'booked' ? 'Booked' :
                    quoteStatus === 'confirmed' ? 'Confirmed' :
                    quoteStatus === 'accepted' ? 'Accepted' :
                    quoteStatus === 'rejected' ? 'Rejected' :
+                   quoteStatus === 'cancelled' ? 'Cancelled' :
                    quoteStatus.charAt(0).toUpperCase() + quoteStatus.slice(1)}
                 </Badge>
 
@@ -441,27 +450,34 @@ export function ClientQuoteView({
           <div className="bg-white dark:bg-clio-gray-900 rounded-3xl border border-clio-gray-200 dark:border-clio-gray-800 shadow-xl p-10 mb-10">
             <div className="flex flex-col items-center text-center max-w-xl mx-auto">
               <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 shadow-lg ${
-                quoteStatus === 'accepted' || quoteStatus === 'confirmed' 
+                quoteStatus === 'accepted' || quoteStatus === 'confirmed' || quoteStatus === 'booked'
                   ? 'bg-emerald-500 text-white shadow-emerald-500/20' 
                   : 'bg-red-500 text-white shadow-red-500/20'
               }`}>
-                {quoteStatus === 'accepted' || quoteStatus === 'confirmed' ? (
+                {quoteStatus === 'accepted' || quoteStatus === 'confirmed' || quoteStatus === 'booked' ? (
                   <Check className="w-10 h-10" />
                 ) : (
                   <X className="w-10 h-10" />
                 )}
               </div>
               <h3 className="text-3xl font-black uppercase tracking-tighter text-clio-gray-900 dark:text-white mb-4">
-                Quote {quoteStatus === 'accepted' || quoteStatus === 'confirmed' ? 'Accepted' : 'Declined'}
+                {quoteStatus === 'booked' || quoteStatus === 'confirmed' ? 'Trip Booked!' : 
+                 quoteStatus === 'accepted' ? 'Quote Accepted' : 
+                 quoteStatus === 'cancelled' ? 'Trip Cancelled' : 'Quote Declined'}
               </h3>
               <p className="text-lg font-medium text-clio-gray-600 dark:text-clio-gray-400 mb-8">
-                {quoteStatus === 'accepted' || quoteStatus === 'confirmed'
+                {quoteStatus === 'booked' || quoteStatus === 'confirmed'
+                  ? 'Great news! Your trip has been officially booked and confirmed. You can find your confirmation details below.'
+                  : quoteStatus === 'accepted'
                   ? 'Excellent choice! Your travel agent has been notified and will be in touch shortly with the next steps for your journey.'
+                  : quoteStatus === 'cancelled'
+                  ? 'This trip has been cancelled. Please contact your agent if you have any questions.'
                   : 'We understand. This quote has been declined. Please reach out to your agent if you\'d like to explore other options.'
                 }
               </p>
 
-              {(quoteStatus === 'accepted' || quoteStatus === 'confirmed') && !paymentInfo && (
+              {(quoteStatus === 'accepted' || quoteStatus === 'confirmed' || quoteStatus === 'booked') && 
+               (!paymentInfo || paymentInfo.paymentStatus !== 'paid_in_full') && (
                 <Button
                   onClick={() => setShowPaymentModal(true)}
                   className="bg-clio-blue hover:bg-clio-blue-hover text-white font-black uppercase tracking-widest h-14 px-10 rounded-2xl shadow-xl shadow-clio-blue/20"

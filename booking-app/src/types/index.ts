@@ -52,7 +52,7 @@ export interface TravelQuote {
   title: string;
   items: TravelItem[];
   totalCost: number;
-  status: 'draft' | 'sent' | 'accepted' | 'rejected';
+  status: 'draft' | 'sent' | 'accepted' | 'rejected' | 'booked' | 'cancelled';
   travelDates: { start: Date; end: Date };
   commissionRate?: number; // percentage (0-50), defaults to global setting
   validationOverrides?: ValidationOverride[]; // Track validation warnings that were overridden
@@ -106,7 +106,7 @@ export interface TravelItem {
   };
 
   // Booking confirmation
-  bookingStatus?: 'not_booked' | 'pending' | 'confirmed' | 'failed' | 'cancelled';
+  bookingStatus?: 'not_booked' | 'pending' | 'confirmed' | 'booked' | 'failed' | 'cancelled';
   confirmationNumber?: string;
   confirmedAt?: string;
 }

@@ -28,10 +28,11 @@ export interface Quote {
 
 export interface BookingResult {
   success: boolean;
-  apiBookings: {
+    apiBookings: {
     itemId: string;
     status: 'success' | 'failed';
     confirmationNumber?: string;
+    bookingStatus: 'booked' | 'failed';
     error?: string;
   }[];
   manualTasks: {
@@ -77,6 +78,7 @@ export async function processHybridBooking(
         result.apiBookings.push({
           itemId: item.id,
           status: 'success',
+          bookingStatus: 'booked',
           confirmationNumber: bookingResult.confirmationNumber,
         });
         result.summary.apiSuccess++;
@@ -84,6 +86,7 @@ export async function processHybridBooking(
         result.apiBookings.push({
           itemId: item.id,
           status: 'failed',
+          bookingStatus: 'failed',
           error: bookingResult.error,
         });
         result.summary.apiFailed++;

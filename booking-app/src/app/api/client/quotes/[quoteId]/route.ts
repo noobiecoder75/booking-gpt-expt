@@ -34,6 +34,9 @@ function dbRowToQuote(row: any): TravelQuote {
           end: new Date(),
         },
     createdAt: new Date(row.created_at),
+    paymentStatus: row.payment_status,
+    totalPaid: row.total_paid ? parseFloat(row.total_paid) : 0,
+    remainingBalance: row.remaining_balance != null ? parseFloat(row.remaining_balance) : totalCost,
   };
 }
 

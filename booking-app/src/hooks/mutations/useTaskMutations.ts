@@ -149,7 +149,7 @@ export function useTaskMutations() {
           const items = (quote.items || []) as TravelItem[];
           const updatedItems = items.map((item: TravelItem) => 
             item.id === task.quote_item_id 
-              ? { ...item, bookingStatus: 'confirmed', confirmedAt: new Date().toISOString() }
+              ? { ...item, bookingStatus: 'booked', confirmedAt: new Date().toISOString() }
               : item
           );
 
@@ -231,7 +231,7 @@ export function useTaskMutations() {
           const items = (quote.items || []) as TravelItem[];
           const updatedItems = items.map((item: TravelItem) => 
             item.id === task.quote_item_id 
-              ? { ...item, bookingStatus: 'confirmed', confirmedAt: new Date().toISOString() }
+              ? { ...item, bookingStatus: 'booked', confirmedAt: new Date().toISOString() }
               : item
           );
 

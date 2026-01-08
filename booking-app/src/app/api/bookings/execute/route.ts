@@ -67,19 +67,49 @@ export async function POST(request: NextRequest) {
     if (bookingResult.success) {
       console.log(`✅ [Execute Booking] Successfully booked ${item.name}. Confirmation: ${bookingResult.confirmationNumber}`);
 
-      // 4. Update the item in the quote
+      // 4. Update the item in the quote and separate booking_items table
       const updatedItems = [...items];
       updatedItems[itemIndex] = {
         ...item,
-        bookingStatus: 'confirmed',
+        bookingStatus: 'booked',
         confirmationNumber: bookingResult.confirmationNumber,
         confirmedAt: new Date().toISOString()
       };
 
       await supabase
         .from('quotes')
-        .update({ items: updatedItems })
+        .update({ 
+          items: updatedItems,
+          updated_at: new Date().toISOString()
+        })
         .eq('id', quote.id);
+
+      // Update the separate booking_items record if it exists
+      // First get the booking_id associated with this quote
+      const { data: bookingData } = await supabase
+        .from('bookings')
+        .select('id')
+        .eq('quote_id', quote.id)
+        .single();
+
+      if (bookingData) {
+        await supabase
+          .from('booking_items')
+          .update({ 
+            booking_status: 'booked',
+            confirmation_number: bookingResult.confirmationNumber,
+            confirmed_at: new Date().toISOString()
+          })
+          .eq('booking_id', bookingData.id)
+          .eq('name', item.name);
+      }
+
+      // Update corresponding supplier expense to 'booked'
+      await supabase
+        .from('expenses')
+        .update({ status: 'booked' })
+        .eq('quote_id', quote.id)
+        .eq('subcategory', item.type);
 
       // 5. Mark task as completed
       await supabase
@@ -90,8 +120,28 @@ export async function POST(request: NextRequest) {
         })
         .eq('id', taskId);
 
-      // 6. Record supplier expense if needed (if not already done)
-      // Note: In a real system, we'd check if an expense already exists
+      // 6. Check if all items in the booking are now booked
+      if (bookingData) {
+        const { data: allBookingItems } = await supabase
+          .from('booking_items')
+          .select('booking_status')
+          .eq('booking_id', bookingData.id);
+
+        if (allBookingItems && allBookingItems.length > 0 && allBookingItems.every(i => i.booking_status === 'booked')) {
+          // Update both bookings and quotes status to 'booked'
+          await supabase
+            .from('bookings')
+            .update({ status: 'booked' })
+            .eq('id', bookingData.id);
+
+          await supabase
+            .from('quotes')
+            .update({ status: 'booked' })
+            .eq('id', quote.id);
+          
+          console.log(`🎊 [Execute Booking] All items booked! Quote ${quote.id} set to 'booked'`);
+        }
+      }
       
       return NextResponse.json({
         success: true,

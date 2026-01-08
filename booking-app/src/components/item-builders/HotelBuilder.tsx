@@ -22,7 +22,8 @@ import {
   Wifi,
   Car,
   Coffee,
-  X
+  X,
+  Check
 } from 'lucide-react';
 import { hotelService } from '@/services/hotel-api';
 import {

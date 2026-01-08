@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
         date: new Date().toISOString().split('T')[0],
         payment_method: 'auto_deducted',
         receipt_url: receiptUrl,
-        status: 'approved',
+        status: 'paid',
       })
       .select()
       .single();

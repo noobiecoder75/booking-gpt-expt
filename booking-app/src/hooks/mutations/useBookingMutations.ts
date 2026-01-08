@@ -18,13 +18,13 @@ export function useBookingMutations() {
       contactId,
       items,
       totalAmount,
-      status = 'confirmed'
+      status = 'booked'
     }: {
       quoteId: string;
       contactId: string;
       items: TravelItem[];
       totalAmount: number;
-      status?: 'pending' | 'confirmed';
+      status?: 'pending' | 'booked';
     }) => {
       if (!user?.id) throw new Error('User not authenticated');
 
@@ -87,7 +87,7 @@ export function useBookingMutations() {
         client_price: item.clientPrice || item.price,
         platform_fee: item.platformFee,
         agent_markup: item.agentMarkup,
-        booking_status: 'confirmed', // Items are confirmed when booking is created
+        booking_status: 'booked', // Items are booked when booking is created
         confirmation_number: item.confirmationNumber,
         cancellation_policy: item.cancellationPolicy,
       }));
@@ -125,7 +125,7 @@ export function useBookingMutations() {
       notes
     }: {
       bookingId: string;
-      status: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+      status: 'pending' | 'confirmed' | 'booked' | 'cancelled' | 'completed';
       notes?: string;
     }) => {
       if (!user?.id) throw new Error('User not authenticated');

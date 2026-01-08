@@ -128,7 +128,7 @@ export interface Expense {
   approvedDate?: string;
 
   // Payment status and method
-  status?: 'pending' | 'paid' | 'cancelled';
+  status?: 'pending' | 'paid' | 'booked' | 'cancelled';
   paymentMethod?: PaymentMethod;
 
   isRecurring?: boolean;
