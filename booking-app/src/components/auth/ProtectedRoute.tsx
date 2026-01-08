@@ -39,6 +39,7 @@ export function ProtectedRoute({
     // Check if user needs to be redirected to login
     if (requireAuth && !user) {
       // Add a small delay to prevent race conditions with middleware
+      // and allow AuthProvider more time to resolve the session
       redirectTimer.current = setTimeout(() => {
         // Double-check user is still not authenticated
         if (!user && !hasRedirected.current) {
@@ -47,7 +48,7 @@ export function ProtectedRoute({
           console.log('🔐 ProtectedRoute: Redirecting to login from:', returnUrl);
           router.replace(`/auth/login?redirectTo=${encodeURIComponent(returnUrl)}`);
         }
-      }, 250); // 250ms delay is safer for session synchronization
+      }, 500); // 500ms delay is safer for session synchronization
       return;
     }
 

@@ -59,74 +59,88 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // Initialize auth once on mount with retry logic
+  // Initialize auth once on mount with consolidated logic
   useEffect(() => {
-    const initAuth = async (retryCount = 0) => {
-      console.log('🔷 AuthProvider: Initializing...', retryCount > 0 ? `(Retry ${retryCount})` : '');
-      try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+    let mounted = true;
 
-        if (error && retryCount < 2) {
-          console.log('⚠️ AuthProvider: Session retrieval failed, retrying in 500ms...');
-          setTimeout(() => initAuth(retryCount + 1), 500);
-          return; // Don't run finally on retry
+    const initAuth = async () => {
+      console.log('🔷 AuthProvider: Initializing auth state...');
+      try {
+        // First try to get existing session
+        const { data: { session: initialSession }, error } = await supabase.auth.getSession();
+
+        if (!mounted) return;
+
+        if (error) {
+          console.error('❌ AuthProvider: Error getting initial session:', error);
         }
 
-        if (session) {
-          setSession(session);
-          setUser(session.user ?? null);
-          if (session.user) {
-            const profileData = await fetchProfile(session.user.id);
+        if (initialSession) {
+          console.log('✅ AuthProvider: Found initial session');
+          setSession(initialSession);
+          setUser(initialSession.user ?? null);
+          
+          const profileData = await fetchProfile(initialSession.user.id);
+          if (mounted) {
             setProfile(profileData);
           }
-        }
-        setLoading(false);
-      } catch (error) {
-        console.error('❌ AuthProvider: Error initializing auth:', error);
-        if (retryCount < 2) {
-          setTimeout(() => initAuth(retryCount + 1), 1000);
         } else {
+          console.log('ℹ️ AuthProvider: No initial session found');
+        }
+      } catch (error) {
+        console.error('❌ AuthProvider: Unexpected error during auth init:', error);
+      } finally {
+        if (mounted) {
           setLoading(false);
         }
       }
     };
 
-    // Small delay to ensure cookies are properly set after redirect
-    const initTimer = setTimeout(() => initAuth(0), 10);
+    initAuth();
 
-    return () => clearTimeout(initTimer);
-  }, []); // Empty deps - runs once on mount
-
-  // Listen for auth state changes
-  useEffect(() => {
+    // Listen for auth state changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, newSession) => {
-      console.log('🔔 AuthProvider: Auth state changed, event:', event);
+      console.log('🔔 AuthProvider: Auth state change event:', event);
+      
+      if (!mounted) return;
 
       if (event === 'SIGNED_OUT') {
         setSession(null);
         setUser(null);
         setProfile(null);
         setLoading(false);
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         setSession(newSession);
         setUser(newSession?.user ?? null);
 
         if (newSession?.user) {
           const profileData = await fetchProfile(newSession.user.id);
-          setProfile(profileData);
+          if (mounted) {
+            setProfile(profileData);
+          }
         }
         setLoading(false);
-      } else {
+      } else if (event === 'INITIAL_SESSION') {
+        // Handled by getSession call above, but update if we have a session now
+        if (newSession) {
+          setSession(newSession);
+          setUser(newSession.user ?? null);
+          const profileData = await fetchProfile(newSession.user.id);
+          if (mounted) {
+            setProfile(profileData);
+          }
+        }
         setLoading(false);
       }
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
-  }, []); // Empty deps - supabase client is stable
+  }, []); // Run once on mount
 
   const signOut = async () => {
     try {
