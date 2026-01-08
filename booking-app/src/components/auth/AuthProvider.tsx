@@ -35,11 +35,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchProfile = async (userId: string) => {
     console.log('🔍 fetchProfile: Starting for userId:', userId);
     try {
-      const { data, error } = await supabase
+      // 3 second timeout for the profile query
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 3000)
+      );
+      
+      const fetchPromise = supabase
         .from('users')
         .select('*')
         .eq('id', userId)
         .single();
+
+      // Race the query against the timeout
+      const result = await Promise.race([fetchPromise, timeoutPromise]) as any;
+      const { data, error } = result;
 
       if (error) {
         console.error('❌ fetchProfile: Error from Supabase:', error);
@@ -54,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('✅ fetchProfile: Successfully fetched data:', data);
       return data;
     } catch (error) {
-      console.error('❌ fetchProfile: Caught exception:', error);
+      console.error('❌ fetchProfile: Profile fetch failed or timed out:', error);
       return null;
     }
   };
@@ -68,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.log('🔷 AuthProvider: Initializing auth state...');
       try {
         // Small delay to allow browser to settle cookies after redirect
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 50));
         
         // First try to get existing session
         const { data: { session: initialSession }, error } = await supabase.auth.getSession();
@@ -84,10 +93,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setSession(initialSession);
           setUser(initialSession.user ?? null);
           
-          const profileData = await fetchProfile(initialSession.user.id);
-          if (mounted) {
-            setProfile(profileData);
-          }
+          // Background fetch profile without blocking
+          fetchProfile(initialSession.user.id).then(profileData => {
+            if (mounted) {
+              setProfile(profileData);
+            }
+          });
         } else {
           console.log('ℹ️ AuthProvider: No initial session found');
         }
@@ -126,24 +137,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log('✅ AuthProvider: User authenticated via', event);
         setSession(newSession);
         setUser(newSession?.user ?? null);
+        
+        // Immediately set loading to false so the UI can render
+        setLoading(false);
 
         if (newSession?.user) {
-          const profileData = await fetchProfile(newSession.user.id);
-          if (mounted) {
-            setProfile(profileData);
-          }
+          // Background fetch profile without blocking
+          fetchProfile(newSession.user.id).then(profileData => {
+            if (mounted) {
+              setProfile(profileData);
+            }
+          });
         }
-        setLoading(false);
       } else if (event === 'INITIAL_SESSION') {
-        // Handled by getSession call above, but update if we have a session now
         if (newSession) {
           console.log('✅ AuthProvider: Initial session detected');
           setSession(newSession);
           setUser(newSession.user ?? null);
-          const profileData = await fetchProfile(newSession.user.id);
-          if (mounted) {
-            setProfile(profileData);
-          }
+          
+          // Background fetch profile without blocking
+          fetchProfile(newSession.user.id).then(profileData => {
+            if (mounted) {
+              setProfile(profileData);
+            }
+          });
         }
         setLoading(false);
       }
