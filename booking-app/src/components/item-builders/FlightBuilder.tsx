@@ -18,7 +18,9 @@ import {
   Loader2, 
   Search,
   ArrowRight,
-  ArrowLeftRight
+  ArrowLeftRight,
+  X,
+  Check
 } from 'lucide-react';
 import { flightService } from '@/services/flight-api';
 import { 

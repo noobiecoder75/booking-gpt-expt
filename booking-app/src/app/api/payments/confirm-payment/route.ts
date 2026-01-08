@@ -150,6 +150,7 @@ export async function POST(request: NextRequest) {
       .from('expenses')
       .insert({
         user_id: userId,
+        quote_id: quoteId, // Link to quote
         title: `Stripe Fee - Payment ${paymentId}`,
         category: 'technology',
         subcategory: 'payment_processing',
@@ -318,6 +319,7 @@ async function initializeBookingWorkflow(
 
       const { error: taskError } = await supabase.from('tasks').insert({
         user_id: userId,
+        contact_id: quote.contactId, // Link to contact
         booking_id: null, // We link to quote instead
         quote_id: quoteId,
         title,
@@ -427,10 +429,16 @@ async function generateInvoiceForPayment(
       .insert({
         quote_id: quoteId,
         user_id: userId,
-        amount: total,
+        contact_id: quote.contactId,
+        total: total, // Use 'total' instead of 'amount' (generated column)
+        paid_amount: paidAmount,
+        remaining_amount: remainingAmount,
         currency: 'USD',
-        status: paymentType === 'full' ? 'paid' : 'sent',
+        status: paymentType === 'full' ? 'paid' : 'partially_paid',
         due_date: new Date().toISOString().split('T')[0],
+        items: quote.items, // Add items from quote
+        customer_name: contact?.name || quote.customerName,
+        customer_email: contact?.email,
       })
       .select()
       .single();
@@ -485,12 +493,18 @@ async function generateCommissionForBooking(
       .from('commissions')
       .insert({
         user_id: userId,
-        booking_id: paymentId, // Use paymentId as booking reference
+        agent_id: userId, // Set agent_id
+        agent_name: 'Agent', // Fallback or fetch from users table
+        customer_id: quote.contactId,
+        customer_name: contact?.name || quote.customerName,
+        booking_id: null, // Don't use paymentId as booking_id (foreign key constraint)
         quote_id: quoteId,
-        amount: commissionAmount,
+        invoice_id: invoiceId,
+        commission_amount: commissionAmount, // Updated column name
+        commission_rate: commissionRate,     // Updated column name
         currency: 'USD',
         status: 'pending',
-        type: 'agent_markup',
+        booking_type: 'package', // Added for schema matching
       })
       .select()
       .single();
@@ -547,8 +561,11 @@ async function createSupplierExpenses(
           .from('contacts')
           .insert({
             user_id: userId,
-            name: supplier,
+            first_name: supplier,
+            last_name: '(Supplier)',
+            email: `supplier-${Date.now()}@example.com`, // Email is usually NOT NULL
             company: supplier,
+            type: 'supplier',
             tags: ['supplier'],
           })
           .select()
@@ -572,7 +589,7 @@ async function createSupplierExpenses(
           supplier_id: supplierId,
           date: item.startDate?.split('T')[0] || new Date().toISOString().split('T')[0],
           status: 'pending',
-          booking_id: quoteId,
+          quote_id: quoteId, // Use quote_id instead of booking_id
           notes: `Auto-generated from booking ${paymentId}. Source: ${supplierSource}`,
         })
         .select()
