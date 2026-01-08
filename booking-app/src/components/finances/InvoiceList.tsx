@@ -21,13 +21,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { InvoiceStatus } from '@/types/financial';
-import { Download, Eye, Mail, Search, FileText } from 'lucide-react';
+import { useInvoiceMutations } from '@/hooks/mutations/useInvoiceMutations';
+import { Download, Eye, Mail, Search, FileText, Trash2 } from 'lucide-react';
 
 export function InvoiceList() {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const { data: allInvoices = [] } = useInvoicesQuery();
+  const { deleteInvoice, voidInvoice } = useInvoiceMutations();
 
   // Filter invoices
   const filteredInvoices = useMemo(() => {
@@ -69,6 +71,17 @@ export function InvoiceList() {
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
+  };
+
+  const handleDeleteInvoice = async (id: string, invoiceNumber: string) => {
+    if (window.confirm(`Are you sure you want to delete invoice ${invoiceNumber}? This action cannot be undone.`)) {
+      try {
+        await deleteInvoice.mutateAsync(id);
+      } catch (error) {
+        console.error('Failed to delete invoice:', error);
+        alert('Failed to delete invoice');
+      }
+    }
   };
 
   return (
@@ -152,6 +165,17 @@ export function InvoiceList() {
                       <Button variant="ghost" size="icon" className="h-8 w-8 text-clio-gray-400 hover:text-clio-blue hover:bg-clio-blue/10" title="Send Email">
                         <Mail className="h-4 w-4" />
                       </Button>
+                      {(invoice.status === 'draft' || invoice.status === 'sent' || invoice.status === 'overdue' || invoice.status === 'cancelled') && (
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8 text-clio-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20" 
+                          title="Delete Invoice"
+                          onClick={() => handleDeleteInvoice(invoice.id, invoice.invoiceNumber)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

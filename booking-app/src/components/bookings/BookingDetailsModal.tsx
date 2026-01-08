@@ -18,7 +18,8 @@ import {
   Hash,
   ExternalLink,
   XCircle,
-  Edit
+  Edit,
+  DollarSign
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';

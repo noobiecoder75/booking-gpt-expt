@@ -17,6 +17,7 @@ import {
   Download,
   Share,
   AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { BookingConfirmation } from '@/types/booking';
 import { formatCurrency } from '@/lib/utils';

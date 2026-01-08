@@ -29,8 +29,22 @@ import {
   Calendar,
   Download,
   Filter,
-  AlertTriangle
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Trash2,
+  ArrowRight,
+  AlertCircle
 } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from '@/components/ui/dialog';
 
 export default function FinancesPage() {
   const { user } = useAuth();
@@ -42,8 +56,13 @@ export default function FinancesPage() {
   const { data: quotes = [] } = useQuotesQuery();
   const { data: contacts = [] } = useContactsQuery();
   const { createBookingFromQuote } = useBookingMutations();
+  const { updateQuoteStatus } = useQuoteMutations();
 
   const [dateRange, setDateRange] = useState('30'); // days
+  const [isQueueOpen, setIsQueueOpen] = useState(false);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [reviewResults, setReviewResults] = useState<{success: number, errors: string[]}>({ success: 0, errors: [] });
+  
   const [selectedPeriod, setSelectedPeriod] = useState({
     startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     endDate: new Date().toISOString().split('T')[0]
@@ -61,9 +80,16 @@ export default function FinancesPage() {
     return invoices
       .filter(invoice => {
         if (invoice.status !== 'paid' && invoice.status !== 'partially_paid') return false;
-        const paidAt = new Date(invoice.paidAt || invoice.createdAt);
-        return paidAt >= new Date(selectedPeriod.startDate) &&
-               paidAt <= new Date(selectedPeriod.endDate);
+        // Handle both snake_case and camelCase for dates
+        const paidAtStr = invoice.paid_at || invoice.paidAt || invoice.created_at || invoice.createdAt;
+        if (!paidAtStr) return false;
+        
+        const paidAt = new Date(paidAtStr);
+        // Extend the end date to include the entire day to handle different timezones (Stripe vs Local)
+        const end = new Date(selectedPeriod.endDate);
+        end.setHours(23, 59, 59, 999);
+        
+        return paidAt >= new Date(selectedPeriod.startDate) && paidAt <= end;
       })
       .reduce((sum, invoice) => sum + (invoice.paid_amount || invoice.paidAmount || 0), 0);
   }, [invoices, selectedPeriod]);
@@ -79,7 +105,9 @@ export default function FinancesPage() {
     return invoices
       .filter(invoice => {
         if (invoice.status === 'paid' || invoice.status === 'cancelled' || invoice.status === 'void') return false;
-        return new Date(invoice.dueDate) < now;
+        const dueDateStr = invoice.due_date || invoice.dueDate;
+        if (!dueDateStr) return false;
+        return new Date(dueDateStr) < now;
       })
       .reduce((sum, invoice) => sum + (invoice.remaining_amount ?? invoice.remainingAmount ?? invoice.total), 0);
   }, [invoices]);
@@ -96,28 +124,36 @@ export default function FinancesPage() {
   const totalCommissionsEarned = useMemo(() => {
     return commissions
       .filter(commission => {
-        const createdAt = new Date(commission.createdAt);
+        const createdAtStr = commission.createdAt || commission.created_at;
+        if (!createdAtStr) return false;
+        const createdAt = new Date(createdAtStr);
+        const end = new Date(selectedPeriod.endDate);
+        end.setHours(23, 59, 59, 999);
         return createdAt >= new Date(selectedPeriod.startDate) &&
-               createdAt <= new Date(selectedPeriod.endDate);
+               createdAt <= end;
       })
-      .reduce((sum, commission) => sum + commission.commissionAmount, 0);
+      .reduce((sum, commission) => sum + (commission.commissionAmount || commission.commission_amount || 0), 0);
   }, [commissions, selectedPeriod]);
 
   const totalCommissionsPaid = useMemo(() => {
     return commissions
       .filter(commission => {
         if (commission.status !== 'paid') return false;
-        const paidAt = new Date(commission.paidAt || commission.createdAt);
+        const paidAtStr = commission.paidAt || commission.paid_at || commission.createdAt || commission.created_at;
+        if (!paidAtStr) return false;
+        const paidAt = new Date(paidAtStr);
+        const end = new Date(selectedPeriod.endDate);
+        end.setHours(23, 59, 59, 999);
         return paidAt >= new Date(selectedPeriod.startDate) &&
-               paidAt <= new Date(selectedPeriod.endDate);
+               paidAt <= end;
       })
-      .reduce((sum, commission) => sum + commission.commissionAmount, 0);
+      .reduce((sum, commission) => sum + (commission.commissionAmount || commission.commission_amount || 0), 0);
   }, [commissions, selectedPeriod]);
 
   const totalCommissionsPending = useMemo(() => {
     return commissions
       .filter(commission => commission.status === 'pending')
-      .reduce((sum, commission) => sum + commission.commissionAmount, 0);
+      .reduce((sum, commission) => sum + (commission.commissionAmount || commission.commission_amount || 0), 0);
   }, [commissions]);
 
   const netProfit = totalRevenue - totalExpenses - totalCommissionsPaid;
@@ -159,125 +195,113 @@ export default function FinancesPage() {
       alert('No accepted quotes available to generate invoices from.');
       return;
     }
+    setIsQueueOpen(true);
+  };
 
-    let bookingsCreated = 0;
-    let invoicesCreated = 0;
-    let commissionsCreated = 0;
-    const errors: string[] = [];
+  const processQuoteInQueue = async (quote: any) => {
+    setProcessingId(quote.id);
+    try {
+      // Get customer data from contacts
+      const customer = contacts.find(c => c.id === quote.contactId);
 
-    for (const quote of acceptedQuotes) {
+      if (!customer) {
+        throw new Error(`Customer not found for quote ${quote.id}`);
+      }
+
+      const customerData = {
+        customerId: customer.id,
+        customerName: `${customer.firstName} ${customer.lastName}`,
+        customerEmail: customer.email,
+        customerAddress: customer.address
+      };
+
+      // Validate quote total
+      if (!quote.totalCost || typeof quote.totalCost !== 'number' || isNaN(quote.totalCost) || quote.totalCost <= 0) {
+        throw new Error(`Invalid quote total: ${quote.totalCost}`);
+      }
+
+      // STEP 1: Create booking from quote
+      const bookingId = await new Promise<string>((resolve, reject) => {
+        createBookingFromQuote.mutate(
+          {
+            quoteId: quote.id,
+            contactId: quote.contactId,
+            items: quote.items,
+            totalAmount: quote.totalCost,
+            status: 'confirmed'
+          },
+          {
+            onSuccess: (id) => resolve(id),
+            onError: (error) => reject(error)
+          }
+        );
+      });
+
+      // STEP 2: Generate invoice from quote
+      const invoiceId = await new Promise<string>((resolve, reject) => {
+        generateInvoiceFromQuote.mutate(
+          {
+            quoteId: quote.id,
+            customerData,
+            terms: 'Net 30',
+            dueDays: 30
+          },
+          {
+            onSuccess: (id) => resolve(id),
+            onError: (error) => reject(error)
+          }
+        );
+      });
+
+      // STEP 3: Generate commission record
+      await new Promise<void>((resolve, reject) => {
+        generateCommissionFromBooking.mutate(
+          {
+            agentId: user?.id || 'default-agent',
+            agentName: user?.email || 'Travel Agent',
+            bookingId: bookingId,
+            quoteId: quote.id,
+            invoiceId: invoiceId,
+            customerId: customer.id,
+            customerName: customerData.customerName,
+            bookingAmount: quote.totalCost,
+            bookingType: 'package',
+          },
+          {
+            onSuccess: () => resolve(),
+            onError: (error) => reject(error)
+          }
+        );
+      });
+
+      setReviewResults(prev => ({ ...prev, success: prev.success + 1 }));
+    } catch (error) {
+      console.error('[FinancesPage] Queue error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setReviewResults(prev => ({ ...prev, errors: [...prev.errors, errorMessage] }));
+    } finally {
+      setProcessingId(null);
+    }
+  };
+
+  const deleteQuoteFromQueue = async (quoteId: string) => {
+    if (window.confirm('Are you sure you want to reject this quote? It will no longer appear in the invoice queue.')) {
+      setProcessingId(quoteId);
       try {
-        // Get customer data from contacts
-        const customer = contacts.find(c => c.id === quote.contactId);
-
-        if (!customer) {
-          errors.push(`Customer not found for quote ${quote.id}`);
-          continue;
-        }
-
-        const customerData = {
-          customerId: customer.id,
-          customerName: `${customer.firstName} ${customer.lastName}`,
-          customerEmail: customer.email,
-          customerAddress: customer.address
-        };
-
-        // Validate quote total before proceeding
-        if (!quote.totalCost || typeof quote.totalCost !== 'number' || isNaN(quote.totalCost) || quote.totalCost <= 0) {
-          errors.push(`Invalid quote total for quote ${quote.id}: ${quote.totalCost}`);
-          continue;
-        }
-
-        // STEP 1: Create booking from quote (with itemized booking_items)
-        const bookingId = await new Promise<string>((resolve, reject) => {
-          createBookingFromQuote.mutate(
+        await new Promise<void>((resolve, reject) => {
+          updateQuoteStatus.mutate(
+            { id: quoteId, status: 'rejected' },
             {
-              quoteId: quote.id,
-              contactId: quote.contactId,
-              items: quote.items,
-              totalAmount: quote.totalCost,
-              status: 'confirmed'
-            },
-            {
-              onSuccess: (id) => {
-                console.log('[FinancesPage] Booking created:', id);
-                resolve(id);
-              },
+              onSuccess: () => resolve(),
               onError: (error) => reject(error)
             }
           );
         });
-
-        if (bookingId) {
-          bookingsCreated++;
-
-          // STEP 2: Generate invoice from quote
-          const invoiceId = await new Promise<string>((resolve, reject) => {
-            generateInvoiceFromQuote.mutate(
-              {
-                quoteId: quote.id,
-                customerData,
-                terms: 'Net 30',
-                dueDays: 30
-              },
-              {
-                onSuccess: (id) => {
-                  console.log('[FinancesPage] Invoice created:', id);
-                  resolve(id);
-                },
-                onError: (error) => reject(error)
-              }
-            );
-          });
-
-          if (invoiceId) {
-            invoicesCreated++;
-
-            // STEP 3: Generate commission record with CORRECT booking ID
-            try {
-              await new Promise<void>((resolve, reject) => {
-                generateCommissionFromBooking.mutate(
-                  {
-                    agentId: user?.id || 'default-agent',
-                    agentName: user?.email || 'Travel Agent',
-                    bookingId: bookingId, // NOW CORRECT - using actual booking ID
-                    quoteId: quote.id,
-                    invoiceId: invoiceId,
-                    customerId: customer.id,
-                    customerName: customerData.customerName,
-                    bookingAmount: quote.totalCost,
-                    bookingType: 'hotel',
-                  },
-                  {
-                    onSuccess: () => {
-                      console.log('[FinancesPage] Commission created for booking:', bookingId);
-                      resolve();
-                    },
-                    onError: (error) => reject(error)
-                  }
-                );
-              });
-              commissionsCreated++;
-            } catch (commError) {
-              console.error('[FinancesPage] Failed to create commission:', commError);
-              const errorMessage = commError instanceof Error ? commError.message : 'Unknown error';
-              errors.push(`Commission generation failed for booking ${bookingId}: ${errorMessage}`);
-            }
-          }
-        }
       } catch (error) {
-        console.error('[FinancesPage] Failed to process quote:', quote.id, error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        errors.push(`Failed to process quote ${quote.id}: ${errorMessage}`);
+        alert('Failed to update quote status');
+      } finally {
+        setProcessingId(null);
       }
-    }
-
-    // Show results
-    if (bookingsCreated > 0) {
-      const message = `Successfully created ${bookingsCreated} booking(s), ${invoicesCreated} invoice(s), and ${commissionsCreated} commission record(s)!`;
-      alert(errors.length > 0 ? `${message}\n\nWarnings:\n${errors.join('\n')}` : message);
-    } else {
-      alert(`Failed to create bookings.\n${errors.join('\n')}`);
     }
   };
 
@@ -520,6 +544,138 @@ export default function FinancesPage() {
 
           {/* Recent Activity / Quick Actions */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <Dialog open={isQueueOpen} onOpenChange={(open) => {
+              setIsQueueOpen(open);
+              if (!open) setReviewResults({ success: 0, errors: [] });
+            }}>
+              <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto bg-white dark:bg-clio-gray-900 border-none shadow-2xl rounded-2xl p-0">
+                <DialogHeader className="p-8 border-b border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/50 dark:bg-clio-gray-900/50">
+                  <DialogTitle className="flex items-center text-xl font-black uppercase tracking-tight">
+                    <Receipt className="w-6 h-6 mr-3 text-clio-blue" />
+                    Invoice Review Queue
+                  </DialogTitle>
+                  <DialogDescription className="font-medium text-clio-gray-500 mt-1 uppercase tracking-widest text-[10px]">
+                    Review and approve invoices for accepted quotes. Rejected items will be removed from this queue.
+                  </DialogDescription>
+                </DialogHeader>
+
+                <div className="p-8 space-y-4">
+                  {acceptedQuotes.length === 0 ? (
+                    <div className="text-center py-16 bg-clio-gray-50 dark:bg-clio-gray-950/50 rounded-2xl border-2 border-dashed border-clio-gray-200 dark:border-clio-gray-800">
+                      <div className="w-16 h-16 bg-emerald-50 dark:bg-emerald-900/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <CheckCircle2 className="w-8 h-8 text-emerald-500" />
+                      </div>
+                      <p className="text-lg font-black text-clio-gray-900 dark:text-white uppercase tracking-tight">All caught up!</p>
+                      <p className="text-sm font-medium text-clio-gray-500 uppercase tracking-widest text-[10px] mt-1">No pending quotes need invoicing.</p>
+                    </div>
+                  ) : (
+                    acceptedQuotes.map(quote => {
+                      const customer = contacts.find(c => c.id === quote.contactId);
+                      const isDuplicate = invoices.some(inv => 
+                        inv.quote_id === quote.id || 
+                        (inv.customer_id === quote.contactId && 
+                         Math.abs(inv.total - quote.totalCost) < 0.01 &&
+                         new Date().getTime() - new Date(inv.created_at || inv.createdAt).getTime() < 24 * 60 * 60 * 1000)
+                      );
+
+                      return (
+                        <div key={quote.id} className={cn(
+                          "group p-6 rounded-2xl border transition-all duration-200",
+                          isDuplicate ? "border-amber-200 bg-amber-50/30 dark:border-amber-900/20" : "border-clio-gray-100 bg-white dark:bg-clio-gray-950 dark:border-clio-gray-800"
+                        )}>
+                          <div className="flex flex-col md:flex-row justify-between gap-6">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h4 className="font-black text-clio-gray-900 dark:text-white uppercase tracking-tight truncate text-lg">
+                                  {quote.title}
+                                </h4>
+                                {isDuplicate && (
+                                  <Badge className="bg-amber-100 text-amber-700 border-none text-[8px] font-black uppercase tracking-widest px-2 py-1">
+                                    <AlertTriangle className="w-2.5 h-2.5 mr-1" />
+                                    Potential Duplicate
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap items-center text-[10px] font-black text-clio-gray-400 gap-4 uppercase tracking-widest">
+                                <span className="flex items-center bg-clio-gray-50 dark:bg-clio-gray-900 px-2 py-1 rounded-lg border border-clio-gray-100 dark:border-clio-gray-800">
+                                  <DollarSign className="w-3 h-3 mr-1.5 text-clio-blue" />
+                                  <span className="text-clio-gray-900 dark:text-white">{formatCurrency(quote.totalCost)}</span>
+                                </span>
+                                <span className="flex items-center">
+                                  <Receipt className="w-3 h-3 mr-1.5" />
+                                  {customer?.firstName} {customer?.lastName}
+                                </span>
+                                <span className="flex items-center">
+                                  <Calendar className="w-3 h-3 mr-1.5" />
+                                  {new Date(quote.createdAt || quote.created_at).toLocaleDateString()}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 shrink-0">
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-12 px-4 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 font-black uppercase tracking-widest text-[10px] rounded-xl"
+                                onClick={() => deleteQuoteFromQueue(quote.id)}
+                                disabled={!!processingId}
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Reject
+                              </Button>
+                              <Button
+                                size="sm"
+                                className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-[10px] px-6 rounded-xl shadow-lg shadow-emerald-600/20 border-none"
+                                onClick={() => processQuoteInQueue(quote)}
+                                disabled={!!processingId}
+                              >
+                                {processingId === quote.id ? (
+                                  <Clock className="w-4 h-4 mr-2 animate-spin" />
+                                ) : (
+                                  <CheckCircle2 className="w-4 h-4 mr-2" />
+                                )}
+                                Approve & Create
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {(reviewResults.success > 0 || reviewResults.errors.length > 0) && (
+                  <div className="mx-8 mb-8 p-6 rounded-2xl bg-clio-gray-50 dark:bg-clio-gray-950 border border-clio-gray-100 dark:border-clio-gray-800 shadow-inner">
+                    <p className="text-[10px] font-black uppercase tracking-widest mb-4 text-clio-gray-400">Processing Summary</p>
+                    <div className="space-y-2">
+                      {reviewResults.success > 0 && (
+                        <p className="text-xs font-bold text-emerald-600 uppercase tracking-tight flex items-center bg-emerald-50 dark:bg-emerald-900/10 p-2 rounded-lg">
+                          <CheckCircle2 className="w-4 h-4 mr-3" />
+                          Successfully processed {reviewResults.success} invoice(s)
+                        </p>
+                      )}
+                      {reviewResults.errors.map((err, i) => (
+                        <p key={i} className="text-xs font-bold text-red-600 uppercase tracking-tight flex items-center bg-red-50 dark:bg-red-900/10 p-2 rounded-lg">
+                          <XCircle className="w-4 h-4 mr-3" />
+                          Error: {err}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <DialogFooter className="p-8 border-t border-clio-gray-100 dark:border-clio-gray-800 bg-clio-gray-50/30 dark:bg-clio-gray-900/30">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsQueueOpen(false)}
+                    className="font-black uppercase tracking-widest text-[10px] h-12 px-8 rounded-xl border-clio-gray-200 dark:border-clio-gray-800 bg-white dark:bg-clio-gray-900"
+                  >
+                    Close Queue
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
             {/* Quick Actions */}
             <Card className="border-clio-gray-100 dark:border-clio-gray-800 shadow-sm overflow-hidden">
               <CardHeader className="bg-clio-gray-50/50 dark:bg-clio-gray-800/20 border-b border-clio-gray-100 dark:border-clio-gray-800">
