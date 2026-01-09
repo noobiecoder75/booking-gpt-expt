@@ -337,6 +337,9 @@ async function initializeBookingWorkflow(
         description,
         status: 'pending',
         priority: canProceed ? 'high' : 'medium',
+        item_type: item.type,
+        item_name: item.name,
+        customer_name: quote.customerName,
         attachments: {
           quoteItemId: item.id,
           executionType: isAPI ? 'api' : 'manual',
