@@ -10,6 +10,10 @@ import { Booking } from '@/types/booking';
 import { BookingStatusBadge } from './BookingStatusBadge';
 import { BookingItemsList } from './BookingItemsList';
 import { WorkflowVisualizer } from './WorkflowVisualizer';
+import { useBookingTasksQuery } from '@/hooks/queries/useTasksQuery';
+import { useQueryClient } from '@tanstack/react-query';
+import { BookingReviewModal } from '@/components/tasks/BookingReviewModal';
+import { BookingTask } from '@/types/task';
 import {
   User,
   Mail,
@@ -19,7 +23,9 @@ import {
   ExternalLink,
   XCircle,
   Edit,
-  DollarSign
+  DollarSign,
+  CheckCircle2,
+  Clock
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -40,7 +46,39 @@ export function BookingDetailsModal({
   onCancel,
   onEditStatus
 }: BookingDetailsModalProps) {
+  const queryClient = useQueryClient();
+  const { data: tasks = [] } = useBookingTasksQuery(booking?.id, booking?.quoteId);
+  const [executingTaskId, setExecutingTaskId] = useState<string | null>(null);
+  const [reviewTask, setReviewTask] = useState<BookingTask | null>(null);
+
   if (!booking) return null;
+
+  const handleExecuteTask = async (taskId: string) => {
+    try {
+      setExecutingTaskId(taskId);
+      const response = await fetch('/api/bookings/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskId }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Successfully executed booking! Confirmation: ${data.confirmationNumber}`);
+        queryClient.invalidateQueries({ queryKey: ['tasks'] });
+        queryClient.invalidateQueries({ queryKey: ['bookings'] });
+      } else {
+        alert(`Execution failed: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Execution failed:', error);
+      alert('An unexpected error occurred during execution.');
+    } finally {
+      setExecutingTaskId(null);
+      setReviewTask(null);
+    }
+  };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -113,6 +151,51 @@ export function BookingDetailsModal({
         </DialogHeader>
 
         <div className="space-y-6 mt-6">
+          {/* Action Tasks (Human in the Loop) */}
+          {tasks.length > 0 && (
+            <div className="bg-orange-50 dark:bg-orange-950/20 border border-orange-100 dark:border-orange-900/30 p-6 rounded-2xl animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-orange-800 dark:text-orange-400">Human in the Loop: Pending Fulfillment</h3>
+                  <p className="text-xs text-orange-700/70 dark:text-orange-500/70 mt-1 uppercase font-bold tracking-tight">
+                    {tasks.length} item{tasks.length > 1 ? 's' : ''} require agent verification before execution
+                  </p>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-white dark:bg-clio-gray-900 flex items-center justify-center shadow-sm">
+                  <Clock className="w-5 h-5 text-orange-500 animate-pulse" />
+                </div>
+              </div>
+              <div className="space-y-3">
+                {tasks.map((task) => (
+                  <div key={task.id} className="flex items-center justify-between p-4 bg-white dark:bg-clio-gray-900 rounded-xl border border-orange-100 dark:border-orange-900/20 shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-orange-50 dark:bg-orange-900/20 flex items-center justify-center">
+                        <CheckCircle2 className="w-4 h-4 text-orange-600" />
+                      </div>
+                      <div>
+                        <div className="text-sm font-bold text-clio-gray-900 dark:text-white uppercase tracking-tight">{task.title}</div>
+                        <div className="text-[10px] font-bold text-clio-gray-400 uppercase tracking-widest">{task.itemName || 'Manual fulfillment'}</div>
+                      </div>
+                    </div>
+                    <Button 
+                      size="sm" 
+                      className="bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-[10px] h-9 px-4 rounded-lg shadow-lg shadow-emerald-600/20 border-none"
+                      onClick={() => setReviewTask(task)}
+                      disabled={!!executingTaskId}
+                    >
+                      {executingTaskId === task.id ? (
+                        <Clock className="w-3 h-3 animate-spin mr-2" />
+                      ) : (
+                        <CheckCircle2 className="w-3 h-3 mr-2" />
+                      )}
+                      Review & Book
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Workflow Status */}
           <div className="bg-clio-gray-50 dark:bg-clio-gray-900/50 border border-clio-gray-100 dark:border-clio-gray-800 p-8 rounded-2xl">
             <h3 className="text-xs font-bold uppercase tracking-wider text-clio-gray-500 dark:text-clio-gray-400 mb-6">Booking Workflow</h3>
@@ -248,6 +331,16 @@ export function BookingDetailsModal({
           )}
         </div>
       </DialogContent>
+
+      {reviewTask && (
+        <BookingReviewModal
+          isOpen={!!reviewTask}
+          onClose={() => setReviewTask(null)}
+          task={reviewTask}
+          onConfirm={() => handleExecuteTask(reviewTask.id)}
+          isExecuting={executingTaskId === reviewTask.id}
+        />
+      )}
     </Dialog>
   );
 }

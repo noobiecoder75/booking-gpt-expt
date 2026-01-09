@@ -491,9 +491,33 @@ async function createBookingRecord(
 ): Promise<string | null> {
   try {
     const supabase = getSupabaseClient();
+
+    // Check if a booking already exists for this quote to prevent duplicates
+    console.log('🔍 [Booking] Checking for existing booking for quote:', quoteId);
+    const { data: existingBooking } = await supabase
+      .from('bookings')
+      .select('id')
+      .eq('quote_id', quoteId)
+      .maybeSingle();
+
+    if (existingBooking) {
+      console.log('⚠️ [Booking] Booking already exists for this quote, skipping creation:', existingBooking.id);
+      
+      // Update existing booking payment status
+      await supabase
+        .from('bookings')
+        .update({
+          payment_status: paidAmount >= quote.totalCost ? 'paid' : 'partial',
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', existingBooking.id);
+        
+      return existingBooking.id;
+    }
+
     const bookingReference = `BKG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-    console.log('📅 [Booking] Creating booking record for quote:', quoteId);
+    console.log('📅 [Booking] Creating new booking record for quote:', quoteId);
 
     // Create booking record
     const { data: booking, error: bookingError } = await supabase

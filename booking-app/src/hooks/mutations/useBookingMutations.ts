@@ -48,6 +48,34 @@ export function useBookingMutations() {
         bookingReference
       });
 
+      // Step 0: Check if booking already exists for this quote
+      const { data: existingBooking } = await supabase
+        .from('bookings')
+        .select('id')
+        .eq('quote_id', quoteId)
+        .maybeSingle();
+
+      if (existingBooking) {
+        console.log('[useBookingMutations] Booking already exists for this quote, updating:', existingBooking.id);
+        
+        // Update status and amount if needed
+        const { error: updateError } = await supabase
+          .from('bookings')
+          .update({
+            status: status,
+            total_amount: totalAmount,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingBooking.id);
+
+        if (updateError) {
+          console.error('[useBookingMutations] Booking update failed:', updateError);
+          throw new Error(`Failed to update booking: ${updateError.message}`);
+        }
+
+        return existingBooking.id;
+      }
+
       // Step 1: Create booking record
       const { data: booking, error: bookingError } = await supabase
         .from('bookings')

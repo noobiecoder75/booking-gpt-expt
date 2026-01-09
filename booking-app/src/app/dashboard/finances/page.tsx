@@ -626,7 +626,11 @@ export default function FinancesPage() {
                               <Button
                                 size="sm"
                                 className="h-12 bg-emerald-600 hover:bg-emerald-700 text-white font-black uppercase tracking-widest text-[10px] px-6 rounded-xl shadow-lg shadow-emerald-600/20 border-none"
-                                onClick={() => processQuoteInQueue(quote)}
+                                onClick={() => {
+                                  if (window.confirm('Are you sure you want to approve this quote and create all associated records (Booking, Invoice, Commission)?')) {
+                                    processQuoteInQueue(quote);
+                                  }
+                                }}
                                 disabled={!!processingId}
                               >
                                 {processingId === quote.id ? (

@@ -19,7 +19,7 @@ function getSupabaseClient() {
 
 export async function POST(request: NextRequest) {
   try {
-    const { taskId } = await request.json();
+    const { taskId, action = 'execute' } = await request.json();
 
     if (!taskId) {
       return NextResponse.json({ error: 'Task ID is required' }, { status: 400 });
@@ -57,6 +57,56 @@ export async function POST(request: NextRequest) {
 
     if (!item) {
       return NextResponse.json({ error: 'Item not found in quote' }, { status: 404 });
+    }
+
+    // PREVIEW ACTION: Just return the payload that would be sent
+    if (action === 'preview') {
+      console.log(`🔍 [Execute Booking] Previewing ${item.type} payload for item ${item.id}`);
+      
+      let preparedPayload = {};
+      
+      if (item.supplierSource === 'api_hotelbeds') {
+        preparedPayload = {
+          endpoint: '/hotel-api/1.0/bookings',
+          method: 'POST',
+          payload: {
+            booking: {
+              rateKey: item.details?.rateKey || 'MOCK_RATE_KEY',
+              holder: {
+                firstName: quote.customerName.split(' ')[0] || 'Guest',
+                lastName: quote.customerName.split(' ')[1] || 'Name',
+              },
+              rooms: [
+                {
+                  paxes: [
+                    {
+                      roomId: 1,
+                      type: 'AD',
+                      name: quote.customerName.split(' ')[0] || 'Guest',
+                      surname: quote.customerName.split(' ')[1] || 'Name',
+                    },
+                  ],
+                },
+              ],
+              clientReference: `${quote.id}-${item.id}`,
+              remark: `Booking for quote ${quote.id}`,
+              tolerance: 2.00,
+            },
+          },
+        };
+      } else {
+        preparedPayload = {
+          info: 'Automated payload preparation not fully detailed for this provider in preview mode.',
+          itemDetails: item,
+          provider: item.supplierSource
+        };
+      }
+
+      return NextResponse.json({
+        success: true,
+        action: 'preview',
+        payload: preparedPayload
+      });
     }
 
     console.log(`🚀 [Execute Booking] Executing ${item.type} booking for item ${item.id} (${item.name})`);

@@ -190,10 +190,10 @@ export default function BookingsPage() {
                       <TableCell>
                         <WorkflowVisualizer
                           hasQuote={!!booking.quoteId}
-                          hasBooking={true}
-                          hasInvoice={false}
-                          hasCommission={false}
-                          isPaid={booking.paymentStatus === 'paid'}
+                          hasBooking={booking.status === 'confirmed' || booking.status === 'booked' || booking.status === 'completed'}
+                          hasInvoice={booking.paymentStatus === 'paid' || booking.paymentStatus === 'booked' || booking.paymentStatus === 'partial'}
+                          hasCommission={false} // TODO: Link to commissions table
+                          isPaid={booking.paymentStatus === 'paid' || booking.paymentStatus === 'booked'}
                           compact={true}
                         />
                       </TableCell>
